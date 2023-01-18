@@ -4,29 +4,17 @@ Created on Tue May 17 15:50:25 2016
 
 @author: hossam
 """
-from pathlib import Path
-import optimizers.PSO as pso
-import optimizers.MVO as mvo
-import optimizers.GWO as gwo
-import optimizers.MFO as mfo
-import optimizers.CS as cs
-import optimizers.BAT as bat
-import optimizers.WOA as woa
-import optimizers.FFA as ffa
-import optimizers.SSA as ssa
-import optimizers.GA as ga
-import optimizers.HHO as hho
-import optimizers.SCA as sca
-import optimizers.JAYA as jaya
-import optimizers.DE as de
-import benchmarks
 import csv
-import numpy
 import time
 import warnings
-import os
-import plot_convergence as conv_plot
+from pathlib import Path
+
+import numpy
+
+import benchmarks
+import optimizers.HHO as hho
 import plot_boxplot as box_plot
+import plot_convergence as conv_plot
 
 warnings.simplefilter(action="ignore")
 
@@ -37,36 +25,7 @@ def selector(algo, func_details, popSize, Iter):
     ub = func_details[2]
     dim = func_details[3]
 
-    if algo == "SSA":
-        x = ssa.SSA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "PSO":
-        x = pso.PSO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "GA":
-        x = ga.GA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "BAT":
-        x = bat.BAT(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "FFA":
-        x = ffa.FFA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "GWO":
-        x = gwo.GWO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "WOA":
-        x = woa.WOA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "MVO":
-        x = mvo.MVO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "MFO":
-        x = mfo.MFO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "CS":
-        x = cs.CS(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "HHO":
-        x = hho.HHO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "SCA":
-        x = sca.SCA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "JAYA":
-        x = jaya.JAYA(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    elif algo == "DE":
-        x = de.DE(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
-    else:
-        return null
+    x = hho.HHO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
     return x
 
 
