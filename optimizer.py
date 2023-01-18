@@ -19,7 +19,7 @@ import plot_convergence as conv_plot
 warnings.simplefilter(action="ignore")
 
 
-def selector(algo, func_details, popSize, Iter):
+def selector(func_details, popSize, Iter):
     function_name = func_details[0]
     lb = func_details[1]
     ub = func_details[2]
@@ -86,7 +86,7 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
             executionTime = [0] * NumOfRuns
             for k in range(0, NumOfRuns):
                 func_details = benchmarks.getFunctionDetails(objectivefunc[j])
-                x = selector(optimizer[i], func_details, PopulationSize, Iterations)
+                x = selector(func_details, PopulationSize, Iterations)
                 convergence[k] = x.convergence
                 optimizerName = x.optimizer
                 objfname = x.objfname
