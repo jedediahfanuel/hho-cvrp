@@ -10,7 +10,7 @@ from optimizer import run
 # Select optimizers
 optimizer = ["HHO"]
 
-# Select benchmark function"
+# Select benchmark function
 objectivefunc = ["F3", "F4"]
 
 # Select number of repetitions for each experiment.
