@@ -1,31 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thirsday March 21  2019
-
-@author: 
-% _____________________________________________________
-% Main paper:
-% Harris hawks optimization: Algorithm and applications
-% Ali Asghar Heidari, Seyedali Mirjalili, Hossam Faris, Ibrahim Aljarah, Majdi Mafarja, Huiling Chen
-% Future Generation Computer Systems, 
-% DOI: https://doi.org/10.1016/j.future.2019.02.028
-% _____________________________________________________
-
-"""
 import random
 import numpy
 import math
 from solution import solution
 import time
 
-
 def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
-
-    # dim=30
-    # SearchAgents_no=50
-    # lb=-100
-    # ub=100
-    # Max_iter=500
 
     # initialize the location and Energy of the rabbit
     Rabbit_Location = numpy.zeros(dim)

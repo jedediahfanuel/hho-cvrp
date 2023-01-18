@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 17 12:46:20 2016
-
-@author: Hossam Faris
-"""
-
 import numpy
 import math
 

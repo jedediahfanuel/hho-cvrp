@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 def run(results_directory, optimizer, objectivefunc, Iterations):
     plt.ioff()
 

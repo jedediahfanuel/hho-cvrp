@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 17 15:50:25 2016
-
-@author: hossam
-"""
-
 from optimizer import run
 
 # Select optimizers

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
 def run(results_directory, optimizer, objectivefunc, Iterations):
     plt.ioff()
     fileResultsData = pd.read_csv(results_directory + "/experiment.csv")
