@@ -19,13 +19,16 @@ import plot_convergence as conv_plot
 warnings.simplefilter(action="ignore")
 
 
-def selector(func_details, popSize, Iter):
+def selector(algo, func_details, popSize, Iter):
     function_name = func_details[0]
     lb = func_details[1]
     ub = func_details[2]
     dim = func_details[3]
 
-    x = hho.HHO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
+    if algo == "HHO":
+        x = hho.HHO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
+    else:
+        return None
     return x
 
 
@@ -71,7 +74,7 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
     Flag = False
     Flag_details = False
 
-    # CSV Header for for the cinvergence
+    # CSV Header for the convergence
     CnvgHeader = []
 
     results_directory = time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
@@ -86,7 +89,7 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
             executionTime = [0] * NumOfRuns
             for k in range(0, NumOfRuns):
                 func_details = benchmarks.getFunctionDetails(objectivefunc[j])
-                x = selector(func_details, PopulationSize, Iterations)
+                x = selector(optimizer[i], func_details, PopulationSize, Iterations)
                 convergence[k] = x.convergence
                 optimizerName = x.optimizer
                 objfname = x.objfname
