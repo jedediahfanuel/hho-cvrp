@@ -27,11 +27,16 @@ def generate_solution(n_customers, n_vehicles, capacity, customers):
 def objective(routes):
     total = 0
     for r in routes:
+        total_2 = 0
         for i in range(len(r) - 1):
             total += distance(
                 c_list[r[i]]['location'][0], c_list[r[i]]['location'][1],
                 c_list[r[i + 1]]['location'][0], c_list[r[i + 1]]['location'][1]
             )
+            # print(c_list[r[i]]['demand'])
+            total_2 += c_list[r[i]]['demand']
+        print(r)
+        print(total_2)
 
     return total
 
@@ -53,14 +58,14 @@ c_list = [
     {'demand': 16, 'location': (84, 39)},
     {'demand': 6, 'location': (14, 24)},
     {'demand': 16, 'location': (2, 39)},
-    {'demand': 18, 'location': (3, 82)},
+    {'demand': 8, 'location': (3, 82)},
 
-    {'demand': 8, 'location': (5, 10)},
-    {'demand': 14, 'location': (98, 52)},
-    {'demand': 21, 'location': (84, 25)},
-    {'demand': 16, 'location': (61, 59)},
-    {'demand': 3, 'location': (1, 65)},
-    {'demand': 22, 'location': (88, 51)},
+    {'demand': 14, 'location': (5, 10)},
+    {'demand': 21, 'location': (98, 52)},
+    {'demand': 16, 'location': (84, 25)},
+    {'demand': 3, 'location': (61, 59)},
+    {'demand': 22, 'location': (1, 65)},
+    {'demand': 18, 'location': (88, 51)},
 
     {'demand': 19, 'location': (91, 2)},
     {'demand': 1, 'location': (19, 32)},
