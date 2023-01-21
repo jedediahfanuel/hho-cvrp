@@ -1,21 +1,8 @@
-import math
 import random
 import cvrplib
 
 # Download instances
 instance, solution = cvrplib.download('A-n32-k5', solution=True)
-
-
-# print(instance.name)
-# print(instance.dimension)
-# print(instance.n_customers)
-# print(instance.depot)
-# print(instance.customers)
-# print(instance.capacity)
-# print(instance.distances)
-# print(instance.demands)
-# print(instance.service_times)
-# print(instance.coordinates)
 
 
 def n_vehicle(name):
