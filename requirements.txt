@@ -1,6 +1,8 @@
-NumPy
+NumPy~=1.24.1
 SciPy
 sklearn
-pandas
-matplotlib
+pandas~=1.5.2
+matplotlib~=3.6.3
 fcmaes
+
+cvrplib~=0.1.1
