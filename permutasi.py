@@ -5,6 +5,7 @@ import cvrplib
 # Download instances
 instance, solution = cvrplib.download('A-n32-k5', solution=True)
 
+
 # print(instance.name)
 # print(instance.dimension)
 # print(instance.n_customers)
@@ -54,30 +55,28 @@ sol = generate_solution(
 
 print(sol)
 
+
 # Add depot as the first and last in route
-for i in range(len(sol)):
-    sol[i] = [0] + sol[i] + [0]
+def add_depot(s):
+    for i in range(len(s)):
+        s[i] = [0] + s[i] + [0]
+    return s
+
 
 print(sol)
 print()
 
-# def objective(routes):
-#     total = 0
-#     for r in routes:
-#         total_2 = 0
-#         for i in range(len(r) - 1):
-#             total += distance(
-#                 c_list[r[i]]['location'][0], c_list[r[i]]['location'][1],
-#                 c_list[r[i + 1]]['location'][0], c_list[r[i + 1]]['location'][1]
-#             )
-#             # print(c_list[r[i]]['demand'])
-#             total_2 += c_list[r[i]]['demand']
-#         print(r)
-#         print(total_2)
-#
-#     return total
 
-# print(objective(sol))
+def objective(routes, distances):
+    total = 0
+    for r in routes:
+        for i in range(len(r) - 1):
+            total += distances[r[i]][r[i + 1]]
+    return total
+
+
+print(objective(add_depot(solution.routes), instance.distances))
+
 # c_list = [
 #     {'demand': 0, 'location': (82, 76)},
 #
