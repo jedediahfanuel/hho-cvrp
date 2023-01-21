@@ -53,18 +53,12 @@ sol = generate_solution(
     instance.demands
 )
 
-print(sol)
-
 
 # Add depot as the first and last in route
 def add_depot(s):
     for i in range(len(s)):
         s[i] = [0] + s[i] + [0]
     return s
-
-
-print(sol)
-print()
 
 
 def objective(routes, distances):
@@ -76,47 +70,6 @@ def objective(routes, distances):
 
 
 print(objective(add_depot(solution.routes), instance.distances))
-
-# c_list = [
-#     {'demand': 0, 'location': (82, 76)},
-#
-#     {'demand': 19, 'location': (96, 44)},
-#     {'demand': 21, 'location': (50, 5)},
-#     {'demand': 6, 'location': (49, 8)},
-#     {'demand': 19, 'location': (13, 7)},
-#     {'demand': 7, 'location': (29, 89)},
-#
-#     {'demand': 12, 'location': (58, 30)},
-#     {'demand': 16, 'location': (84, 39)},
-#     {'demand': 6, 'location': (14, 24)},
-#     {'demand': 16, 'location': (2, 39)},
-#     {'demand': 8, 'location': (3, 82)},
-#
-#     {'demand': 14, 'location': (5, 10)},
-#     {'demand': 21, 'location': (98, 52)},
-#     {'demand': 16, 'location': (84, 25)},
-#     {'demand': 3, 'location': (61, 59)},
-#     {'demand': 22, 'location': (1, 65)},
-#     {'demand': 18, 'location': (88, 51)},
-#
-#     {'demand': 19, 'location': (91, 2)},
-#     {'demand': 1, 'location': (19, 32)},
-#     {'demand': 24, 'location': (93, 3)},
-#     {'demand': 8, 'location': (50, 93)},
-#     {'demand': 12, 'location': (98, 14)},
-#
-#     {'demand': 4, 'location': (5, 42)},
-#     {'demand': 8, 'location': (42, 9)},
-#     {'demand': 24, 'location': (61, 62)},
-#     {'demand': 24, 'location': (9, 97)},
-#     {'demand': 2, 'location': (80, 55)},
-#
-#     {'demand': 20, 'location': (57, 69)},
-#     {'demand': 15, 'location': (23, 15)},
-#     {'demand': 2, 'location': (20, 70)},
-#     {'demand': 14, 'location': (85, 60)},
-#     {'demand': 9, 'location': (98, 5)}
-# ]
 
 # def distance(x1, y1, x2, y2):
 #     return round(math.hypot((x2 - x1), (y2 - y1)))
