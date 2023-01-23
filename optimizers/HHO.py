@@ -55,7 +55,6 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
 
             # fitness of locations
             fitness = objf(generate.get_route(X[i, :]), instance.distances)
-            print(f'INITIAL FITNESS : {fitness}')
 
             # Update the location of Rabbit
             if fitness < Rabbit_Energy:  # Change this to > for maximization problem
