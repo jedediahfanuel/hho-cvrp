@@ -25,14 +25,14 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
     X = numpy.asarray(
         [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (SearchAgents_no, dim))]
     )
-    X = generate.permutation_to_binary(
+    X = numpy.asarray(generate.get_binary(
         generate.initial_solution(
             instance.n_customers,
             generate.n_vehicle(instance.name),
             instance.capacity,
             instance.demands
         )
-    )
+    ))
 
     # Initialize convergence
     convergence_curve = numpy.zeros(Max_iter)
