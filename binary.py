@@ -11,13 +11,15 @@ sol = [
 
 def get_route(s):
     trip = [0]
-    current_customer = 0
-    while len(trip) < 6:
+    current_customer = 0  # mulai dari depot
+    while True:
         for i, val in enumerate(s[0][current_customer]):
             if val:
                 trip.append(i)
                 current_customer = i
                 break
+        if current_customer == 0:  # berakhir di depot
+            break
     return trip
 
 
