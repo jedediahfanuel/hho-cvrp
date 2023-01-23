@@ -54,7 +54,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
             X[i, :] = numpy.clip(X[i, :], lb, ub)
 
             # fitness of locations
-            fitness = objf(X[i, :], instance.distances)
+            fitness = objf(generate.get_route(X[i, :]), instance.distances)
             print(f'INITIAL FITNESS : {fitness}')
 
             # Update the location of Rabbit
@@ -129,7 +129,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1, instance.distances) < fitness:  # improved move?
+                    if objf(generate.get_route(X1), instance.distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -139,7 +139,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2, instance.distances) < fitness:
+                        if objf(generate.get_route(X2), instance.distances) < fitness:
                             X[i, :] = X2.copy()
                 if (
                         r < 0.5 and abs(Escaping_Energy) < 0.5
@@ -150,7 +150,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1, instance.distances) < fitness:  # improved move?
+                    if objf(generate.get_route(X1), instance.distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -160,7 +160,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2, instance.distances) < fitness:
+                        if objf(generate.get_route(X2), instance.distances) < fitness:
                             X[i, :] = X2.copy()
 
         convergence_curve[t] = Rabbit_Energy
