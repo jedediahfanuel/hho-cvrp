@@ -22,16 +22,13 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
         ub = numpy.full(dim, ub)
 
     # Initialize the locations of Harris' hawks
-    X = numpy.asarray(
-        [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (SearchAgents_no, dim))]
-    )
     X = numpy.asarray(generate.get_binary(
         generate.initial_solution(
             instance.n_customers,
             generate.n_vehicle(instance.name),
             instance.capacity,
             instance.demands
-        )
+        ), instance.dimension
     ))
 
     # Initialize convergence
