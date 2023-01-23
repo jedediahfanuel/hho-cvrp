@@ -4,8 +4,8 @@ import math
 from solution import solution
 import time
 
-def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
 
+def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     # initialize the location and Energy of the rabbit
     Rabbit_Location = numpy.zeros(dim)
     Rabbit_Energy = float("inf")  # change this to -inf for maximization problems
@@ -77,7 +77,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 elif q >= 0.5:
                     # perch based on other family members
                     X[i, :] = (Rabbit_Location - X.mean(0)) - random.random() * (
-                        (ub - lb) * random.random() + lb
+                            (ub - lb) * random.random() + lb
                     )
 
             # -------- Exploitation phase -------------------
@@ -90,17 +90,17 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 r = random.random()  # probability of each event
 
                 if (
-                    r >= 0.5 and abs(Escaping_Energy) < 0.5
+                        r >= 0.5 and abs(Escaping_Energy) < 0.5
                 ):  # Hard besiege Eq. (6) in paper
                     X[i, :] = (Rabbit_Location) - Escaping_Energy * abs(
                         Rabbit_Location - X[i, :]
                     )
 
                 if (
-                    r >= 0.5 and abs(Escaping_Energy) >= 0.5
+                        r >= 0.5 and abs(Escaping_Energy) >= 0.5
                 ):  # Soft besiege Eq. (4) in paper
                     Jump_strength = 2 * (
-                        1 - random.random()
+                            1 - random.random()
                     )  # random jump strength of the rabbit
                     X[i, :] = (Rabbit_Location - X[i, :]) - Escaping_Energy * abs(
                         Jump_strength * Rabbit_Location - X[i, :]
@@ -109,7 +109,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
 
                 if (
-                    r < 0.5 and abs(Escaping_Energy) >= 0.5
+                        r < 0.5 and abs(Escaping_Energy) >= 0.5
                 ):  # Soft besiege Eq. (10) in paper
                     # rabbit try to escape by many zigzag deceptive motions
                     Jump_strength = 2 * (1 - random.random())
@@ -122,16 +122,16 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                         X[i, :] = X1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         X2 = (
-                            Rabbit_Location
-                            - Escaping_Energy
-                            * abs(Jump_strength * Rabbit_Location - X[i, :])
-                            + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                                Rabbit_Location
+                                - Escaping_Energy
+                                * abs(Jump_strength * Rabbit_Location - X[i, :])
+                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
                         if objf(X2) < fitness:
                             X[i, :] = X2.copy()
                 if (
-                    r < 0.5 and abs(Escaping_Energy) < 0.5
+                        r < 0.5 and abs(Escaping_Energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
                     Jump_strength = 2 * (1 - random.random())
                     X1 = Rabbit_Location - Escaping_Energy * abs(
@@ -143,10 +143,10 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                         X[i, :] = X1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         X2 = (
-                            Rabbit_Location
-                            - Escaping_Energy
-                            * abs(Jump_strength * Rabbit_Location - X.mean(0))
-                            + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                                Rabbit_Location
+                                - Escaping_Energy
+                                * abs(Jump_strength * Rabbit_Location - X.mean(0))
+                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
                         if objf(X2) < fitness:
@@ -179,10 +179,10 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
 def Levy(dim):
     beta = 1.5
     sigma = (
-        math.gamma(1 + beta)
-        * math.sin(math.pi * beta / 2)
-        / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
-    ) ** (1 / beta)
+                    math.gamma(1 + beta)
+                    * math.sin(math.pi * beta / 2)
+                    / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
+            ) ** (1 / beta)
     u = 0.01 * numpy.random.randn(dim) * sigma
     v = numpy.random.randn(dim)
     zz = numpy.power(numpy.absolute(v), (1 / beta))

@@ -4,6 +4,7 @@ import numpy
 import math
 import cvrplib
 
+
 def getFunctionDetails(a):
     # Download instances
     instance = cvrplib.download(a)
@@ -84,7 +85,7 @@ def F4(x):
 def F5(x):
     dim = len(x)
     o = numpy.sum(
-        100 * (x[1:dim] - (x[0 : dim - 1] ** 2)) ** 2 + (x[0 : dim - 1] - 1) ** 2
+        100 * (x[1:dim] - (x[0: dim - 1] ** 2)) ** 2 + (x[0: dim - 1] - 1) ** 2
     )
     return o
 
@@ -118,10 +119,10 @@ def F9(x):
 def F10(x):
     dim = len(x)
     o = (
-        -20 * numpy.exp(-0.2 * numpy.sqrt(numpy.sum(x ** 2) / dim))
-        - numpy.exp(numpy.sum(numpy.cos(2 * math.pi * x)) / dim)
-        + 20
-        + numpy.exp(1)
+            -20 * numpy.exp(-0.2 * numpy.sqrt(numpy.sum(x ** 2) / dim))
+            - numpy.exp(numpy.sum(numpy.cos(2 * math.pi * x)) / dim)
+            + 20
+            + numpy.exp(1)
     )
     return o
 
@@ -137,27 +138,27 @@ def F11(x):
 def F12(x):
     dim = len(x)
     o = (math.pi / dim) * (
-        10 * ((numpy.sin(math.pi * (1 + (x[0] + 1) / 4))) ** 2)
-        + numpy.sum(
-            (((x[: dim - 1] + 1) / 4) ** 2)
-            * (1 + 10 * ((numpy.sin(math.pi * (1 + (x[1 :] + 1) / 4)))) ** 2)
-        )
-        + ((x[dim - 1] + 1) / 4) ** 2
+            10 * ((numpy.sin(math.pi * (1 + (x[0] + 1) / 4))) ** 2)
+            + numpy.sum(
+        (((x[: dim - 1] + 1) / 4) ** 2)
+        * (1 + 10 * ((numpy.sin(math.pi * (1 + (x[1:] + 1) / 4)))) ** 2)
+    )
+            + ((x[dim - 1] + 1) / 4) ** 2
     ) + numpy.sum(Ufun(x, 10, 100, 4))
     return o
 
 
 def F13(x):
-    if x.ndim==1:
-        x = x.reshape(1,-1)
+    if x.ndim == 1:
+        x = x.reshape(1, -1)
 
     o = 0.1 * (
-        (numpy.sin(3 * numpy.pi * x[:,0])) ** 2
-        + numpy.sum(
-            (x[:,:-1] - 1) ** 2
-            * (1 + (numpy.sin(3 * numpy.pi * x[:,1:])) ** 2), axis=1
-        )
-        + ((x[:,-1] - 1) ** 2) * (1 + (numpy.sin(2 * numpy.pi * x[:,-1])) ** 2)
+            (numpy.sin(3 * numpy.pi * x[:, 0])) ** 2
+            + numpy.sum(
+        (x[:, :-1] - 1) ** 2
+        * (1 + (numpy.sin(3 * numpy.pi * x[:, 1:])) ** 2), axis=1
+    )
+            + ((x[:, -1] - 1) ** 2) * (1 + (numpy.sin(2 * numpy.pi * x[:, -1])) ** 2)
     ) + numpy.sum(Ufun(x, 5, 100, 4))
     return o
 
@@ -209,50 +210,50 @@ def F15(L):
 
 def F16(L):
     o = (
-        4 * (L[0] ** 2)
-        - 2.1 * (L[0] ** 4)
-        + (L[0] ** 6) / 3
-        + L[0] * L[1]
-        - 4 * (L[1] ** 2)
-        + 4 * (L[1] ** 4)
+            4 * (L[0] ** 2)
+            - 2.1 * (L[0] ** 4)
+            + (L[0] ** 6) / 3
+            + L[0] * L[1]
+            - 4 * (L[1] ** 2)
+            + 4 * (L[1] ** 4)
     )
     return o
 
 
 def F17(L):
     o = (
-        (L[1] - (L[0] ** 2) * 5.1 / (4 * (numpy.pi ** 2)) + 5 / numpy.pi * L[0] - 6)
-        ** 2
-        + 10 * (1 - 1 / (8 * numpy.pi)) * numpy.cos(L[0])
-        + 10
+            (L[1] - (L[0] ** 2) * 5.1 / (4 * (numpy.pi ** 2)) + 5 / numpy.pi * L[0] - 6)
+            ** 2
+            + 10 * (1 - 1 / (8 * numpy.pi)) * numpy.cos(L[0])
+            + 10
     )
     return o
 
 
 def F18(L):
     o = (
-        1
-        + (L[0] + L[1] + 1) ** 2
-        * (
-            19
-            - 14 * L[0]
-            + 3 * (L[0] ** 2)
-            - 14 * L[1]
-            + 6 * L[0] * L[1]
-            + 3 * L[1] ** 2
+                1
+                + (L[0] + L[1] + 1) ** 2
+                * (
+                        19
+                        - 14 * L[0]
+                        + 3 * (L[0] ** 2)
+                        - 14 * L[1]
+                        + 6 * L[0] * L[1]
+                        + 3 * L[1] ** 2
+                )
+        ) * (
+                30
+                + (2 * L[0] - 3 * L[1]) ** 2
+                * (
+                        18
+                        - 32 * L[0]
+                        + 12 * (L[0] ** 2)
+                        + 48 * L[1]
+                        - 36 * L[0] * L[1]
+                        + 27 * (L[1] ** 2)
+                )
         )
-    ) * (
-        30
-        + (2 * L[0] - 3 * L[1]) ** 2
-        * (
-            18
-            - 32 * L[0]
-            + 12 * (L[0] ** 2)
-            + 48 * L[1]
-            - 36 * L[0] * L[1]
-            + 27 * (L[1] ** 2)
-        )
-    )
     return o
 
 

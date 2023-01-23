@@ -1,24 +1,3 @@
-# from pprint import pprint
-#
-# import cvrplib
-#
-# # Download instances
-# instance = cvrplib.download('A-n32-k5')
-# instance, solution = cvrplib.download('A-n32-k5', solution=True)
-#
-# pprint(instance)
-# pprint(solution)
-#
-# import random
-# import time
-#
-# random.seed(int(time.time()))
-#
-# n = 31
-# print(random.sample(range(n), n))
-# print(random.sample(range(n), n))
-
-# initialize the location and Energy of the rabbit
 import numpy
 
 dim = 9
