@@ -29,10 +29,11 @@ def initial_solution(n_customers, n_vehicles, capacity, demands):
     return add_depot(routes)
 
 
+#TODO: masih nge bug kah? infinity loop? Tapi mungkin karena si input nya yg ngaco
 def binary_to_permutation(s):
     trip = [0]
     current_customer = 0  # mulai dari depot
-    while True:
+    while len(trip) <= len(s[0]):
         for i, val in enumerate(s[current_customer]):
             if val:
                 trip.append(i)
