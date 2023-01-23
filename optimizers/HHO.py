@@ -3,23 +3,33 @@ import numpy
 import math
 from solution import solution
 import time
+import generate
 
 
-def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
+def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
+    dim = (
+        generate.n_vehicle(instance.name),
+        instance.dimensions,
+        instance.dimensions
+    )
+
     # initialize the location and Energy of the rabbit
     Rabbit_Location = numpy.zeros(dim)
     Rabbit_Energy = float("inf")  # change this to -inf for maximization problems
 
     if not isinstance(lb, list):
-        lb = [lb for _ in range(dim)]
-        ub = [ub for _ in range(dim)]
-    lb = numpy.asarray(lb)
-    ub = numpy.asarray(ub)
+        lb = numpy.full(dim, lb)
+        ub = numpy.full(dim, ub)
 
     # Initialize the locations of Harris' hawks
-    X = numpy.asarray(
-        [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (SearchAgents_no, dim))]
-    )
+    X = numpy.asarray(generate.get_binary(
+        generate.initial_solution(
+            instance.n_customers,
+            generate.n_vehicle(instance.name),
+            instance.capacity,
+            instance.demands
+        ), instance.dimension
+    ))
 
     # Initialize convergence
     convergence_curve = numpy.zeros(Max_iter)
@@ -27,7 +37,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     ############################
     s = solution()
 
-    print('HHO is now tackling  "' + objf.__name__ + '"')
+    print('HHO is now tackling  "' + objf.__name__ + '" ' + instance.name)
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
