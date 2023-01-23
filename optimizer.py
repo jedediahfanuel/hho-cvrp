@@ -17,10 +17,10 @@ def selector(algo, func_details, popSize, Iter):
     function_name = func_details[0]
     lb = func_details[1]
     ub = func_details[2]
-    dim = func_details[3]
+    instance = func_details[3]
 
     if algo == "HHO":
-        x = hho.HHO(getattr(benchmarks, function_name), lb, ub, dim, popSize, Iter)
+        x = hho.HHO(getattr(benchmarks, function_name), lb, ub, instance, popSize, Iter)
     else:
         return None
     return x
