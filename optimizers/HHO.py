@@ -135,7 +135,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 Rabbit_Location
                                 - Escaping_Energy
                                 * abs(Jump_strength * Rabbit_Location - X[i, :])
-                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                                + numpy.multiply(numpy.random.randn(*dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
                         if objf(generate.get_route(X2), instance.distances) < fitness:
@@ -156,7 +156,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 Rabbit_Location
                                 - Escaping_Energy
                                 * abs(Jump_strength * Rabbit_Location - X.mean(0))
-                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                                + numpy.multiply(numpy.random.randn(*dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
                         if objf(generate.get_route(X2), instance.distances) < fitness:
@@ -193,8 +193,8 @@ def Levy(dim):
                     * math.sin(math.pi * beta / 2)
                     / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
             ) ** (1 / beta)
-    u = 0.01 * numpy.random.randn(dim) * sigma
-    v = numpy.random.randn(dim)
+    u = 0.01 * numpy.random.randn(*dim) * sigma
+    v = numpy.random.randn(*dim)
     zz = numpy.power(numpy.absolute(v), (1 / beta))
     step = numpy.divide(u, zz)
     return step
