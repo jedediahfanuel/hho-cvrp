@@ -17,7 +17,7 @@ def add_depot(s):
     return s
 
 
-def generate_solution(n_customers, n_vehicles, capacity, demands):
+def initial_solution(n_customers, n_vehicles, capacity, demands):
     permutation = random.sample(range(1, n_customers + 1), n_customers)
     loads = [0] * n_vehicles
     routes = [[] for _ in range(n_vehicles)]
@@ -57,7 +57,7 @@ def get_route(binary_solution):
 
 
 def permutation_to_binary(permutation):
-    x = [[0 for j in range(5)] for i in range(5)]
+    x = [[0 for _ in range(5)] for _ in range(5)]
     current_customer = permutation[0]
     for next_customer in permutation[1:]:
         x[current_customer][next_customer] = 1
@@ -72,7 +72,7 @@ def get_binary(permutation_solution):
     return routes
 
 
-pprint(generate_solution(
+pprint(initial_solution(
     instance.n_customers,
     n_vehicle(instance.name),
     instance.capacity,
