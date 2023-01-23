@@ -9,8 +9,8 @@ import generate
 def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
     dim = (
         generate.n_vehicle(instance.name),
-        instance.dimensions,
-        instance.dimensions
+        instance.dimension,
+        instance.dimension
     )
 
     # initialize the location and Energy of the rabbit
@@ -18,8 +18,8 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
     Rabbit_Energy = float("inf")  # change this to -inf for maximization problems
 
     if not isinstance(lb, list):
-        lb = numpy.full(dim, lb)
-        ub = numpy.full(dim, ub)
+        lb = numpy.full(dim[1:], lb)
+        ub = numpy.full(dim[1:], ub)
 
     # Initialize the locations of Harris' hawks
     X = numpy.asarray(generate.get_binary(
@@ -30,6 +30,8 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
             instance.demands
         ), instance.dimension
     ))
+
+    print(X)
 
     # Initialize convergence
     convergence_curve = numpy.zeros(Max_iter)
@@ -54,7 +56,8 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
             X[i, :] = numpy.clip(X[i, :], lb, ub)
 
             # fitness of locations
-            fitness = objf(X[i, :])
+            fitness = objf(X[i, :], instance.distances)
+            print(f'INITIAL FITNESS : {fitness}')
 
             # Update the location of Rabbit
             if fitness < Rabbit_Energy:  # Change this to > for maximization problem
