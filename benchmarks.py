@@ -2,10 +2,15 @@ from typing import Dict, Any, List
 
 import numpy
 import math
+import cvrplib
 
 def getFunctionDetails(a):
+    # Download instances
+    instance = cvrplib.download(a)
+
     # [name, lb, ub, dim]
-    param: dict[str | Any, list[str | int]] = {
+    param = {
+        "cvrp": ["cvrp", 0, 1, instance],
         "F1": ["F1", -100, 100, 30],
         "F2": ["F2", -10, 10, 30],
         "F3": ["F3", -100, 100, 30],
@@ -28,6 +33,17 @@ def getFunctionDetails(a):
         "F23": ["F23", 0, 10, 4],
     }
     return param.get(a, "nothing")
+
+
+# fungsi objektif dari cvrp
+# dimana menghitung jarak total dari seluruh rute
+def cvrp(routes, distances):
+    total = 0
+    for r in routes:
+        for i in range(len(r) - 1):
+            total += distances[r[i]][r[i + 1]]
+    return total
+
 
 # define the function blocks
 def prod(it):
