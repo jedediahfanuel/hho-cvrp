@@ -21,17 +21,15 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
         lb = numpy.full(dim[1:], lb)
         ub = numpy.full(dim[1:], ub)
 
-    # Initialize the locations of Harris' hawks
-    X = numpy.asarray(generate.get_binary(
+    # Initialize the locations of Harris hawks || 4D Array
+    X = numpy.asarray([ generate.get_binary(
         generate.initial_solution(
             instance.n_customers,
             generate.n_vehicle(instance.name),
             instance.capacity,
             instance.demands
         ), instance.dimension
-    ))
-
-    print(X)
+    ) for _ in range(SearchAgents_no)])
 
     # Initialize convergence
     convergence_curve = numpy.zeros(Max_iter)
@@ -131,7 +129,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1) < fitness:  # improved move?
+                    if objf(X1, instance.distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -141,7 +139,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2) < fitness:
+                        if objf(X2, instance.distances) < fitness:
                             X[i, :] = X2.copy()
                 if (
                         r < 0.5 and abs(Escaping_Energy) < 0.5
@@ -152,7 +150,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1) < fitness:  # improved move?
+                    if objf(X1, instance.distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -162,7 +160,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2) < fitness:
+                        if objf(X2, instance.distances) < fitness:
                             X[i, :] = X2.copy()
 
         convergence_curve[t] = Rabbit_Energy
