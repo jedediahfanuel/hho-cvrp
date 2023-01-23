@@ -1,10 +1,4 @@
 import random
-from pprint import pprint
-
-import cvrplib
-
-# Download instances
-instance, solution = cvrplib.download('A-n32-k5', solution=True)
 
 
 def n_vehicle(name):
@@ -56,8 +50,8 @@ def get_route(binary_solution):
     return routes
 
 
-def permutation_to_binary(permutation):
-    x = [[0 for _ in range(5)] for _ in range(5)]
+def permutation_to_binary(permutation, dim):
+    x = [[0 for _ in range(dim)] for _ in range(dim)]
     current_customer = permutation[0]
     for next_customer in permutation[1:]:
         x[current_customer][next_customer] = 1
@@ -65,16 +59,8 @@ def permutation_to_binary(permutation):
     return x
 
 
-def get_binary(permutation_solution):
+def get_binary(permutation_solution, dim):
     routes = []
     for route in permutation_solution:
-        routes.append(permutation_to_binary(route))
+        routes.append(permutation_to_binary(route, dim))
     return routes
-
-
-pprint(initial_solution(
-    instance.n_customers,
-    n_vehicle(instance.name),
-    instance.capacity,
-    instance.demands
-))
