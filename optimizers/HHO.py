@@ -39,7 +39,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
     while t < Max_iter:
         for i in range(0, SearchAgents_no):
 
-            # Check boundries
+            # Check boundaries
 
             X[i, :] = numpy.clip(X[i, :], lb, ub)
 
