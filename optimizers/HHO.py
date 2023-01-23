@@ -51,7 +51,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 Rabbit_Energy = fitness
                 Rabbit_Location = X[i, :].copy()
 
-        E1 = 2 * (1 - (t / Max_iter))  # factor to show the decreaing energy of rabbit
+        E1 = 2 * (1 - (t / Max_iter))  # factor to show the decreasing energy of rabbit
 
         # Update the location of Harris' hawks
         for i in range(0, SearchAgents_no):
@@ -87,7 +87,7 @@ def HHO(objf, lb, ub, dim, SearchAgents_no, Max_iter):
                 # phase 1: ----- surprise pounce (seven kills) ----------
                 # surprise pounce (seven kills): multiple, short rapid dives by different hawks
 
-                r = random.random()  # probablity of each event
+                r = random.random()  # probability of each event
 
                 if (
                     r >= 0.5 and abs(Escaping_Energy) < 0.5

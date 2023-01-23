@@ -1,4 +1,6 @@
 import random
+from pprint import pprint
+
 import cvrplib
 
 # Download instances
@@ -16,12 +18,6 @@ def add_depot(s):
 
 
 def generate_solution(n_customers, n_vehicles, capacity, demands):
-    """
-    Generates a permutation solution
-    with multiple vehicles
-    and checks its constraints.
-    """
-
     permutation = random.sample(range(1, n_customers + 1), n_customers)
     loads = [0] * n_vehicles
     routes = [[] for _ in range(n_vehicles)]
@@ -74,3 +70,11 @@ def get_binary(permutation_solution):
     for route in permutation_solution:
         routes.append(permutation_to_binary(route))
     return routes
+
+
+pprint(generate_solution(
+    instance.n_customers,
+    n_vehicle(instance.name),
+    instance.capacity,
+    instance.demands
+))
