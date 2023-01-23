@@ -11,7 +11,7 @@ objectivefunc = ["A-n32-k5"]
 NumOfRuns = 1
 
 # Select general parameters for all optimizers (population size, number of iterations) ....
-params = {"PopulationSize": 5, "Iterations": 1}
+params = {"PopulationSize": 5, "Iterations": 3}
 
 # Choose whether to Export the results in different formats
 export_flags = {
