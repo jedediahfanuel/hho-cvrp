@@ -17,6 +17,10 @@ def getFunctionDetails(a):
 # fungsi objektif dari cvrp
 # dimana menghitung jarak total dari seluruh rute
 def cvrp(routes, distances):
+    # inget ini masih 1 rute
+    # kedepannya sih pecah dulu jadi beberapa rute
+    # baru kirim ke concat_depot
+    routes = concat_depot(generate_stable_solution(routes))
     total = 0
     for r in routes:
         for i in range(len(r) - 1):
@@ -24,9 +28,15 @@ def cvrp(routes, distances):
     return total
 
 
+def concat_depot(s):
+    return numpy.concatenate((
+        numpy.zeros(1, dtype=int), s, numpy.zeros(1, dtype=int)
+    ))
+
+
 def generate_stable_solution(solution, lb=None, ub=None):
     # print(f"Raw: {solution}")
-    ## Bring them back to boundary
+    # Bring them back to boundary
     # sudah dilakuin sebelum masuk fungsi objektif
     # solution = numpy.clip(solution, lb, ub)
 
@@ -35,7 +45,7 @@ def generate_stable_solution(solution, lb=None, ub=None):
     solution_int = solution.astype(int)
     city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
 
-    ### Way 1: Stable, not random
+    # Way 1: Stable, not random
     for idx, city in enumerate(solution_int):
         if solution_done[idx] != -1:
             continue
@@ -59,7 +69,7 @@ def generate_unstable_solution(solution, lb=None, ub=None):
     # print(solution_int)
     city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
 
-    ## Way 2: Random, not stable
+    # Way 2: Random, not stable
     # count_dict = dict(zip(*numpy.unique(solution_int, return_counts=True)))
     count_dict = dict(zip(city_unique, city_counts))
     for idx, city in enumerate(solution_int):
@@ -74,7 +84,8 @@ def generate_unstable_solution(solution, lb=None, ub=None):
                     idx_city_keep = numpy.random.choice(idx_list_city)
                     solution_done[idx_city_keep] = city
                     if idx_city_keep != idx:
-                        solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
+                        solution_done[idx] = numpy.random.choice(
+                            list(solution_set - set(solution_done) - set(city_unique)))
             else:
                 solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
         else:
