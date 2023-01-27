@@ -22,9 +22,11 @@ def cvrp(routes, distances):
     # baru kirim ke concat_depot
     routes = concat_depot(generate_stable_solution(routes))
     total = 0
-    for r in routes:
-        for i in range(len(r) - 1):
-            total += distances[r[i]][r[i + 1]]
+    # for r in routes:
+    #     for i in range(len(r) - 1):
+    #         total += distances[r[i]][r[i + 1]]
+    for i in range(len(routes) - 1):
+        total += distances[routes[i]][routes[i + 1]]
     return total
 
 
@@ -60,8 +62,13 @@ def generate_stable_solution(solution, lb=None, ub=None):
     return solution_done
 
 
-def generate_unstable_solution(solution, lb=None, ub=None):
+def generate_unstable_solution(solution, lb=1, ub=31.99):
     # print(solution)
+    if not isinstance(lb, list):
+        lb = [lb for _ in range(31)]
+        ub = [ub for _ in range(31)]
+    lb = numpy.asarray(lb)
+    ub = numpy.asarray(ub)
     solution_bound = numpy.clip(solution, lb, ub)
     solution_set = set(range(int(lb[0]), round(ub[0])))
     solution_done = numpy.array([-1, ] * len(solution_bound))
