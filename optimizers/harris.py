@@ -46,7 +46,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
             X[i, :] = numpy.clip(X[i, :], lb, ub)
 
             # fitness of locations
-            fitness = objf(X[i, :], distances)
+            fitness = objf(generate_unstable_solution(X[i, :], lb, ub), distances)
 
             # Update the location of Rabbit
             if fitness < Rabbit_Energy:  # Change this to > for maximization problem
@@ -118,9 +118,9 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                     X1 = Rabbit_Location - Escaping_Energy * abs(
                         Jump_strength * Rabbit_Location - X[i, :]
                     )
-                    X1 = numpy.clip(X1, lb, ub)
+                    # X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1, distances) < fitness:  # improved move?
+                    if objf(generate_unstable_solution(X1, lb, ub), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -129,8 +129,8 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                                 * abs(Jump_strength * Rabbit_Location - X[i, :])
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
-                        X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2, distances) < fitness:
+                        # X2 = numpy.clip(X2, lb, ub)
+                        if objf(generate_unstable_solution(X2, lb, ub), distances) < fitness:
                             X[i, :] = X2.copy()
                 if (
                         r < 0.5 and abs(Escaping_Energy) < 0.5
@@ -139,9 +139,9 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                     X1 = Rabbit_Location - Escaping_Energy * abs(
                         Jump_strength * Rabbit_Location - X.mean(0)
                     )
-                    X1 = numpy.clip(X1, lb, ub)
+                    # X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(X1, distances) < fitness:  # improved move?
+                    if objf(generate_unstable_solution(X1, lb, ub), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         X2 = (
@@ -150,8 +150,8 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                                 * abs(Jump_strength * Rabbit_Location - X.mean(0))
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
-                        X2 = numpy.clip(X2, lb, ub)
-                        if objf(X2, distances) < fitness:
+                        # X2 = numpy.clip(X2, lb, ub)
+                        if objf(generate_unstable_solution(X2, lb, ub), distances) < fitness:
                             X[i, :] = X2.copy()
 
         convergence_curve[t] = Rabbit_Energy
@@ -181,12 +181,69 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
 def Levy(dim):
     beta = 1.5
     sigma = (
-                    math.gamma(1 + beta)
-                    * math.sin(math.pi * beta / 2)
-                    / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
-            ) ** (1 / beta)
+            math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
+            / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
+    ) ** (1 / beta)
     u = 0.01 * numpy.random.randn(dim) * sigma
     v = numpy.random.randn(dim)
     zz = numpy.power(numpy.absolute(v), (1 / beta))
     step = numpy.divide(u, zz)
     return step
+
+
+def generate_stable_solution(s, lb=None, ub=None):
+    # Bring them back to boundary
+    s = numpy.clip(s, lb, ub)
+
+    solution_set = set(list(range(0, len(s))))
+    solution_done = numpy.array([-1, ] * len(s))
+    solution_int = s.astype(int)
+    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
+
+    # Way 1: Stable, not random
+    for idx, city in enumerate(solution_int):
+        if solution_done[idx] != -1:
+            continue
+        if city in city_unique:
+            solution_done[idx] = city
+            city_unique = numpy.where(city_unique == city, -1, city_unique)
+        else:
+            list_cities_left = list(solution_set - set(city_unique) - set(solution_done))
+            # print(list_cities_left)
+            solution_done[idx] = list_cities_left[0]
+    # print(f"What: {solution_done}")
+    return solution_done
+
+
+def generate_unstable_solution(s, lb=None, ub=None):
+    # print(solution)
+    solution_bound = numpy.clip(s, lb, ub)
+    solution_set = set(range(int(lb[0]), round(ub[0])))
+    solution_done = numpy.array([-1, ] * len(solution_bound))
+    solution_int = solution_bound.astype(int)
+    # print(solution_int)
+    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
+
+    # Way 2: Random, not stable
+    # count_dict = dict(zip(*numpy.unique(solution_int, return_counts=True)))
+    count_dict = dict(zip(city_unique, city_counts))
+    for idx, city in enumerate(solution_int):
+        if solution_done[idx] != -1:
+            continue
+        if city in city_unique:
+            if city in (solution_set - set(solution_done)):
+                if count_dict[city] == 1:
+                    solution_done[idx] = city
+                else:
+                    idx_list_city = numpy.where(solution_int == city)[0]
+                    idx_city_keep = numpy.random.choice(idx_list_city)
+                    solution_done[idx_city_keep] = city
+                    if idx_city_keep != idx:
+                        solution_done[idx] = numpy.random.choice(
+                            list(solution_set - set(solution_done) - set(city_unique)))
+            else:
+                solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
+        else:
+            solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
+    # print(solution_done)
+    return solution_done
