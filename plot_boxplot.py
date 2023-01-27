@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def run(results_directory, optimizer, objectivefunc, Iterations):
     plt.ioff()
 
@@ -12,13 +13,14 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
         data = []
 
         for i in range(len(optimizer)):
-            objective_name = objectivefunc[j]
+            # objective_name = objectivefunc[j]
+            objective_name = "cvrp"  # nanti jadi nama dataset
             optimizer_name = optimizer[i]
 
             detailedData = fileResultsDetailsData[
                 (fileResultsDetailsData["Optimizer"] == optimizer_name)
                 & (fileResultsDetailsData["objfname"] == objective_name)
-            ]
+                ]
             detailedData = detailedData["Iter" + str(Iterations)]
             detailedData = np.array(detailedData).T.tolist()
             data.append(detailedData)

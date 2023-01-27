@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 def run(results_directory, optimizer, objectivefunc, Iterations):
     plt.ioff()
     fileResultsData = pd.read_csv(results_directory + "/experiment.csv")
 
     for j in range(0, len(objectivefunc)):
-        objective_name = objectivefunc[j]
+        # objective_name = objectivefunc[j] # ini harusnya cvrp tapi ganti dulu ke na
+        objective_name = "cvrp"
 
         startIteration = 0
         if "SSA" in optimizer:
@@ -18,8 +20,8 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
             row = fileResultsData[
                 (fileResultsData["Optimizer"] == optimizer_name)
                 & (fileResultsData["objfname"] == objective_name)
-            ]
-            row = row.iloc[:, 3 + startIteration :]
+                ]
+            row = row.iloc[:, 3 + startIteration:]
             plt.plot(allGenerations, row.values.tolist()[0], label=optimizer_name)
         plt.xlabel("Iterations")
         plt.ylabel("Fitness")
