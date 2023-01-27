@@ -9,7 +9,7 @@ def getFunctionDetails(a):
     # [name, lb, ub, dim]
     param = {
         # dimensi = banyaknya customer
-        "cvrp": ["cvrp", 1, instance.dimension - 0.01, instance.n_customers],
+        "cvrp": ["cvrp", instance],
     }
     return param.get("cvrp", "nothing")
 
