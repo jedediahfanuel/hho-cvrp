@@ -1,7 +1,7 @@
 import random
 import numpy
 import math
-from solution import solution
+from solution import Solution
 import time
 import generate
 
@@ -35,12 +35,12 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
     convergence_curve = numpy.zeros(Max_iter)
 
     ############################
-    s = solution()
+    s = Solution()
 
     print('HHO is now tackling  "' + objf.__name__ + '" ' + instance.name)
 
     timerStart = time.time()
-    s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
+    s.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
     ############################
 
     t = 0  # Loop counter
@@ -175,13 +175,13 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
         t = t + 1
 
     timerEnd = time.time()
-    s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
-    s.executionTime = timerEnd - timerStart
+    s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
+    s.execution_time = timerEnd - timerStart
     s.convergence = convergence_curve
     s.optimizer = "HHO"
     s.objfname = objf.__name__
     s.best = Rabbit_Energy
-    s.bestIndividual = Rabbit_Location
+    s.best_individual = Rabbit_Location
 
     return s
 
