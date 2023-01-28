@@ -5,12 +5,13 @@ from solution import Solution
 import time
 
 
-def HHO(objf, data, SearchAgents_no, Max_iter):
+def hho(objf, data, search_agent_no, max_iter):
     lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
 
     # initialize the location and Energy of the rabbit
-    Rabbit_Location = numpy.zeros(dim)
-    Rabbit_Energy = float("inf")  # change this to -inf for maximization problems
+    rabbit_location = numpy.zeros(dim)
+    rabbit_energy = float("inf")  # change this to -inf for maximization problems
+    fitness = int("inf")
 
     if not isinstance(lb, list):
         lb = [lb for _ in range(dim)]
@@ -19,71 +20,71 @@ def HHO(objf, data, SearchAgents_no, Max_iter):
     ub = numpy.asarray(ub)
 
     # Initialize the locations of Harris' hawks
-    X = numpy.asarray(
-        [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (SearchAgents_no, dim))]
+    x_hawks = numpy.asarray(
+        [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (search_agent_no, dim))]
     )
 
     # Initialize convergence
-    convergence_curve = numpy.zeros(Max_iter)
+    convergence_curve = numpy.zeros(max_iter)
 
     ############################
     s = Solution()
 
     print('HHO is now tackling  "' + objf.__name__ + '"')
 
-    timerStart = time.time()
+    timer_start = time.time()
     s.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
     ############################
 
     t = 0  # Loop counter
 
     # Main loop
-    while t < Max_iter:
-        for i in range(0, SearchAgents_no):
+    while t < max_iter:
+        for i in range(0, search_agent_no):
 
             # Check boundaries
 
-            X[i, :] = numpy.clip(X[i, :], lb, ub)
+            x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            fitness = objf(generate_unstable_solution(X[i, :]), distances)
+            fitness = objf(generate_unstable_solution(x_hawks[i, :]), distances)
 
             # Update the location of Rabbit
-            if fitness < Rabbit_Energy:  # Change this to > for maximization problem
-                Rabbit_Energy = fitness
-                Rabbit_Location = X[i, :].copy()
+            if fitness < rabbit_energy:  # Change this to > for maximization problem
+                rabbit_energy = fitness
+                rabbit_location = x_hawks[i, :].copy()
 
-        E1 = 2 * (1 - (t / Max_iter))  # factor to show the decreasing energy of rabbit
+        e1 = 2 * (1 - (t / max_iter))  # factor to show the decreasing energy of rabbit
 
         # Update the location of Harris' hawks
-        for i in range(0, SearchAgents_no):
+        for i in range(0, search_agent_no):
 
-            E0 = 2 * random.random() - 1  # -1<E0<1
-            Escaping_Energy = E1 * (
-                E0
+            e0 = 2 * random.random() - 1  # -1 < e0 < 1
+            escaping_energy = e1 * (
+                e0
             )  # escaping energy of rabbit Eq. (3) in the paper
 
             # -------- Exploration phase Eq. (1) in paper -------------------
 
-            if abs(Escaping_Energy) >= 1:
+            if abs(escaping_energy) >= 1:
                 # Harris' hawks perch randomly based on 2 strategy:
                 q = random.random()
-                rand_Hawk_index = math.floor(SearchAgents_no * random.random())
-                X_rand = X[rand_Hawk_index, :]
+                rand_hawk_index = math.floor(search_agent_no * random.random())
+                x_rand = x_hawks[rand_hawk_index, :]
                 if q < 0.5:
                     # perch based on other family members
-                    X[i, :] = X_rand - random.random() * abs(
-                        X_rand - 2 * random.random() * X[i, :]
+                    x_hawks[i, :] = x_rand - random.random() * abs(
+                        x_rand - 2 * random.random() * x_hawks[i, :]
                     )
 
                 elif q >= 0.5:
                     # perch on a random tall tree (random site inside group's home range)
-                    X[i, :] = (Rabbit_Location - X.mean(0)) - random.random() * (
+                    x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
 
             # -------- Exploitation phase -------------------
-            elif abs(Escaping_Energy) < 1:
+            elif abs(escaping_energy) < 1:
                 # Attacking the rabbit using 4 strategies regarding the behavior of the rabbit
 
                 # phase 1: ----- surprise pounce (seven kills) ----------
@@ -92,92 +93,92 @@ def HHO(objf, data, SearchAgents_no, Max_iter):
                 r = random.random()  # probability of each event
 
                 if (
-                        r >= 0.5 and abs(Escaping_Energy) < 0.5
+                        r >= 0.5 > abs(escaping_energy)
                 ):  # Hard besiege Eq. (6) in paper
-                    X[i, :] = (Rabbit_Location) - Escaping_Energy * abs(
-                        Rabbit_Location - X[i, :]
+                    x_hawks[i, :] = rabbit_location - escaping_energy * abs(
+                        rabbit_location - x_hawks[i, :]
                     )
 
                 if (
-                        r >= 0.5 and abs(Escaping_Energy) >= 0.5
+                        r >= 0.5 and abs(escaping_energy) >= 0.5
                 ):  # Soft besiege Eq. (4) in paper
-                    Jump_strength = 2 * (
+                    jump_strength = 2 * (
                             1 - random.random()
                     )  # random jump strength of the rabbit
-                    X[i, :] = (Rabbit_Location - X[i, :]) - Escaping_Energy * abs(
-                        Jump_strength * Rabbit_Location - X[i, :]
+                    x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
+                        jump_strength * rabbit_location - x_hawks[i, :]
                     )
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
 
                 if (
-                        r < 0.5 and abs(Escaping_Energy) >= 0.5
+                        r < 0.5 <= abs(escaping_energy)
                 ):  # Soft besiege Eq. (10) in paper
                     # rabbit try to escape by many zigzag deceptive motions
-                    Jump_strength = 2 * (1 - random.random())
-                    X1 = Rabbit_Location - Escaping_Energy * abs(
-                        Jump_strength * Rabbit_Location - X[i, :]
+                    jump_strength = 2 * (1 - random.random())
+                    x1 = rabbit_location - escaping_energy * abs(
+                        jump_strength * rabbit_location - x_hawks[i, :]
                     )
-                    X1 = numpy.clip(X1, lb, ub)
+                    x1 = numpy.clip(x1, lb, ub)
 
-                    if objf(generate_unstable_solution(X1), distances) < fitness:  # improved move?
-                        X[i, :] = X1.copy()
+                    if objf(generate_unstable_solution(x1), distances) < fitness:  # improved move?
+                        x_hawks[i, :] = x1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
-                        X2 = (
-                                Rabbit_Location
-                                - Escaping_Energy
-                                * abs(Jump_strength * Rabbit_Location - X[i, :])
-                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                        x2 = (
+                                rabbit_location
+                                - escaping_energy
+                                * abs(jump_strength * rabbit_location - x_hawks[i, :])
+                                + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
-                        X2 = numpy.clip(X2, lb, ub)
-                        if objf(generate_unstable_solution(X2), distances) < fitness:
-                            X[i, :] = X2.copy()
+                        x2 = numpy.clip(x2, lb, ub)
+                        if objf(generate_unstable_solution(x2), distances) < fitness:
+                            x_hawks[i, :] = x2.copy()
                 if (
-                        r < 0.5 and abs(Escaping_Energy) < 0.5
+                        r < 0.5 and abs(escaping_energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
-                    Jump_strength = 2 * (1 - random.random())
-                    X1 = Rabbit_Location - Escaping_Energy * abs(
-                        Jump_strength * Rabbit_Location - X.mean(0)
+                    jump_strength = 2 * (1 - random.random())
+                    x1 = rabbit_location - escaping_energy * abs(
+                        jump_strength * rabbit_location - x_hawks.mean(0)
                     )
-                    X1 = numpy.clip(X1, lb, ub)
+                    x1 = numpy.clip(x1, lb, ub)
 
-                    if objf(generate_unstable_solution(X1), distances) < fitness:  # improved move?
-                        X[i, :] = X1.copy()
+                    if objf(generate_unstable_solution(x1), distances) < fitness:  # improved move?
+                        x_hawks[i, :] = x1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
-                        X2 = (
-                                Rabbit_Location
-                                - Escaping_Energy
-                                * abs(Jump_strength * Rabbit_Location - X.mean(0))
-                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
+                        x2 = (
+                                rabbit_location
+                                - escaping_energy
+                                * abs(jump_strength * rabbit_location - x_hawks.mean(0))
+                                + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
-                        X2 = numpy.clip(X2, lb, ub)
-                        if objf(generate_unstable_solution(X2), distances) < fitness:
-                            X[i, :] = X2.copy()
+                        x2 = numpy.clip(x2, lb, ub)
+                        if objf(generate_unstable_solution(x2), distances) < fitness:
+                            x_hawks[i, :] = x2.copy()
 
-        convergence_curve[t] = Rabbit_Energy
+        convergence_curve[t] = rabbit_energy
         if t % 1 == 0:
             print(
                 "At iteration "
                 + str(t)
                 + " the best fitness is "
-                + str(Rabbit_Energy)
+                + str(rabbit_energy)
             )
         t = t + 1
 
-    timerEnd = time.time()
+    timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
-    s.execution_time = timerEnd - timerStart
+    s.execution_time = timer_end - timer_start
     s.convergence = convergence_curve
     s.optimizer = "HHO"
     s.objfname = objf.__name__
-    s.best = Rabbit_Energy
-    s.best_individual = Rabbit_Location
+    s.best = rabbit_energy
+    s.best_individual = rabbit_location
     s.instance = data.name
 
     return s
 
 
-def Levy(dim):
+def levy(dim):
     beta = 1.5
     sigma = (
             math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
