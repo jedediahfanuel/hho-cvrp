@@ -3,33 +3,25 @@ import numpy
 import math
 from solution import solution
 import time
-import generate
 
 
-def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
-    dim = (
-        generate.n_vehicle(instance.name),
-        instance.dimension,
-        instance.dimension
-    )
+def HHO(objf, instance, SearchAgents_no, Max_iter):
+    lb, ub, dim, distances = 1, instance.dimension - 0.01, instance.n_customers, instance.distances
 
     # initialize the location and Energy of the rabbit
     Rabbit_Location = numpy.zeros(dim)
     Rabbit_Energy = float("inf")  # change this to -inf for maximization problems
 
     if not isinstance(lb, list):
-        lb = numpy.full(dim[1:], lb)
-        ub = numpy.full(dim[1:], ub)
+        lb = [lb for _ in range(dim)]
+        ub = [ub for _ in range(dim)]
+    lb = numpy.asarray(lb)
+    ub = numpy.asarray(ub)
 
-    # Initialize the locations of Harris hawks || 4D Array
-    X = numpy.asarray([ generate.get_binary(
-        generate.initial_solution(
-            instance.n_customers,
-            generate.n_vehicle(instance.name),
-            instance.capacity,
-            instance.demands
-        ), instance.dimension
-    ) for _ in range(SearchAgents_no)])
+    # Initialize the locations of Harris' hawks
+    X = numpy.asarray(
+        [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (SearchAgents_no, dim))]
+    )
 
     # Initialize convergence
     convergence_curve = numpy.zeros(Max_iter)
@@ -37,7 +29,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
     ############################
     s = solution()
 
-    print('HHO is now tackling  "' + objf.__name__ + '" ' + instance.name)
+    print('HHO is now tackling  "' + objf.__name__ + '"')
 
     timerStart = time.time()
     s.startTime = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -54,7 +46,7 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
             X[i, :] = numpy.clip(X[i, :], lb, ub)
 
             # fitness of locations
-            fitness = objf(generate.get_route(X[i, :]), instance.distances)
+            fitness = objf(generate_unstable_solution(X[i, :]), distances)
 
             # Update the location of Rabbit
             if fitness < Rabbit_Energy:  # Change this to > for maximization problem
@@ -79,13 +71,13 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                 rand_Hawk_index = math.floor(SearchAgents_no * random.random())
                 X_rand = X[rand_Hawk_index, :]
                 if q < 0.5:
-                    # perch on a random tall tree (random site inside group's home range)
+                    # perch based on other family members
                     X[i, :] = X_rand - random.random() * abs(
                         X_rand - 2 * random.random() * X[i, :]
                     )
 
                 elif q >= 0.5:
-                    # perch based on other family members
+                    # perch on a random tall tree (random site inside group's home range)
                     X[i, :] = (Rabbit_Location - X.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
@@ -128,17 +120,17 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(generate.get_route(X1), instance.distances) < fitness:  # improved move?
+                    if objf(generate_unstable_solution(X1), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         X2 = (
                                 Rabbit_Location
                                 - Escaping_Energy
                                 * abs(Jump_strength * Rabbit_Location - X[i, :])
-                                + numpy.multiply(numpy.random.randn(*dim), Levy(dim))
+                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(generate.get_route(X2), instance.distances) < fitness:
+                        if objf(generate_unstable_solution(X2), distances) < fitness:
                             X[i, :] = X2.copy()
                 if (
                         r < 0.5 and abs(Escaping_Energy) < 0.5
@@ -149,17 +141,17 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
                     )
                     X1 = numpy.clip(X1, lb, ub)
 
-                    if objf(generate.get_route(X1), instance.distances) < fitness:  # improved move?
+                    if objf(generate_unstable_solution(X1), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         X2 = (
                                 Rabbit_Location
                                 - Escaping_Energy
                                 * abs(Jump_strength * Rabbit_Location - X.mean(0))
-                                + numpy.multiply(numpy.random.randn(*dim), Levy(dim))
+                                + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
                         X2 = numpy.clip(X2, lb, ub)
-                        if objf(generate.get_route(X2), instance.distances) < fitness:
+                        if objf(generate_unstable_solution(X2), distances) < fitness:
                             X[i, :] = X2.copy()
 
         convergence_curve[t] = Rabbit_Energy
@@ -189,12 +181,61 @@ def HHO(objf, lb, ub, instance, SearchAgents_no, Max_iter):
 def Levy(dim):
     beta = 1.5
     sigma = (
-                    math.gamma(1 + beta)
-                    * math.sin(math.pi * beta / 2)
-                    / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
-            ) ** (1 / beta)
-    u = 0.01 * numpy.random.randn(*dim) * sigma
-    v = numpy.random.randn(*dim)
+            math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
+            / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
+    ) ** (1 / beta)
+    u = 0.01 * numpy.random.randn(dim) * sigma
+    v = numpy.random.randn(dim)
     zz = numpy.power(numpy.absolute(v), (1 / beta))
     step = numpy.divide(u, zz)
     return step
+
+
+def generate_stable_solution(s):
+    # range(lb, ub)
+    solution_set = set(list(range(1, len(s))))
+    solution_done = numpy.array([-1, ] * len(s))
+    solution_int = s.astype(int)
+    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
+
+    # Way 1: Stable, not random
+    for idx, city in enumerate(solution_int):
+        if solution_done[idx] != -1:
+            continue
+        if city in city_unique:
+            solution_done[idx] = city
+            city_unique = numpy.where(city_unique == city, -1, city_unique)
+        else:
+            list_cities_left = list(solution_set - set(city_unique) - set(solution_done))
+            solution_done[idx] = list_cities_left[0]
+    return solution_done
+
+
+def generate_unstable_solution(s):
+    # range(lb, ub)
+    solution_set = set(range(1, len(s) + 1))
+    solution_done = numpy.array([-1, ] * len(s))
+    solution_int = s.astype(int)
+    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
+
+    # Way 2: Random, not stable
+    count_dict = dict(zip(city_unique, city_counts))
+    for idx, city in enumerate(solution_int):
+        if solution_done[idx] != -1:
+            continue
+        if city in city_unique:
+            if city in (solution_set - set(solution_done)):
+                if count_dict[city] == 1:
+                    solution_done[idx] = city
+                else:
+                    idx_list_city = numpy.where(solution_int == city)[0]
+                    idx_city_keep = numpy.random.choice(idx_list_city)
+                    solution_done[idx_city_keep] = city
+                    if idx_city_keep != idx:
+                        solution_done[idx] = numpy.random.choice(
+                            list(solution_set - set(solution_done) - set(city_unique)))
+            else:
+                solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
+        else:
+            solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
+    return solution_done

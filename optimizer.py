@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy
 
 import benchmarks
-import optimizers.harris as hho
+import optimizers.HHO as hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 
