@@ -18,13 +18,13 @@ def selector(algo, func_details, pop_size, n_iter):
     instance = func_details[1]
 
     if algo == "HHO":
-        x = hho.HHO(getattr(benchmarks, function_name), instance, pop_size, n_iter)
+        x = hho.hho(getattr(benchmarks, function_name), instance, pop_size, n_iter)
     else:
         return None
     return x
 
 
-def run(optimizer, instances, num_of_runs, params, export_flags):
+def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags: dict[str, bool]):
     """
     It serves as the main interface of the framework for running the experiments.
 
