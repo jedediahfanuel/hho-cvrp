@@ -195,7 +195,7 @@ def generate_stable_solution(s, lb=None, ub=None):
     # Bring them back to boundary
     s = numpy.clip(s, lb, ub)
 
-    solution_set = set(list(range(0, len(s))))
+    solution_set = set(list(range(lb[0], len(s))))
     solution_done = numpy.array([-1, ] * len(s))
     solution_int = s.astype(int)
     city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
