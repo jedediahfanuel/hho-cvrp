@@ -11,7 +11,7 @@ def hho(objf, data, search_agent_no, max_iter):
     # initialize the location and Energy of the rabbit
     rabbit_location = numpy.zeros(dim)
     rabbit_energy = float("inf")  # change this to -inf for maximization problems
-    fitness = int("inf")
+    fitness = float("inf")
 
     if not isinstance(lb, list):
         lb = [lb for _ in range(dim)]
