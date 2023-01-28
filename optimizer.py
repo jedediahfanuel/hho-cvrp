@@ -94,9 +94,9 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                             )
                             writer.writerow(header)
                             flag_details = True  # at least one experiment
-                        execution_time[k] = x.executionTime
+                        execution_time[k] = x.execution_time
                         a = numpy.concatenate(
-                            [[x.optimizer, x.instance, x.executionTime], x.convergence]
+                            [[x.optimizer, x.instance, x.execution_time], x.convergence]
                         )
                         writer.writerow(a)
                     out.close()
