@@ -157,12 +157,10 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
         convergence_curve[t] = Rabbit_Energy
         if t % 1 == 0:
             print(
-                [
-                    "At iteration "
-                    + str(t)
-                    + " the best fitness is "
-                    + str(Rabbit_Energy)
-                ]
+                "At iteration "
+                + str(t)
+                + " the best fitness is "
+                + str(Rabbit_Energy)
             )
         t = t + 1
 
