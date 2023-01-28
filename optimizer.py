@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy
 
 import benchmarks
-import optimizers.HHO as hho
+from optimizers.HHO import hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 
@@ -18,7 +18,7 @@ def selector(algo, func_details, pop_size, n_iter):
     instance = func_details[1]
 
     if algo == "HHO":
-        x = hho.hho(getattr(benchmarks, function_name), instance, pop_size, n_iter)
+        x = hho(getattr(benchmarks, function_name), instance, pop_size, n_iter)
     else:
         return None
     return x
