@@ -7,8 +7,7 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
     fileResultsData = pd.read_csv(results_directory + "/experiment.csv")
 
     for j in range(0, len(objectivefunc)):
-        # objective_name = objectivefunc[j] # ini harusnya cvrp tapi ganti dulu ke na
-        objective_name = "cvrp"
+        instance_name = objectivefunc[j] # ini harusnya cvrp tapi ganti dulu ke na
 
         startIteration = 0
         if "SSA" in optimizer:
@@ -19,7 +18,7 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
 
             row = fileResultsData[
                 (fileResultsData["Optimizer"] == optimizer_name)
-                & (fileResultsData["objfname"] == objective_name)
+                & (fileResultsData["Instance"] == instance_name)
                 ]
             row = row.iloc[:, 3 + startIteration:]
             plt.plot(allGenerations, row.values.tolist()[0], label=optimizer_name)
@@ -27,7 +26,7 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
         plt.ylabel("Fitness")
         plt.legend(loc="upper right", bbox_to_anchor=(1.2, 1.02))
         plt.grid()
-        fig_name = results_directory + "/convergence-" + objective_name + ".png"
+        fig_name = results_directory + "/convergence-" + instance_name + ".png"
         plt.savefig(fig_name, bbox_inches="tight")
         plt.clf()
         # plt.show()

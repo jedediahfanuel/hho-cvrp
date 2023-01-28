@@ -5,8 +5,8 @@ from solution import solution
 import time
 
 
-def HHO(objf, instance, SearchAgents_no, Max_iter):
-    lb, ub, dim, distances = 1, instance.dimension - 0.01, instance.n_customers, instance.distances
+def HHO(objf, data, SearchAgents_no, Max_iter):
+    lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
 
     # initialize the location and Energy of the rabbit
     Rabbit_Location = numpy.zeros(dim)
@@ -172,6 +172,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
     s.objfname = objf.__name__
     s.best = Rabbit_Energy
     s.bestIndividual = Rabbit_Location
+    s.instance = data.name
 
     return s
 

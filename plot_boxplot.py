@@ -13,13 +13,12 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
         data = []
 
         for i in range(len(optimizer)):
-            # objective_name = objectivefunc[j]
-            objective_name = "cvrp"  # nanti jadi nama dataset
+            instance_name = objectivefunc[j]
             optimizer_name = optimizer[i]
 
             detailedData = fileResultsDetailsData[
                 (fileResultsDetailsData["Optimizer"] == optimizer_name)
-                & (fileResultsDetailsData["objfname"] == objective_name)
+                & (fileResultsDetailsData["Instance"] == instance_name)
                 ]
             detailedData = detailedData["Iter" + str(Iterations)]
             detailedData = np.array(detailedData).T.tolist()
@@ -52,7 +51,7 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
             loc="upper right",
             bbox_to_anchor=(1.2, 1.02),
         )
-        fig_name = results_directory + "/boxplot-" + objective_name + ".png"
+        fig_name = results_directory + "/boxplot-" + instance_name + ".png"
         plt.savefig(fig_name, bbox_inches="tight")
         plt.clf()
         # plt.show()

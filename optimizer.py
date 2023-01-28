@@ -24,7 +24,7 @@ def selector(algo, func_details, popSize, Iter):
     return x
 
 
-def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
+def run(optimizer, instances, NumOfRuns, params, export_flags):
 
     """
     It serves as the main interface of the framework for running the experiments.
@@ -33,7 +33,7 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
     ----------
     optimizer : list
         The list of optimizers names
-    objectivefunc : list
+    instances : list
         The list of benchmark functions
     NumOfRuns : int
         The number of independent runs
@@ -76,15 +76,14 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
         CnvgHeader.append("Iter" + str(l + 1))
 
     for i in range(0, len(optimizer)):
-        for j in range(0, len(objectivefunc)):
+        for j in range(0, len(instances)):
             convergence = [0] * NumOfRuns
             executionTime = [0] * NumOfRuns
             for k in range(0, NumOfRuns):
-                func_details = benchmarks.getFunctionDetails(objectivefunc[j])
+                func_details = benchmarks.getFunctionDetails(instances[j])
                 x = selector(optimizer[i], func_details, PopulationSize, Iterations)
                 convergence[k] = x.convergence
-                optimizerName = x.optimizer
-                objfname = x.objfname
+
                 if Export_details == True:
                     ExportToFile = results_directory + "experiment_details.csv"
                     with open(ExportToFile, "a", newline="\n") as out:
@@ -93,13 +92,13 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
                             Flag_details == False
                         ):  # just one time to write the header of the CSV file
                             header = numpy.concatenate(
-                                [["Optimizer", "objfname", "ExecutionTime"], CnvgHeader]
+                                [["Optimizer", "Instance", "ExecutionTime"], CnvgHeader]
                             )
                             writer.writerow(header)
                             Flag_details = True  # at least one experiment
                         executionTime[k] = x.executionTime
                         a = numpy.concatenate(
-                            [[x.optimizer, x.objfname, x.executionTime], x.convergence]
+                            [[x.optimizer, x.instance, x.executionTime], x.convergence]
                         )
                         writer.writerow(a)
                     out.close()
@@ -113,7 +112,7 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
                         Flag == False
                     ):  # just one time to write the header of the CSV file
                         header = numpy.concatenate(
-                            [["Optimizer", "objfname", "ExecutionTime"], CnvgHeader]
+                            [["Optimizer", "Instance", "ExecutionTime"], CnvgHeader]
                         )
                         writer.writerow(header)
                         Flag = True
@@ -123,20 +122,20 @@ def run(optimizer, objectivefunc, NumOfRuns, params, export_flags):
                         numpy.mean(convergence, axis=0, dtype=numpy.float64), decimals=2
                     ).tolist()
                     a = numpy.concatenate(
-                        [[optimizerName, objfname, avgExecutionTime], avgConvergence]
+                        [[x.optimizer, x.instance, avgExecutionTime], avgConvergence]
                     )
                     writer.writerow(a)
                 out.close()
 
     if Export_convergence == True:
-        conv_plot.run(results_directory, optimizer, objectivefunc, Iterations)
+        conv_plot.run(results_directory, optimizer, instances, Iterations)
 
     if Export_boxplot == True:
-        box_plot.run(results_directory, optimizer, objectivefunc, Iterations)
+        box_plot.run(results_directory, optimizer, instances, Iterations)
 
-    if Flag == False:  # Faild to run at least one experiment
+    if Flag == False:  # Failed to run at least one experiment
         print(
-            "No Optomizer or Cost function is selected. Check lists of available optimizers and cost functions"
+            "No Optimizer or Cost function is selected. Check lists of available optimizers and cost functions"
         )
 
     print("Execution completed")

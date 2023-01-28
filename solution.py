@@ -13,3 +13,4 @@ class solution:
         self.dim = 0
         self.popnum = 0
         self.maxiers = 0
+        self.instance = ""
