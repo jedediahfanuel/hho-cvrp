@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def run(results_directory, optimizer, objectivefunc, iterations):
+def run(results_directory, optimizer, instances, iterations):
     plt.ioff()
     file_results_data = pd.read_csv(results_directory + "/experiment.csv")
 
-    for j in range(0, len(objectivefunc)):
-        instance_name = objectivefunc[j] # ini harusnya cvrp tapi ganti dulu ke na
+    for j in range(0, len(instances)):
+        instance_name = instances[j]
 
         start_iteration = 0
         if "SSA" in optimizer:
@@ -30,4 +30,3 @@ def run(results_directory, optimizer, objectivefunc, iterations):
         fig_name = results_directory + "/convergence-" + instance_name + ".png"
         plt.savefig(fig_name, bbox_inches="tight")
         plt.clf()
-

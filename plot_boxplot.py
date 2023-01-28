@@ -3,43 +3,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def run(results_directory, optimizer, objectivefunc, Iterations):
+def run(results_directory, optimizer, instances, iterations):
     plt.ioff()
 
-    fileResultsDetailsData = pd.read_csv(results_directory + "/experiment_details.csv")
-    for j in range(0, len(objectivefunc)):
+    file_results_details_data = pd.read_csv(results_directory + "/experiment_details.csv")
+    for j in range(0, len(instances)):
 
         # Box Plot
         data = []
 
         for i in range(len(optimizer)):
-            instance_name = objectivefunc[j]
+            instance_name = instances[j]
             optimizer_name = optimizer[i]
 
-            detailedData = fileResultsDetailsData[
-                (fileResultsDetailsData["Optimizer"] == optimizer_name)
-                & (fileResultsDetailsData["Instance"] == instance_name)
+            detailed_data = file_results_details_data[
+                (file_results_details_data["Optimizer"] == optimizer_name)
+                & (file_results_details_data["Instance"] == instance_name)
                 ]
-            detailedData = detailedData["Iter" + str(Iterations)]
-            detailedData = np.array(detailedData).T.tolist()
-            data.append(detailedData)
+            detailed_data = detailed_data["Iter" + str(iterations)]
+            detailed_data = np.array(detailed_data).T.tolist()
+            data.append(detailed_data)
 
         # , notch=True
         box = plt.boxplot(data, patch_artist=True, labels=optimizer)
 
         colors = [
-            "#5c9eb7",
-            "#f77199",
-            "#cf81d2",
-            "#4a5e6a",
-            "#f45b18",
-            "#ffbd35",
-            "#6ba5a1",
-            "#fcd1a1",
-            "#c3ffc1",
-            "#68549d",
-            "#1c8c44",
-            "#a44c40",
+            "#5c9eb7", "#f77199", "#cf81d2", "#4a5e6a",
+            "#f45b18", "#ffbd35", "#6ba5a1", "#fcd1a1",
+            "#c3ffc1", "#68549d", "#1c8c44", "#a44c40",
             "#404636",
         ]
         for patch, color in zip(box["boxes"], colors):
@@ -54,4 +45,3 @@ def run(results_directory, optimizer, objectivefunc, Iterations):
         fig_name = results_directory + "/boxplot-" + instance_name + ".png"
         plt.savefig(fig_name, bbox_inches="tight")
         plt.clf()
-        # plt.show()
