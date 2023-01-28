@@ -2,7 +2,7 @@ import numpy
 import cvrplib
 
 
-def getFunctionDetails(a):
+def get_function_details(a):
     # Download instances
     instance = cvrplib.download(a)
 

@@ -79,7 +79,7 @@ def run(optimizer, instances, num_of_runs, params, export_flags):
             convergence = [0] * num_of_runs
             execution_time = [0] * num_of_runs
             for k in range(0, num_of_runs):
-                func_details = benchmarks.getFunctionDetails(instances[j])
+                func_details = benchmarks.get_function_details(instances[j])
                 x = selector(optimizer[i], func_details, population_size, iterations)
                 convergence[k] = x.convergence
 
