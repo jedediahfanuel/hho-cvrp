@@ -118,7 +118,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                     X1 = Rabbit_Location - Escaping_Energy * abs(
                         Jump_strength * Rabbit_Location - X[i, :]
                     )
-                    # X1 = numpy.clip(X1, lb, ub)
+                    X1 = numpy.clip(X1, lb, ub)
 
                     if objf(generate_unstable_solution(X1, lb, ub), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
@@ -129,7 +129,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                                 * abs(Jump_strength * Rabbit_Location - X[i, :])
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
-                        # X2 = numpy.clip(X2, lb, ub)
+                        X2 = numpy.clip(X2, lb, ub)
                         if objf(generate_unstable_solution(X2, lb, ub), distances) < fitness:
                             X[i, :] = X2.copy()
                 if (
@@ -139,7 +139,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                     X1 = Rabbit_Location - Escaping_Energy * abs(
                         Jump_strength * Rabbit_Location - X.mean(0)
                     )
-                    # X1 = numpy.clip(X1, lb, ub)
+                    X1 = numpy.clip(X1, lb, ub)
 
                     if objf(generate_unstable_solution(X1, lb, ub), distances) < fitness:  # improved move?
                         X[i, :] = X1.copy()
@@ -150,7 +150,7 @@ def HHO(objf, instance, SearchAgents_no, Max_iter):
                                 * abs(Jump_strength * Rabbit_Location - X.mean(0))
                                 + numpy.multiply(numpy.random.randn(dim), Levy(dim))
                         )
-                        # X2 = numpy.clip(X2, lb, ub)
+                        X2 = numpy.clip(X2, lb, ub)
                         if objf(generate_unstable_solution(X2, lb, ub), distances) < fitness:
                             X[i, :] = X2.copy()
 
