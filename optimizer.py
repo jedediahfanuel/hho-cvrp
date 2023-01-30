@@ -9,6 +9,7 @@ import benchmarks
 from optimizers.HHO import hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
+import plot_scatter as scatter_plot
 
 warnings.simplefilter(action="ignore")
 
@@ -33,7 +34,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     optimizer : list
         The list of optimizers names
     instances : list
-        The list of benchmark functions
+        The list of benchmark instances
     num_of_runs : int
         The number of independent runs
     params  : set
@@ -46,6 +47,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         2. export_details (Exporting the detailed results in files)
         3. export_convergence (Exporting the convergence plots)
         4. export_boxplot (Exporting the box plots)
+        5. export_scatter: (Exporting the scatter plots)
 
     Returns
     -----------
@@ -61,6 +63,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     export_details = export_flags["export_details"]
     export_convergence = export_flags["export_convergence"]
     export_boxplot = export_flags["export_boxplot"]
+    export_scatter = export_flags["export_scatter"]
 
     flag = False
     flag_details = False
@@ -96,10 +99,15 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                             flag_details = True  # at least one experiment
                         execution_time[k] = x.execution_time
                         a = numpy.concatenate(
-                            [[x.optimizer, x.instance, x.execution_time], x.convergence]
+                            [[x.optimizer, x.name, x.execution_time], x.convergence]
                         )
                         writer.writerow(a)
                     out.close()
+
+                if export_scatter:
+                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
+                    Path(rd).mkdir(parents=True, exist_ok=True)
+                    scatter_plot.run(x, rd, k)
 
             if export:
                 export_to_file = results_directory + "experiment.csv"
@@ -119,16 +127,20 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                         numpy.mean(convergence, axis=0, dtype=numpy.float64), decimals=2
                     ).tolist()
                     a = numpy.concatenate(
-                        [[x.optimizer, x.instance, avg_execution_time], avg_convergence]
+                        [[x.optimizer, x.name, avg_execution_time], avg_convergence]
                     )
                     writer.writerow(a)
                 out.close()
 
     if export_convergence:
-        conv_plot.run(results_directory, optimizer, instances, iterations)
+        rd = results_directory + "box-plot/"
+        Path(rd).mkdir(parents=True, exist_ok=True)
+        conv_plot.run(rd, optimizer, instances, iterations)
 
     if export_boxplot:
-        box_plot.run(results_directory, optimizer, instances, iterations)
+        rd = results_directory + "convergence-plot/"
+        Path(rd).mkdir(parents=True, exist_ok=True)
+        box_plot.run(rd, optimizer, instances, iterations)
 
     if not flag:  # Failed to run at least one experiment
         print(

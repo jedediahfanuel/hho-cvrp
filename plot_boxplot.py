@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 def run(results_directory, optimizer, instances, iterations):
     plt.ioff()
 
-    file_results_details_data = pd.read_csv(results_directory + "/experiment_details.csv")
+    file_results_details_data = pd.read_csv(results_directory + "../experiment_details.csv")
     for j in range(0, len(instances)):
 
         # Box Plot

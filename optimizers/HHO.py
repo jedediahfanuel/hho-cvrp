@@ -1,9 +1,11 @@
-import random
-import numpy
-import math
-from solution import Solution
 import time
+import random
+import math
 
+from solution import Solution
+from benchmarks import concat_depot
+
+import numpy
 
 def hho(objf, data, search_agent_no, max_iter):
     lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
@@ -31,7 +33,7 @@ def hho(objf, data, search_agent_no, max_iter):
     ############################
     s = Solution()
 
-    print('HHO is now tackling  "' + objf.__name__ + '"')
+    print('HHO is now tackling "' + objf.__name__ + '" ' + data.name)
 
     timer_start = time.time()
     s.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -178,8 +180,10 @@ def hho(objf, data, search_agent_no, max_iter):
     s.objfname = objf.__name__
     s.best = rabbit_energy
     s.best_individual = rabbit_location
-    s.instance = data.name
-    s.routes = best_routes
+    s.name = data.name
+    s.routes = concat_depot(best_routes)
+    s.dim = data.dimension
+    s.coordinates = data.coordinates
 
     return s
 
