@@ -1,9 +1,11 @@
-import random
-import numpy
-import math
-from solution import Solution
 import time
+import random
+import math
 
+from solution import Solution
+from benchmarks import concat_depot
+
+import numpy
 
 def hho(objf, data, search_agent_no, max_iter):
     lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
@@ -179,7 +181,7 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = best_routes
+    s.routes = concat_depot(best_routes)
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
