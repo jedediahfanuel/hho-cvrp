@@ -33,7 +33,7 @@ def hho(objf, data, search_agent_no, max_iter):
     ############################
     s = Solution()
 
-    print('HHO is now tackling  "' + objf.__name__ + '"')
+    print('HHO is now tackling "' + objf.__name__ + '" ' + data.name)
 
     timer_start = time.time()
     s.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
