@@ -4,7 +4,7 @@ import pandas as pd
 
 def run(results_directory, optimizer, instances, iterations):
     plt.ioff()
-    file_results_data = pd.read_csv(results_directory + "/experiment.csv")
+    file_results_data = pd.read_csv(results_directory + "../experiment.csv")
 
     for j in range(0, len(instances)):
         instance_name = instances[j]
