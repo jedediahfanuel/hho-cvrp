@@ -98,7 +98,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                             flag_details = True  # at least one experiment
                         execution_time[k] = x.execution_time
                         a = numpy.concatenate(
-                            [[x.optimizer, x.instance, x.execution_time], x.convergence]
+                            [[x.optimizer, x.name, x.execution_time], x.convergence]
                         )
                         writer.writerow(a)
                     out.close()
@@ -121,7 +121,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                         numpy.mean(convergence, axis=0, dtype=numpy.float64), decimals=2
                     ).tolist()
                     a = numpy.concatenate(
-                        [[x.optimizer, x.instance, avg_execution_time], avg_convergence]
+                        [[x.optimizer, x.name, avg_execution_time], avg_convergence]
                     )
                     writer.writerow(a)
                 out.close()
