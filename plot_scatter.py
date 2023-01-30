@@ -37,7 +37,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     if show_id:
         for city in range(0, s.dim):
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
-                     f"{city}", size='xx-small', color='white', weight='normal')
+                     f"{city}", size='xx-small', color='blue', weight='normal')
 
     # Nanti si s.routes harus di update ke VRP
     line_x = np.array([coordinates[x, 0] for x in s.routes])
