@@ -31,14 +31,15 @@ def get_space(coordinates):
 
 
 def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf"), size=100, show_id=True):
-    plt.scatter(s.coordinates[:, 0].T, s.coordinates[:, 1].T, s=size, c='k')
+    coordinates = np.array(s.coordinates)
+    plt.scatter(coordinates[:, 0].T, coordinates[:, 1].T, s=size, c='k')
 
     # add text annotation
-    x_min, x_max, y_min, y_max, text_space_x, text_space_y, space_x, space_y = get_space(s.coordinates)
+    x_min, x_max, y_min, y_max, text_space_x, text_space_y, space_x, space_y = get_space(coordinates)
 
     if show_id:
         for city in range(0, s.dim):
-            plt.text(s.coordinates[city][0] - text_space_x, s.coordinates[city][1] - text_space_y,
+            plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
                      f"{city}", size='xx-small', color='white', weight='normal')
 
     plt.xlim((x_min - space_x, x_max + space_x))
