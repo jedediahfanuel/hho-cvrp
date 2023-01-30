@@ -16,7 +16,7 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
 
 def run(s: Solution, results_directory):
     plt.ioff()
-    fn = "scatter-" + s.instance + "-" + s.optimizer + t
+    fn = "scatter-" + s.name + "-" + s.optimizer + t
     plot_cities(s, pathsave=results_directory, filename=fn)
 
 
@@ -44,7 +44,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
-    plt.title(s.instance)
+    plt.title(s.name)
 
     Path(pathsave).mkdir(parents=True, exist_ok=True)
 

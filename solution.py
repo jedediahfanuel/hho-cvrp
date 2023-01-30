@@ -13,6 +13,6 @@ class Solution:
         self.dim = 0
         self.pop_num = 0
         self.maxiers = 0
-        self.instance = ""
+        self.name = ""
         self.routes = []
         self.coordinates = []
