@@ -22,6 +22,7 @@ export_flags = {
     "export_details": True,
     "export_convergence": True,
     "export_boxplot": True,
+    "export_scatter": True,
 }
 
 run(optimizer, instances, num_of_runs, params, export_flags)
