@@ -180,6 +180,8 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best_individual = rabbit_location
     s.instance = data.name
     s.routes = best_routes
+    s.dim = data.dimension
+    s.coordinates = data.coordinates
 
     return s
 
