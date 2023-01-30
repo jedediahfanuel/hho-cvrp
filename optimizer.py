@@ -133,10 +133,14 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                 out.close()
 
     if export_convergence:
-        conv_plot.run(results_directory, optimizer, instances, iterations)
+        rd = results_directory + "box-plot/"
+        Path(rd).mkdir(parents=True, exist_ok=True)
+        conv_plot.run(rd, optimizer, instances, iterations)
 
     if export_boxplot:
-        box_plot.run(results_directory, optimizer, instances, iterations)
+        rd = results_directory + "convergence-plot/"
+        Path(rd).mkdir(parents=True, exist_ok=True)
+        box_plot.run(rd, optimizer, instances, iterations)
 
     if not flag:  # Failed to run at least one experiment
         print(
