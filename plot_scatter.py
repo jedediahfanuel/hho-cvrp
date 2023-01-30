@@ -44,7 +44,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
-    plt.title(s.name + " " + s.best)
+    plt.title(s.name + " " + str(s.best))
 
     Path(pathsave).mkdir(parents=True, exist_ok=True)
 
