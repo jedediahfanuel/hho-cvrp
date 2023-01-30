@@ -14,3 +14,4 @@ class Solution:
         self.pop_num = 0
         self.maxiers = 0
         self.instance = ""
+        self.routes = []
