@@ -42,6 +42,11 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
                      f"{city}", size='xx-small', color='white', weight='normal')
 
+    # draw lines
+    plt.plot(coordinates[:, 0], coordinates[:, 1], 'r-')
+    plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
+             fontdict={'size': 12, 'color': 'red'})
+
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
     plt.title(s.name + " " + str(s.best))
