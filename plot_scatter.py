@@ -1,12 +1,9 @@
 import platform
-import datetime
 from pathlib import Path
 from solution import Solution
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-t = datetime.datetime.now().strftime(" %d %b %Y %X")
 
 if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Windows"
     import matplotlib
@@ -14,9 +11,9 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
     matplotlib.use('Agg')  # Force matplotlib to not use any Xwindows backend.
 
 
-def run(s: Solution, results_directory):
+def run(s: Solution, results_directory, k: int):
     plt.ioff()
-    fn = "scatter-" + s.name + "-" + s.optimizer + t
+    fn = "scatter-" + s.name + "-" + str(k) + "-" + str(s.best)
     plot_cities(s, pathsave=results_directory, filename=fn)
 
 
@@ -42,8 +39,12 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
                      f"{city}", size='xx-small', color='white', weight='normal')
 
+    # Nanti si s.routes harus di update ke VRP
+    line_x = np.array([coordinates[x, 0] for x in s.routes])
+    line_y = np.array([coordinates[y, 1] for y in s.routes])
+
     # draw lines
-    plt.plot(coordinates[:, 0], coordinates[:, 1], 'r-')
+    plt.plot(line_x, line_y, 'r-')
     plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
              fontdict={'size': 12, 'color': 'red'})
 

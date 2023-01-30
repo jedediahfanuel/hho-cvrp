@@ -4,7 +4,7 @@ from optimizer import run
 optimizer = ["HHO"]
 
 # Select benchmark function
-instances = ["A-n32-k5"]
+instances = ["A-n32-k5", "B-n78-k10", "P-n19-k2", "X-n101-k25"]
 
 # Select number of repetitions for each experiment.
 # To obtain meaningful statistical results, usually 30 independent runs are executed for each algorithm.

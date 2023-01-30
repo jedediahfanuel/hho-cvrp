@@ -34,7 +34,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     optimizer : list
         The list of optimizers names
     instances : list
-        The list of benchmark functions
+        The list of benchmark instances
     num_of_runs : int
         The number of independent runs
     params  : set
@@ -47,6 +47,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         2. export_details (Exporting the detailed results in files)
         3. export_convergence (Exporting the convergence plots)
         4. export_boxplot (Exporting the box plots)
+        5. export_scatter: (Exporting the scatter plots)
 
     Returns
     -----------
@@ -103,6 +104,11 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                         writer.writerow(a)
                     out.close()
 
+                if export_scatter:
+                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
+                    Path(rd).mkdir(parents=True, exist_ok=True)
+                    scatter_plot.run(x, rd, k)
+
             if export:
                 export_to_file = results_directory + "experiment.csv"
 
@@ -125,9 +131,6 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     )
                     writer.writerow(a)
                 out.close()
-
-            if export_scatter:
-                scatter_plot.run(x, results_directory)
 
     if export_convergence:
         conv_plot.run(results_directory, optimizer, instances, iterations)
