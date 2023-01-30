@@ -9,6 +9,7 @@ import benchmarks
 from optimizers.HHO import hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
+import plot_scatter as scatter_plot
 
 warnings.simplefilter(action="ignore")
 
@@ -61,6 +62,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     export_details = export_flags["export_details"]
     export_convergence = export_flags["export_convergence"]
     export_boxplot = export_flags["export_boxplot"]
+    export_scatter = export_flags["export_scatter"]
 
     flag = False
     flag_details = False
@@ -123,6 +125,9 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     )
                     writer.writerow(a)
                 out.close()
+
+            if export_scatter:
+                scatter_plot.run(x, results_directory)
 
     if export_convergence:
         conv_plot.run(results_directory, optimizer, instances, iterations)
