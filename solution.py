@@ -15,3 +15,4 @@ class Solution:
         self.maxiers = 0
         self.instance = ""
         self.routes = []
+        self.coordinates = []
