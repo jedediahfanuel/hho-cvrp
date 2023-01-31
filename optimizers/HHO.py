@@ -7,9 +7,10 @@ from benchmarks import concat_depot
 
 import numpy
 
+
 def hho(objf, data, search_agent_no, max_iter):
     lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
-    best_routes = []
+    best_routes, temp_routes = [], []
 
     # initialize the location and Energy of the rabbit
     rabbit_location = numpy.zeros(dim)
@@ -48,13 +49,14 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        best_routes = generate_unstable_solution(x_hawks[i, :])
-        fitness = objf(best_routes, distances)
+        temp_routes = generate_unstable_solution(x_hawks[i, :])
+        fitness = objf(temp_routes, distances)
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
             rabbit_energy = fitness
             rabbit_location = x_hawks[i, :].copy()
+            best_routes = temp_routes
 
     # Main loop
     while t < max_iter:
@@ -125,9 +127,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x1 = numpy.clip(x1, lb, ub)
 
-                    best_routes = generate_unstable_solution(x1)
-                    if objf(best_routes, distances) < fitness:  # improved move?
+                    temp_routes = generate_unstable_solution(x1)
+                    if objf(temp_routes, distances) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
+                        best_routes = temp_routes
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -136,9 +139,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        best_routes = generate_unstable_solution(x2)
-                        if objf(best_routes, distances) < fitness:
+                        temp_routes = generate_unstable_solution(x2)
+                        if objf(temp_routes, distances) < fitness:
                             x_hawks[i, :] = x2.copy()
+                            best_routes = temp_routes
                 if (
                         r < 0.5 and abs(escaping_energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
@@ -147,9 +151,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    best_routes = generate_unstable_solution(x1)
-                    if objf(best_routes, distances) < fitness:  # improved move?
+                    temp_routes = generate_unstable_solution(x1)
+                    if objf(temp_routes, distances) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
+                        best_routes = temp_routes
                     else:  # Perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -158,9 +163,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        best_routes = generate_unstable_solution(x2)
-                        if objf(best_routes, distances) < fitness:
+                        temp_routes = generate_unstable_solution(x2)
+                        if objf(temp_routes, distances) < fitness:
                             x_hawks[i, :] = x2.copy()
+                            best_routes = temp_routes
 
         for i in range(0, search_agent_no):
 
@@ -169,13 +175,14 @@ def hho(objf, data, search_agent_no, max_iter):
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            best_routes = generate_unstable_solution(x_hawks[i, :])
-            fitness = objf(best_routes, distances)
+            temp_routes = generate_unstable_solution(x_hawks[i, :])
+            fitness = objf(temp_routes, distances)
 
             # Update the location of Rabbit
             if fitness < rabbit_energy:  # Change this to > for maximization problem
                 rabbit_energy = fitness
                 rabbit_location = x_hawks[i, :].copy()
+                best_routes = temp_routes
 
         convergence_curve[t] = rabbit_energy
         if t % 1 == 0:
