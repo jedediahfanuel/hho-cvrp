@@ -41,23 +41,23 @@ def hho(objf, data, search_agent_no, max_iter):
 
     t = 0  # Loop counter
 
+    for i in range(0, search_agent_no):
+
+        # Check boundaries
+
+        x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
+
+        # fitness of locations
+        best_routes = generate_unstable_solution(x_hawks[i, :])
+        fitness = objf(best_routes, distances)
+
+        # Update the location of Rabbit
+        if fitness < rabbit_energy:  # Change this to > for maximization problem
+            rabbit_energy = fitness
+            rabbit_location = x_hawks[i, :].copy()
+
     # Main loop
     while t < max_iter:
-        for i in range(0, search_agent_no):
-
-            # Check boundaries
-
-            x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
-
-            # fitness of locations
-            best_routes = generate_unstable_solution(x_hawks[i, :])
-            fitness = objf(best_routes, distances)
-
-            # Update the location of Rabbit
-            if fitness < rabbit_energy:  # Change this to > for maximization problem
-                rabbit_energy = fitness
-                rabbit_location = x_hawks[i, :].copy()
-
         e1 = 2 * (1 - (t / max_iter))  # factor to show the decreasing energy of rabbit
 
         # Update the location of Harris' hawks
@@ -161,6 +161,21 @@ def hho(objf, data, search_agent_no, max_iter):
                         best_routes = generate_unstable_solution(x2)
                         if objf(best_routes, distances) < fitness:
                             x_hawks[i, :] = x2.copy()
+
+        for i in range(0, search_agent_no):
+
+            # Check boundaries
+
+            x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
+
+            # fitness of locations
+            best_routes = generate_unstable_solution(x_hawks[i, :])
+            fitness = objf(best_routes, distances)
+
+            # Update the location of Rabbit
+            if fitness < rabbit_energy:  # Change this to > for maximization problem
+                rabbit_energy = fitness
+                rabbit_location = x_hawks[i, :].copy()
 
         convergence_curve[t] = rabbit_energy
         if t % 1 == 0:
