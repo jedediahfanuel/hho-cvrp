@@ -44,7 +44,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     line_y = np.array([coordinates[y, 1] for y in s.routes])
 
     # draw lines
-    plt.plot(line_x, line_y, 'r-')
+    plt.plot(line_x, line_y, 'r-', lw=0.5)
     plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
              fontdict={'size': 8, 'color': 'red'})
 
