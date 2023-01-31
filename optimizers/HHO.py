@@ -203,7 +203,7 @@ def levy(dim):
 
 def generate_stable_solution(s):
     # range(lb, ub)
-    solution_set = set(list(range(1, len(s))))
+    solution_set = set(list(range(1, len(s) + 1)))
     solution_done = numpy.array([-1, ] * len(s))
     solution_int = s.astype(int)
     city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
