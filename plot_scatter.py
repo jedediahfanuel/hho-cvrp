@@ -46,7 +46,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     # draw lines
     plt.plot(line_x, line_y, 'r-')
     plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
-             fontdict={'size': 12, 'color': 'red'})
+             fontdict={'size': 8, 'color': 'red'})
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
