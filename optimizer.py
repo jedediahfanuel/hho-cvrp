@@ -10,6 +10,7 @@ from optimizers.HHO import hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 import plot_scatter as scatter_plot
+import write_routes
 
 warnings.simplefilter(action="ignore")
 
@@ -64,6 +65,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     export_convergence = export_flags["export_convergence"]
     export_boxplot = export_flags["export_boxplot"]
     export_scatter = export_flags["export_scatter"]
+    export_route = export_flags["export_route"]
 
     flag = False
     flag_details = False
@@ -108,6 +110,12 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
                     Path(rd).mkdir(parents=True, exist_ok=True)
                     scatter_plot.run(x, rd, k)
+
+                if export_route:
+                    rd = results_directory + "routes-" + x.optimizer + "/" + x.name + "/"
+                    Path(rd).mkdir(parents=True, exist_ok=True)
+                    write_routes.run(x, rd, k)
+
 
             if export:
                 export_to_file = results_directory + "experiment.csv"
