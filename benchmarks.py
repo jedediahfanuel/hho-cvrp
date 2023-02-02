@@ -14,20 +14,55 @@ def get_function_details(a):
     return param.get("cvrp", "nothing")
 
 
-# fungsi objektif dari cvrp
-# dimana menghitung jarak total dari seluruh rute
-def cvrp(routes, distances):
-    # inget ini masih 1 rute
-    # kedepannya sih pecah dulu jadi beberapa rute
-    # baru kirim ke concat_depot
-    routes = concat_depot(routes)
-    total = 0
-    # for r in routes:
-    #     for i in range(len(r) - 1):
-    #         total += distances[r[i]][r[i + 1]]
-    for i in range(len(routes) - 1):
-        total += distances[routes[i]][routes[i + 1]]
+def cvrp(solution, distances, max_capacity, demands):
+    """
+    CVRP objective function sum all distance of routes.
+    This function take tsp solution, convert it into cvrp solution,
+    then calculate its total distance (fitness value)
+
+    :param solution: 1D list of tsp solution representation
+    :param distances: matrix of distances
+    :param max_capacity: maximum capacity of truck (homogeneous)
+    :param demands: matrix od demands
+    :return: the fitness value of cvrp (total distance)
+
+    room for improvement : using built in sum() function instead loops
+    """
+    routes = split_customer(solution, max_capacity, demands)
+
+    total, start = 0, 0
+    for r in routes:
+        for i in range(len(r) - 1):
+            total += distances[r[i]][r[i + 1]]
+
     return total
+
+
+def split_customer(solution, max_capacity, demands):
+    """
+    This function split tsp solution into cvrp solution
+
+    :param solution: 1D list of tsp solution representation
+    :param max_capacity: maximum capacity of truck (homogeneous)
+    :param demands: matrix demands
+    :return: Lists of route,
+             where regular customers are sorted from left -> right
+
+    room for improvement: use numpy
+    """
+    routes, load, v = [[0]], 0, 0
+
+    for i in solution:
+        if demands[i] + load <= max_capacity:
+            routes[v].append(i)
+            load += demands[i]
+        else:
+            routes[v].append(0)  # close the route
+            routes.append([0, i])  # open new route
+            load = demands[i]
+            v += 1
+
+    return routes
 
 
 def concat_depot(s):
