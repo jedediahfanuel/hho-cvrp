@@ -39,14 +39,14 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
                      f"{city}", size='xx-small', color='blue', weight='normal')
 
-    # Nanti si s.routes harus di update ke VRP
-    line_x = np.array([coordinates[x, 0] for x in s.routes])
-    line_y = np.array([coordinates[y, 1] for y in s.routes])
+    for r in s.routes:
+        line_x = np.array([coordinates[x, 0] for x in r])
+        line_y = np.array([coordinates[y, 1] for y in r])
 
-    # draw lines
-    plt.plot(line_x, line_y, 'r-', lw=0.5)
-    plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
-             fontdict={'size': 8, 'color': 'red'})
+        # draw lines
+        plt.plot(line_x, line_y, 'r-', lw=0.5)
+        plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
+                 fontdict={'size': 8, 'color': 'red'})
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
