@@ -14,7 +14,7 @@ def get_function_details(a):
     return param.get("cvrp", "nothing")
 
 
-def cvrp(solution, distances, max_capacity, demand):
+def cvrp(solution, distances, max_capacity, demands):
     """
     CVRP objective function sum all distance of routes.
     This function take tsp solution, convert it into cvrp solution,
@@ -23,12 +23,12 @@ def cvrp(solution, distances, max_capacity, demand):
     :param solution: 1D list of tsp solution representation
     :param distances: matrix of distances
     :param max_capacity: maximum capacity of truck (homogeneous)
-    :param demand: matrix od demands
+    :param demands: matrix od demands
     :return: the fitness value of cvrp (total distance)
 
     room for improvement : using built in sum() function instead loops
     """
-    routes = split_customer(solution, max_capacity, demand)
+    routes = split_customer(solution, max_capacity, demands)
 
     total, start = 0, 0
     for r in routes:
@@ -38,13 +38,13 @@ def cvrp(solution, distances, max_capacity, demand):
     return total
 
 
-def split_customer(solution, max_capacity, demand):
+def split_customer(solution, max_capacity, demands):
     """
     This function split tsp solution into cvrp solution
 
     :param solution: 1D list of tsp solution representation
     :param max_capacity: maximum capacity of truck (homogeneous)
-    :param demand: matrix demands
+    :param demands: matrix demands
     :return: Lists of route,
              where regular customers are sorted from left -> right
 
@@ -53,13 +53,15 @@ def split_customer(solution, max_capacity, demand):
     routes, load, v = [[0]], 0, 0
 
     for i in solution:
-        if demand[i] + load <= max_capacity:
+        if demands[i] + load <= max_capacity:
             routes[v].append(i)
-            load += demand[i]
+            load += demands[i]
         else:
+            print(f"Loads {v} : {load}")
             routes[v].append(0)  # close the route
+            print(f"Route {v} : {routes[v]}")
             routes.append([0, i])  # open new route
-            load = demand[i]
+            load = demands[i]
             v += 1
 
     return routes
