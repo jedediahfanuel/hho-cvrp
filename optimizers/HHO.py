@@ -3,7 +3,6 @@ import random
 import math
 
 from solution import Solution
-from benchmarks import concat_depot
 
 import numpy
 
@@ -50,7 +49,7 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        temp_routes = generate_unstable_solution(x_hawks[i, :])
+        temp_routes = generate_stable_solution(x_hawks[i, :])
         fitness = objf(temp_routes, distances, max_capacity, demands)
 
         # Update the location of Rabbit
@@ -128,7 +127,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x1 = numpy.clip(x1, lb, ub)
 
-                    temp_routes = generate_unstable_solution(x1)
+                    temp_routes = generate_stable_solution(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                         best_routes = temp_routes
@@ -140,7 +139,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        temp_routes = generate_unstable_solution(x2)
+                        temp_routes = generate_stable_solution(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                             best_routes = temp_routes
@@ -152,7 +151,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    temp_routes = generate_unstable_solution(x1)
+                    temp_routes = generate_stable_solution(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                         best_routes = temp_routes
@@ -164,7 +163,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        temp_routes = generate_unstable_solution(x2)
+                        temp_routes = generate_stable_solution(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                             best_routes = temp_routes
@@ -176,7 +175,7 @@ def hho(objf, data, search_agent_no, max_iter):
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            temp_routes = generate_unstable_solution(x_hawks[i, :])
+            temp_routes = generate_stable_solution(x_hawks[i, :])
             fitness = objf(temp_routes, distances, max_capacity, demands)
 
             # Update the location of Rabbit
@@ -204,7 +203,7 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = concat_depot(best_routes)
+    s.routes = best_routes
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
