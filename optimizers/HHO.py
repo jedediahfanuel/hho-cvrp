@@ -3,6 +3,7 @@ import random
 import math
 
 from solution import Solution
+from benchmarks import split_customer
 
 import numpy
 
@@ -203,7 +204,7 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = best_routes
+    s.routes = split_customer(best_routes, max_capacity, demands)
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
