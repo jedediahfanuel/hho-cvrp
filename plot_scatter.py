@@ -39,18 +39,25 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
                      f"{city}", size='xx-small', color='blue', weight='normal')
 
+    count = 1
     for r in s.routes:
         line_x = np.array([coordinates[x, 0] for x in r])
         line_y = np.array([coordinates[y, 1] for y in r])
 
+        # generate random color
+        rgb = tuple(np.random.uniform(0, 1, size=3))
+
         # draw lines
-        plt.plot(line_x, line_y, 'r-', lw=0.5)
+        plt.plot(line_x, line_y, '-', label=str(f'route {count}'), lw=0.5, c=rgb)
         plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
                  fontdict={'size': 8, 'color': 'red'})
+
+        count += 1
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
     plt.title(s.name + " " + str(s.best))
+    plt.legend(fontsize='xx-small')
 
     Path(pathsave).mkdir(parents=True, exist_ok=True)
 
