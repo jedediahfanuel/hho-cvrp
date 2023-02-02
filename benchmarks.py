@@ -57,9 +57,7 @@ def split_customer(solution, max_capacity, demands):
             routes[v].append(i)
             load += demands[i]
         else:
-            print(f"Loads {v} : {load}")
             routes[v].append(0)  # close the route
-            print(f"Route {v} : {routes[v]}")
             routes.append([0, i])  # open new route
             load = demands[i]
             v += 1
