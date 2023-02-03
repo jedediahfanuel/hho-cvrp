@@ -1,6 +1,7 @@
 import time
 import random
 import math
+from optimizers.two_opt import two_opt
 
 from solution import Solution
 from benchmarks import split_customer
@@ -195,6 +196,11 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
+    # TODO pasang cvrp_two_opt() di sini
+    # tambahin ke convergence
+    # hitung ulang rabbit energy
+    # jangan lupa hasilnya dimasukin ke masing-masing atribute dari class Solution()
+
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.execution_time = timer_end - timer_start
@@ -214,9 +220,9 @@ def hho(objf, data, search_agent_no, max_iter):
 def levy(dim):
     beta = 1.5
     sigma = (
-            math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
-            / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
-    ) ** (1 / beta)
+                    math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
+                    / (math.gamma((1 + beta) / 2) * beta * 2 ** ((beta - 1) / 2))
+            ) ** (1 / beta)
     u = 0.01 * numpy.random.randn(dim) * sigma
     v = numpy.random.randn(dim)
     zz = numpy.power(numpy.absolute(v), (1 / beta))
@@ -272,3 +278,8 @@ def generate_unstable_solution(s):
         else:
             solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
     return solution_done
+
+
+# TODO bikin per routes di 2-opt in untuk local optimum.
+def cvrp_two_opt(routes, distances):
+    pass
