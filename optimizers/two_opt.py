@@ -9,11 +9,13 @@ def two_opt(route, distances):
     :return: the array-like that have been processed
     """
     improved = True
+    z = 0
     while improved:
         improved = False
+        print(route)
         for i in range(len(route) - 2):
             for j in range(i + 2, len(route)):
-                len_delta = - distances[i][j + 1] - distances[j][j + 1] \
+                len_delta = - distances[i][i + 1] - distances[j][j + 1] \
                             + distances[i + 1][j + 1] + distances[i][j]
 
                 if len_delta < 0:
