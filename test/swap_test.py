@@ -9,20 +9,20 @@ class SwapCase(unittest.TestCase):
 
     def test_head_swap(self):
         self.assertEqual(
-            [4, 3, 2, 1, 0, 5, 6, 7, 8, 9],
+            [0, 4, 3, 2, 1, 5, 6, 7, 8, 9],
             swap(self.route, 0, 4)
         )
 
     def test_body_swap(self):
         self.assertEqual(
-            [0, 1, 6, 5, 4, 3, 2, 7, 8, 9],
+            [0, 1, 2, 6, 5, 4, 3, 7, 8, 9],
             swap(self.route, 2, 6)
         )
 
     def test_tail_swap(self):
         self.assertEqual(
-            [0, 1, 2, 3, 4, 9, 8, 7, 6, 5],
-            swap(self.route, 5, 10)
+            [0, 1, 2, 3, 4, 5, 9, 8, 7, 6],
+            swap(self.route, 5, 9)
         )
 
 
