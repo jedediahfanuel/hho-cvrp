@@ -13,8 +13,8 @@ def two_opt(route, distances):
         improved = False
         for i in range(len(route) - 2):
             for j in range(i + 2, len(route)):
-                len_delta = - distances(route[i][j + 1]) - distances(route[j][j + 1]) \
-                            + distances(route[i + 1][j + 1]) + distances(route[i][j])
+                len_delta = - distances[i][j + 1] - distances[j][j + 1] \
+                            + distances[i + 1][j + 1] + distances[i][j]
 
                 if len_delta < 0:
                     route = swap(route, i, j)
