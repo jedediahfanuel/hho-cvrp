@@ -49,6 +49,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         3. export_convergence (Exporting the convergence plots)
         4. export_boxplot (Exporting the box plots)
         5. export_scatter: (Exporting the scatter plots)
+        6. export_route: (Exporting the routes for each iteration)
 
     Returns
     -----------
@@ -115,7 +116,6 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     rd = results_directory + "routes-" + x.optimizer + "/" + x.name + "/"
                     Path(rd).mkdir(parents=True, exist_ok=True)
                     write_routes.run(x, rd, k)
-
 
             if export:
                 export_to_file = results_directory + "experiment.csv"
