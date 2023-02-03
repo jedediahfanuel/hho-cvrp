@@ -3,7 +3,7 @@ import unittest
 from optimizers.two_opt import swap
 
 
-class TwoOptCase(unittest.TestCase):
+class SwapCase(unittest.TestCase):
     def setUp(self):
         self.route = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
