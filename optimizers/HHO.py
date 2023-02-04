@@ -53,13 +53,28 @@ def hho(objf, data, search_agent_no, max_iter):
 
         # fitness of locations
         temp_routes = generate_stable_solution(x_hawks[i, :])
-        fitness = objf(temp_routes, distances, max_capacity, demands)
+        to_be = split_customer(temp_routes, max_capacity, demands)
+        x_hawks[i, :] = cvrp_two_opt_no_depot(to_be, distances)
+
+        to_be = cvrp_two_opt(to_be, distances)
+        fitness = normal_cvrp(to_be, distances, max_capacity, demands)
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
             rabbit_energy = fitness
             rabbit_location = x_hawks[i, :].copy()
             best_routes = temp_routes
+
+    if t % 1 == 0:
+        print(
+            "At iteration "
+            + str(t)
+            + " the best fitness is "
+            + str(rabbit_energy)
+        )
+
+    convergence_curve[t] = rabbit_energy
+    t += 1
 
     # Main loop
     while t < max_iter:
@@ -203,13 +218,13 @@ def hho(objf, data, search_agent_no, max_iter):
     rabbit_energy = normal_cvrp(best_routes, distances, max_capacity, demands)
     convergence_curve[t] = rabbit_energy
 
-    if t % 1 == 0:
-        print(
-            "At iteration "
-            + str(t)
-            + " the best fitness is "
-            + str(rabbit_energy)
-        )
+    # if t % 1 == 0:
+    #     print(
+    #         "At iteration "
+    #         + str(t)
+    #         + " the best fitness is "
+    #         + str(rabbit_energy)
+    #     )
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -292,3 +307,7 @@ def generate_unstable_solution(s):
 
 def cvrp_two_opt(routes, distances):
     return [two_opt(r, distances) for r in routes]
+
+
+def cvrp_two_opt_no_depot(routes, distances):
+    return [y for r in routes for y in two_opt(r, distances)[1:-1]]
