@@ -38,6 +38,15 @@ def cvrp(solution, distances, max_capacity, demands):
     return total
 
 
+def normal_cvrp(solution, distances, max_capacity, demands):
+    total = 0
+    for r in solution:
+        for i in range(len(r) - 1):
+            total += distances[r[i]][r[i + 1]]
+
+    return total
+
+
 def split_customer(solution, max_capacity, demands):
     """
     This function split tsp solution into cvrp solution
@@ -62,6 +71,7 @@ def split_customer(solution, max_capacity, demands):
             load = demands[i]
             v += 1
 
+    routes[v].append(0)  # close the last route
     return routes
 
 
