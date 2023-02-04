@@ -5,7 +5,7 @@ from optimizers.two_opt import two_opt
 
 from solution import Solution
 from benchmarks import split_customer
-from benchmarks import normal_cvrp
+from benchmarks import concat_depot
 
 import numpy
 
@@ -32,7 +32,7 @@ def hho(objf, data, search_agent_no, max_iter):
     )
 
     # Initialize convergence
-    convergence_curve = numpy.zeros(max_iter + 1)
+    convergence_curve = numpy.zeros(max_iter)
 
     ############################
     s = Solution()
@@ -52,29 +52,14 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        temp_routes = generate_stable_solution(x_hawks[i, :])
-        to_be = split_customer(temp_routes, max_capacity, demands)
-        x_hawks[i, :] = cvrp_two_opt_no_depot(to_be, distances)
-
-        to_be = cvrp_two_opt(to_be, distances)
-        fitness = normal_cvrp(to_be, distances, max_capacity, demands)
+        x_hawks[i, :] = two_opt(concat_depot(generate_stable_solution(x_hawks[i, :])), distances)[1:-1]
+        fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
             rabbit_energy = fitness
             rabbit_location = x_hawks[i, :].copy()
             best_routes = temp_routes
-
-    if t % 1 == 0:
-        print(
-            "At iteration "
-            + str(t)
-            + " the best fitness is "
-            + str(rabbit_energy)
-        )
-
-    convergence_curve[t] = rabbit_energy
-    t += 1
 
     # Main loop
     while t < max_iter:
@@ -214,9 +199,9 @@ def hho(objf, data, search_agent_no, max_iter):
 
     # Do the local search for a better solution
     best_routes = split_customer(best_routes, max_capacity, demands)
-    best_routes = cvrp_two_opt(best_routes, distances)
-    rabbit_energy = normal_cvrp(best_routes, distances, max_capacity, demands)
-    convergence_curve[t] = rabbit_energy
+    # best_routes = cvrp_two_opt(best_routes, distances)
+    # rabbit_energy = normal_cvrp(best_routes, distances, max_capacity, demands)
+    # convergence_curve[t] = rabbit_energy
 
     # if t % 1 == 0:
     #     print(
