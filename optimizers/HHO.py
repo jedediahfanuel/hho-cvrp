@@ -5,6 +5,7 @@ from optimizers.two_opt import two_opt
 
 from solution import Solution
 from benchmarks import split_customer
+from benchmarks import normal_cvrp
 
 import numpy
 
@@ -31,7 +32,7 @@ def hho(objf, data, search_agent_no, max_iter):
     )
 
     # Initialize convergence
-    convergence_curve = numpy.zeros(max_iter)
+    convergence_curve = numpy.zeros(max_iter + 1)
 
     ############################
     s = Solution()
@@ -196,10 +197,19 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
-    # TODO pasang cvrp_two_opt() di sini
-    # tambahin ke convergence
-    # hitung ulang rabbit energy
-    # jangan lupa hasilnya dimasukin ke masing-masing atribute dari class Solution()
+    # Do the local search for a better solution
+    best_routes = split_customer(best_routes, max_capacity, demands)
+    best_routes = cvrp_two_opt(best_routes, distances)
+    rabbit_energy = normal_cvrp(best_routes, distances, max_capacity, demands)
+    convergence_curve[t] = rabbit_energy
+
+    if t % 1 == 0:
+        print(
+            "At iteration "
+            + str(t)
+            + " the best fitness is "
+            + str(rabbit_energy)
+        )
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -210,7 +220,7 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = split_customer(best_routes, max_capacity, demands)
+    s.routes = best_routes
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
@@ -280,6 +290,5 @@ def generate_unstable_solution(s):
     return solution_done
 
 
-# TODO bikin per routes di 2-opt in untuk local optimum.
 def cvrp_two_opt(routes, distances):
-    pass
+    return [two_opt(r, distances) for r in routes]
