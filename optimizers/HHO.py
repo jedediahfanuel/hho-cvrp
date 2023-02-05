@@ -52,8 +52,8 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
-        fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
+        temp_routes = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
+        fitness = objf(temp_routes, distances, max_capacity, demands)
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
