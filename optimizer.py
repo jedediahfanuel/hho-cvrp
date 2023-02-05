@@ -77,7 +77,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
     Path(results_directory).mkdir(parents=True, exist_ok=True)
 
-    for it in range(0, iterations + 1):
+    for it in range(0, iterations):
         cnvg_header.append("Iter" + str(it + 1))
 
     for i in range(0, len(optimizer)):
@@ -143,12 +143,12 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     if export_convergence:
         rd = results_directory + "convergence-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        conv_plot.run(rd, optimizer, instances, iterations + 1)
+        conv_plot.run(rd, optimizer, instances, iterations)
 
     if export_boxplot:
         rd = results_directory + "box-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        box_plot.run(rd, optimizer, instances, iterations + 1)
+        box_plot.run(rd, optimizer, instances, iterations)
 
     if not flag:  # Failed to run at least one experiment
         print(
