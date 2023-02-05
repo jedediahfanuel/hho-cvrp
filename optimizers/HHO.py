@@ -52,7 +52,7 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        x_hawks[i, :] = two_opt(concat_depot(generate_stable_solution(x_hawks[i, :])), distances)[1:-1]
+        x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
         fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
 
         # Update the location of Rabbit
@@ -130,7 +130,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x1 = numpy.clip(x1, lb, ub)
 
-                    temp_routes = generate_stable_solution(x1)
+                    temp_routes = get_permutation(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                         best_routes = temp_routes
@@ -142,7 +142,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        temp_routes = generate_stable_solution(x2)
+                        temp_routes = get_permutation(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                             best_routes = temp_routes
@@ -154,7 +154,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    temp_routes = generate_stable_solution(x1)
+                    temp_routes = get_permutation(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                         best_routes = temp_routes
@@ -166,7 +166,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        temp_routes = generate_stable_solution(x2)
+                        temp_routes = get_permutation(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                             best_routes = temp_routes
@@ -178,7 +178,7 @@ def hho(objf, data, search_agent_no, max_iter):
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            temp_routes = generate_stable_solution(x_hawks[i, :])
+            temp_routes = get_permutation(x_hawks[i, :])
             fitness = objf(temp_routes, distances, max_capacity, demands)
 
             # Update the location of Rabbit
@@ -240,26 +240,6 @@ def levy(dim):
     return step
 
 
-def generate_stable_solution(s):
-    # range(lb, ub)
-    solution_set = set(list(range(1, len(s) + 1)))
-    solution_done = numpy.array([-1, ] * len(s))
-    solution_int = s.astype(int)
-    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
-
-    # Way 1: Stable, not random
-    for idx, city in enumerate(solution_int):
-        if solution_done[idx] != -1:
-            continue
-        if city in city_unique:
-            solution_done[idx] = city
-            city_unique = numpy.where(city_unique == city, -1, city_unique)
-        else:
-            list_cities_left = list(solution_set - set(city_unique) - set(solution_done))
-            solution_done[idx] = list_cities_left[0]
-    return solution_done
-
-
 def get_permutation(arr):
     """
     This function takes a 1-dimensional list or array as input and returns a list of indices that correspond to the
@@ -277,36 +257,6 @@ def get_permutation(arr):
         # Output: [0, 4, 2, 1, 3]
     """
     return [i for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
-
-
-def generate_unstable_solution(s):
-    # range(lb, ub)
-    solution_set = set(range(1, len(s) + 1))
-    solution_done = numpy.array([-1, ] * len(s))
-    solution_int = s.astype(int)
-    city_unique, city_counts = numpy.unique(solution_int, return_counts=True)
-
-    # Way 2: Random, not stable
-    count_dict = dict(zip(city_unique, city_counts))
-    for idx, city in enumerate(solution_int):
-        if solution_done[idx] != -1:
-            continue
-        if city in city_unique:
-            if city in (solution_set - set(solution_done)):
-                if count_dict[city] == 1:
-                    solution_done[idx] = city
-                else:
-                    idx_list_city = numpy.where(solution_int == city)[0]
-                    idx_city_keep = numpy.random.choice(idx_list_city)
-                    solution_done[idx_city_keep] = city
-                    if idx_city_keep != idx:
-                        solution_done[idx] = numpy.random.choice(
-                            list(solution_set - set(solution_done) - set(city_unique)))
-            else:
-                solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
-        else:
-            solution_done[idx] = numpy.random.choice(list(solution_set - set(solution_done) - set(city_unique)))
-    return solution_done
 
 
 def cvrp_two_opt(routes, distances):
