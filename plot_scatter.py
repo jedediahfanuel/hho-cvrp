@@ -29,7 +29,6 @@ def get_space(coordinates):
 
 def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf"), size=100, show_id=True):
     coordinates = np.array(s.coordinates)
-    plt.scatter(coordinates[:, 0].T, coordinates[:, 1].T, s=size, c='k')
 
     # add text annotation
     x_min, x_max, y_min, y_max, text_space_x, text_space_y, space_x, space_y = get_space(coordinates)
@@ -37,22 +36,21 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     if show_id:
         for city in range(0, s.dim):
             plt.text(coordinates[city][0] - text_space_x, coordinates[city][1] - text_space_y,
-                     f"{city}", size='xx-small', color='blue', weight='normal')
+                     f"{city}", size='xx-small', color='black', weight='normal')
 
-    count = 1
-    for r in s.routes:
+    for i, r in enumerate(s.routes):
+        point_x = np.array([coordinates[x, 0].T for x in r])
+        point_y = np.array([coordinates[y, 1].T for y in r])
         line_x = np.array([coordinates[x, 0] for x in r])
         line_y = np.array([coordinates[y, 1] for y in r])
 
-        # generate random color
-        rgb = tuple(np.random.uniform(0, 1, size=3))
+        # draw cities
+        plt.scatter(point_x, point_y, s=size)
 
         # draw lines
-        plt.plot(line_x, line_y, '-', label=str(f'route {count}'), lw=0.5, c=rgb)
+        plt.plot(line_x, line_y, '-', label=str(f'route {i + 1}'), lw=0.5)
         plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
                  fontdict={'size': 8, 'color': 'red'})
-
-        count += 1
 
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
