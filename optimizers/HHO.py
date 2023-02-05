@@ -44,6 +44,7 @@ def hho(objf, data, search_agent_no, max_iter):
 
     t = 0  # Loop counter
 
+    # TODO coba jangan local search di awal, biarin aja jelek dulu, baru nanti di exploitation
     for i in range(0, search_agent_no):
 
         # Check boundaries
@@ -51,7 +52,7 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
+        x_hawks[i, :] = get_permutation(x_hawks[i, :])
         fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
 
         # Update the location of Rabbit
@@ -127,11 +128,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = numpy.clip(x1, lb, ub)
-
-                    x1 = get_permutation(x1)
+                    x1 = two_opt(concat_depot(get_permutation(x1)), distances)[1:-1]
+                    # x1 = get_permutation(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
-                        # best_routes = temp_routes
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -140,10 +140,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        x2 = two_opt(concat_depot(get_permutation(x2)), distances)[1:-1]
+                        # x2 = get_permutation(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
-                            # best_routes = temp_routes
                 if (
                         r < 0.5 and abs(escaping_energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
@@ -152,10 +152,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    x1 = get_permutation(x1)
+                    x1 = two_opt(concat_depot(get_permutation(x1)), distances)[1:-1]
+                    # x1 = get_permutation(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
-                        # best_routes = temp_routes
                     else:  # Perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -164,10 +164,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        x2 = two_opt(concat_depot(get_permutation(x2)), distances)[1:-1]
+                        # x2 = get_permutation(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
-                            # best_routes = temp_routes
 
         for i in range(0, search_agent_no):
 
