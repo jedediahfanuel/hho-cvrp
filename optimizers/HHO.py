@@ -260,6 +260,25 @@ def generate_stable_solution(s):
     return solution_done
 
 
+def get_permutation(arr):
+    """
+    This function takes a 1-dimensional list or array as input and returns a list of indices that correspond to the
+    sorted elements in the original list or array. The returned list of indices can be used to access the sorted
+    elements in the original list or array. The sorting is performed in ascending order based on the values of the
+    elements in the list or array.
+
+    :param arr: 1-dimensional array-like
+    :return: 1-dimensional array-like
+
+    .. code-block:: python
+        # example
+        arr = [0.1, 0.5, 0.3, 0.7, 0.2]
+        print(get_permutation(arr))
+        # Output: [0, 4, 2, 1, 3]
+    """
+    return [i for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
+
+
 def generate_unstable_solution(s):
     # range(lb, ub)
     solution_set = set(range(1, len(s) + 1))
