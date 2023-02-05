@@ -11,7 +11,7 @@ import numpy
 
 
 def hho(objf, data, search_agent_no, max_iter):
-    lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
+    lb, ub, dim, distances = 0, 1, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
     best_routes, temp_routes = [], []
 
