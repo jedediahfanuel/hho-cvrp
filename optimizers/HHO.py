@@ -6,12 +6,13 @@ from optimizers.two_opt import two_opt
 from solution import Solution
 from benchmarks import split_customer
 from benchmarks import concat_depot
+from benchmarks import normal_cvrp
 
 import numpy
 
 
 def hho(objf, data, search_agent_no, max_iter):
-    lb, ub, dim, distances = 0, 1, data.n_customers, data.distances
+    lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
     best_routes, temp_routes = [], []
 
@@ -54,6 +55,7 @@ def hho(objf, data, search_agent_no, max_iter):
         # fitness of locations
         temp_routes = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
         fitness = objf(temp_routes, distances, max_capacity, demands)
+        x_hawks[i, :] = temp_routes
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
@@ -133,7 +135,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     temp_routes = get_permutation(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
-                        best_routes = temp_routes
+                        # best_routes = temp_routes
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -145,7 +147,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         temp_routes = get_permutation(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
-                            best_routes = temp_routes
+                            # best_routes = temp_routes
                 if (
                         r < 0.5 and abs(escaping_energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
@@ -157,7 +159,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     temp_routes = get_permutation(x1)
                     if objf(temp_routes, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
-                        best_routes = temp_routes
+                        # best_routes = temp_routes
                     else:  # Perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -169,7 +171,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         temp_routes = get_permutation(x2)
                         if objf(temp_routes, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
-                            best_routes = temp_routes
+                            # best_routes = temp_routes
 
         for i in range(0, search_agent_no):
 
@@ -257,7 +259,7 @@ def get_permutation(arr):
     [0, 4, 2, 1, 3]
 
     """
-    return [i for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
+    return [i + 1 for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
 
 
 def cvrp_two_opt(routes, distances):
