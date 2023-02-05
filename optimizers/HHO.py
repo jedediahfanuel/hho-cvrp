@@ -44,11 +44,9 @@ def hho(objf, data, search_agent_no, max_iter):
 
     t = 0  # Loop counter
 
-    # TODO coba jangan local search di awal, biarin aja jelek dulu, baru nanti di exploitation
     for i in range(0, search_agent_no):
 
         # Check boundaries
-
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
@@ -129,7 +127,6 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x1 = numpy.clip(x1, lb, ub)
                     x1 = two_opt(concat_depot(get_permutation(x1)), distances)[1:-1]
-                    # x1 = get_permutation(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
@@ -141,7 +138,6 @@ def hho(objf, data, search_agent_no, max_iter):
                         )
                         x2 = numpy.clip(x2, lb, ub)
                         x2 = two_opt(concat_depot(get_permutation(x2)), distances)[1:-1]
-                        # x2 = get_permutation(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                 if (
@@ -153,7 +149,6 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x1 = numpy.clip(x1, lb, ub)
                     x1 = two_opt(concat_depot(get_permutation(x1)), distances)[1:-1]
-                    # x1 = get_permutation(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
@@ -165,14 +160,12 @@ def hho(objf, data, search_agent_no, max_iter):
                         )
                         x2 = numpy.clip(x2, lb, ub)
                         x2 = two_opt(concat_depot(get_permutation(x2)), distances)[1:-1]
-                        # x2 = get_permutation(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
 
         for i in range(0, search_agent_no):
 
             # Check boundaries
-
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
@@ -193,19 +186,6 @@ def hho(objf, data, search_agent_no, max_iter):
                 + str(rabbit_energy)
             )
         t = t + 1
-
-    # Do the local search for a better solution
-    # best_routes = cvrp_two_opt(best_routes, distances)
-    # rabbit_energy = normal_cvrp(best_routes, distances, max_capacity, demands)
-    # convergence_curve[t] = rabbit_energy
-
-    # if t % 1 == 0:
-    #     print(
-    #         "At iteration "
-    #         + str(t)
-    #         + " the best fitness is "
-    #         + str(rabbit_energy)
-    #     )
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
