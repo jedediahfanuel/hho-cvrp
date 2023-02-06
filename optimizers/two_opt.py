@@ -1,8 +1,8 @@
 def two_opt(route, distances):
     """
-    Two opt is a heuristic method that swap two edges in a graph.
-    It iterates over the path and check if the swap is feasible,
-    then swap the sub-route, otherwise continue iterates.
+    Two opt is a heuristic method that inverse two edges in a graph.
+    It iterates over the path and check if the inverse is feasible,
+    then inverse the sub-route, otherwise continue iterates.
 
     :param route: one dimensional array-like
     :param distances: matrix of distances
@@ -18,15 +18,15 @@ def two_opt(route, distances):
                             + distances[route[i + 1]][route[j + 1]] + distances[route[i]][route[j]]
 
                 if len_delta < 0:
-                    route = swap(route, i, j)
+                    route = inverse(route, i, j)
                     improved = True
 
     return route
 
 
-def swap(r, i, j):
+def inverse(r, i, j):
     """
-    Swap two edges, or inverse the middle route.
+    Inverse two edges, or the middle route.
     example: i, j = 1, 4
     A - B - E - D - C - F - G - H - A
     A - B - C - D - E - F - G - H - A
