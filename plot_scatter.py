@@ -55,7 +55,7 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     plt.xlim((x_min - space_x, x_max + space_x))
     plt.ylim((y_min - space_y, y_max + space_y))
     plt.title(s.name + " " + str(s.best))
-    plt.legend(fontsize='xx-small')
+    plt.legend(fontsize='xx-small', bbox_to_anchor = (1, 0.5))
 
     Path(pathsave).mkdir(parents=True, exist_ok=True)
 
