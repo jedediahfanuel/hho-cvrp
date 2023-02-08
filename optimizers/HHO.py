@@ -61,7 +61,7 @@ def hho(objf, data, search_agent_no, max_iter):
             rabbit_location = x_hawks[i, :].copy()
 
     # Main loop
-    while t < max_iter:
+    while t < max_iter - 2:
         e1 = 2 * (1 - (t / max_iter))  # factor to show the decreasing energy of rabbit
 
         # Update the location of Harris' hawks
@@ -88,7 +88,7 @@ def hho(objf, data, search_agent_no, max_iter):
                 elif q < 0.5:
                     # perch on a random tall tree (random site inside group's home range)
                     x_hawks[i, :] = x_hawks.mean(0) - levy(dim) * (
-                        rabbit_location - x_hawks[i, :]
+                            rabbit_location - x_hawks[i, :]
                     )
 
             # -------- Exploitation phase -------------------
@@ -139,7 +139,7 @@ def hho(objf, data, search_agent_no, max_iter):
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            if t < max_iter - 1:
+            if t < max_iter - 3:
                 x_hawks[i, :] = get_permutation(x_hawks[i, :])
             else:
                 x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
@@ -160,8 +160,6 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
-    print(rabbit_location.astype(int))
-
     next_best = float("inf")
     the_best = []
     n_v = n_vehicle(data.name)
@@ -172,10 +170,28 @@ def hho(objf, data, search_agent_no, max_iter):
                 next_best = temp
                 the_best = plan
 
+    convergence_curve[t] = next_best
+    if t % 1 == 0:
+        print(
+            "At iteration "
+            + str(t)
+            + " the best fitness is "
+            + str(next_best)
+        )
+    t += 1
 
-    print("=============================================================")
-    print(f"Distance : {next_best}")
-    print(f"Route : {the_best}")
+    the_best = [two_opt(ru, distances) for ru in [concat_depot(t) for t in the_best]]
+    next_best = normal_cvrp(the_best, distances)
+
+    convergence_curve[t] = next_best
+    if t % 1 == 0:
+        print(
+            "At iteration "
+            + str(t)
+            + " the best fitness is "
+            + str(next_best)
+        )
+    t += 1
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -183,10 +199,11 @@ def hho(objf, data, search_agent_no, max_iter):
     s.convergence = convergence_curve
     s.optimizer = "HHO"
     s.objfname = objf.__name__
-    s.best = rabbit_energy
+    s.best = next_best
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
+    # s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
+    s.routes = the_best
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
