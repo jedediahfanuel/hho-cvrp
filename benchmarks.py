@@ -38,7 +38,7 @@ def cvrp(solution, distances, max_capacity, demands):
     return total
 
 
-def normal_cvrp(solution, distances, max_capacity, demands):
+def normal_cvrp(solution, distances):
     total = 0
     for r in solution:
         for i in range(len(r) - 1):
