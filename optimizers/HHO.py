@@ -77,13 +77,13 @@ def hho(objf, data, search_agent_no, max_iter):
                 q = random.random()
                 rand_hawk_index = math.floor(search_agent_no * random.random())
                 x_rand = x_hawks[rand_hawk_index, :]
-                if q < 0.5:
+                if q >= 0.5:
                     # perch based on other family members
                     x_hawks[i, :] = x_rand - random.random() * abs(
                         x_rand - 2 * random.random() * x_hawks[i, :]
                     )
 
-                elif q >= 0.5:
+                elif q < 0.5:
                     # perch on a random tall tree (random site inside group's home range)
                     x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
