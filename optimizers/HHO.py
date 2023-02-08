@@ -6,6 +6,8 @@ from optimizers.two_opt import two_opt
 from solution import Solution
 from benchmarks import split_customer
 from benchmarks import concat_depot
+from benchmarks import normal_cvrp
+from generate import n_vehicle
 
 import numpy
 
@@ -158,6 +160,23 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
+    print(rabbit_location.astype(int))
+
+    next_best = float("inf")
+    the_best = []
+    n_v = n_vehicle(data.name)
+    for plan in split_array(rabbit_location.astype(int), n_v):
+        if all(test_capacity(r, max_capacity, demands) for r in plan):
+            temp = normal_cvrp([concat_depot(r) for r in plan], distances)
+            if temp < next_best:
+                next_best = temp
+                the_best = plan
+
+
+    print("=============================================================")
+    print(f"Distance : {next_best}")
+    print(f"Route : {the_best}")
+
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.execution_time = timer_end - timer_start
@@ -213,3 +232,18 @@ def cvrp_two_opt(routes, distances):
 
 def cvrp_two_opt_no_depot(routes, distances):
     return [y for r in routes for y in two_opt(r, distances)[1:-1]]
+
+
+def split_array(arr, k):
+    if k == 1:
+        yield [arr]
+    elif k == len(arr):
+        yield [arr[i:i + 1] for i in range(len(arr))]
+    else:
+        for i in range(1, len(arr)):
+            for right in split_array(arr[i:], k - 1):
+                yield [arr[:i]] + right
+
+
+def test_capacity(route, max_capacity, demands):
+    return True if sum([demands[c] for c in route]) <= max_capacity else False
