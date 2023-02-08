@@ -81,14 +81,14 @@ def hho(objf, data, search_agent_no, max_iter):
                 x_rand = x_hawks[rand_hawk_index, :]
                 if q >= 0.5:
                     # perch based on other family members
-                    x_hawks[i, :] = x_rand + levy(dim) * abs(
-                        x_hawks.mean(0) - x_hawks[i, :]
+                    x_hawks[i, :] = x_rand - random.random() * abs(
+                        x_rand - 2 * random.random() * x_hawks[i, :]
                     )
 
                 elif q < 0.5:
                     # perch on a random tall tree (random site inside group's home range)
-                    x_hawks[i, :] = x_hawks.mean(0) - levy(dim) * (
-                            rabbit_location - x_hawks[i, :]
+                    x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
+                            (ub - lb) * random.random() + lb
                     )
 
             # -------- Exploitation phase -------------------
@@ -101,21 +101,30 @@ def hho(objf, data, search_agent_no, max_iter):
                 r = random.random()  # probability of each event
 
                 if (
-                        r >= 0.5
-                ):  # Hard soft besiege Eq. (6) in paper
-                    jump_strength = 2 * (1 - random.random())
+                        r >= 0.5 > abs(escaping_energy)
+                ):  # Hard besiege Eq. (6) in paper
+                    x_hawks[i, :] = rabbit_location - escaping_energy * abs(
+                        rabbit_location - x_hawks[i, :]
+                    )
+
+                if (
+                        r >= 0.5 and abs(escaping_energy) >= 0.5
+                ):  # Soft besiege Eq. (4) in paper
+                    jump_strength = 2 * (
+                            1 - random.random()
+                    )  # random jump strength of the rabbit
                     x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
                         jump_strength * rabbit_location - x_hawks[i, :]
-                    ) - (1 - escaping_energy) * abs(x_hawks[i, :])
+                    )
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
 
                 if (
-                        r < 0.5
-                ):  # Hard Soft besiege Eq. (10) in paper
+                        r < 0.5 <= abs(escaping_energy)
+                ):  # Soft besiege Eq. (10) in paper
                     # rabbit try to escape by many zigzag deceptive motions
                     jump_strength = 2 * (1 - random.random())
-                    x1 = rabbit_location - escaping_energy * levy(dim) * abs(
+                    x1 = rabbit_location - escaping_energy * abs(
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = numpy.clip(x1, lb, ub)
@@ -125,8 +134,31 @@ def hho(objf, data, search_agent_no, max_iter):
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
-                                - (1 - escaping_energy)
-                                * levy(dim) * abs(jump_strength * rabbit_location - x_hawks.mean(0))
+                                - escaping_energy
+                                * abs(jump_strength * rabbit_location - x_hawks[i, :])
+                                + numpy.multiply(numpy.random.randn(dim), levy(dim))
+                        )
+                        x2 = numpy.clip(x2, lb, ub)
+                        x2 = get_permutation(x2)
+                        if objf(x2, distances, max_capacity, demands) < fitness:
+                            x_hawks[i, :] = x2.copy()
+                if (
+                        r < 0.5 and abs(escaping_energy) < 0.5
+                ):  # Hard besiege Eq. (11) in paper
+                    jump_strength = 2 * (1 - random.random())
+                    x1 = rabbit_location - escaping_energy * abs(
+                        jump_strength * rabbit_location - x_hawks.mean(0)
+                    )
+                    x1 = numpy.clip(x1, lb, ub)
+                    x1 = get_permutation(x1)
+                    if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
+                        x_hawks[i, :] = x1.copy()
+                    else:  # Perform levy-based short rapid dives around the rabbit
+                        x2 = (
+                                rabbit_location
+                                - escaping_energy
+                                * abs(jump_strength * rabbit_location - x_hawks.mean(0))
+                                + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
                         x2 = get_permutation(x2)
