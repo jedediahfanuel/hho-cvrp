@@ -251,7 +251,7 @@ def get_permutation(arr):
     --------
     >>> ary = [0.1, 0.5, 0.3, 0.7, 0.2]
     >>> print(get_permutation(ary))
-    [0, 4, 2, 1, 3]
+    [1, 5, 3, 2, 4]
 
     """
     return [i + 1 for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
