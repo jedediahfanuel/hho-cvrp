@@ -195,6 +195,7 @@ def hho(objf, data, search_agent_no, max_iter):
                 x_hawks[i, :] = get_permutation(x_hawks[i, :])
             else:
                 x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
+
             fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
 
             # Update the location of Rabbit
@@ -212,24 +213,20 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
-    final_route = [two_opt(h, distances)
-                   for h in split_customer(rabbit_location.astype(int), max_capacity, demands)
-                   ]
-    # print(f"final : {final_route}")
+    final_route = []
+    for i in range(0, search_agent_no):
 
-    # print(rabbit_location)
-    #
-    # final_route = cvrp_two_opt_no_depot(
-    #     split_customer(rabbit_location.astype(int), max_capacity, demands), distances
-    # )
+        # fitness of locations
+        test_route = [two_opt(h, distances)
+                      for h in split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
+                      ]
+        fitness = normal_cvrp(test_route, distances)
 
-    # final_route = cvrp_two_opt_no_depot(
-    #     split_customer(rabbit_location.astype(int), max_capacity, demands),
-    #     distances
-    # )
-    # print(final_route)
-
-    rabbit_energy = normal_cvrp(final_route, distances)
+        # Update the location of Rabbit
+        if fitness < rabbit_energy:  # Change this to > for maximization problem
+            rabbit_energy = fitness
+            rabbit_location = x_hawks[i, :].copy()
+            final_route = test_route
 
     convergence_curve[t] = rabbit_energy
     if t % 1 == 0:
@@ -239,6 +236,7 @@ def hho(objf, data, search_agent_no, max_iter):
             + " the best fitness is "
             + str(rabbit_energy)
         )
+    t = t + 1
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
