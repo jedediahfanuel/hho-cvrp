@@ -62,6 +62,4 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
     for idx, ext in enumerate(exts):
         plt.savefig(f"{pathsave}/{filename}{ext}", bbox_inches='tight')
 
-    if platform.system() != "Linux":
-        plt.show()
     plt.close()
