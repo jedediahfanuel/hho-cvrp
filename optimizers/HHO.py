@@ -107,6 +107,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         rabbit_location - x_hawks[i, :]
                     )
 
+                    x_hawks[i, :] = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
+                    )
+
                 if (
                         r >= 0.5 and abs(escaping_energy) >= 0.5
                 ):  # Soft besiege Eq. (4) in paper
@@ -115,6 +119,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     )  # random jump strength of the rabbit
                     x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
                         jump_strength * rabbit_location - x_hawks[i, :]
+                    )
+
+                    x_hawks[i, :] = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
                     )
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
@@ -175,7 +183,14 @@ def hho(objf, data, search_agent_no, max_iter):
                 x_hawks[i, :] = get_permutation(x_hawks[i, :])
             else:
                 x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
-            fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
+
+                test_route = [two_opt(h, distances)
+                              for h in split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
+                              ]
+
+            fitness = objf(
+                x_hawks[i, :].astype(int), distances, max_capacity, demands
+            ) if t < max_iter - 1 else normal_cvrp(test_route, distances)
 
             # Update the location of Rabbit
             if fitness < rabbit_energy:  # Change this to > for maximization problem
@@ -234,8 +249,9 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = next_best
     s.best_individual = rabbit_location
     s.name = data.name
-    # s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
-    s.routes = the_best
+    s.routes = [two_opt(h, distances)
+                for h in split_customer(rabbit_location.astype(int), max_capacity, demands)
+                ]
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
@@ -281,17 +297,6 @@ def cvrp_two_opt(routes, distances):
 
 def cvrp_two_opt_no_depot(routes, distances):
     return [y for r in routes for y in two_opt(r, distances)[1:-1]]
-
-
-def split_array(arr, k):
-    if k == 1:
-        yield [arr]
-    elif k == len(arr):
-        yield [arr[i:i + 1] for i in range(len(arr))]
-    else:
-        for i in range(1, len(arr)):
-            for right in split_array(arr[i:], k - 1):
-                yield [arr[:i]] + right
 
 
 def test_capacity(route, max_capacity, demands):
