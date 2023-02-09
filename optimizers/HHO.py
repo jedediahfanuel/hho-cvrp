@@ -61,7 +61,7 @@ def hho(objf, data, search_agent_no, max_iter):
             rabbit_location = x_hawks[i, :].copy()
 
     # Main loop
-    while t < max_iter - 2:
+    while t < max_iter - 1:
         e1 = 2 * (1 - (t / max_iter))  # factor to show the decreasing energy of rabbit
 
         # Update the location of Harris' hawks
@@ -107,6 +107,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         rabbit_location - x_hawks[i, :]
                     )
 
+                    x_hawks[i, :] = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
+                    )
+
                 if (
                         r >= 0.5 and abs(escaping_energy) >= 0.5
                 ):  # Soft besiege Eq. (4) in paper
@@ -115,6 +119,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     )  # random jump strength of the rabbit
                     x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
                         jump_strength * rabbit_location - x_hawks[i, :]
+                    )
+
+                    x_hawks[i, :] = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
                     )
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
@@ -128,7 +136,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    x1 = get_permutation(x1)
+                    # x1 = get_permutation(x1)
+                    x1 = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x1), max_capacity, demands), distances
+                    )
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
@@ -139,7 +150,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        # x2 = get_permutation(x2)
+                        x2 = cvrp_two_opt_no_depot(
+                            split_customer(get_permutation(x2), max_capacity, demands), distances
+                        )
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                 if (
@@ -150,7 +164,10 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    x1 = get_permutation(x1)
+                    # x1 = get_permutation(x1)
+                    x1 = cvrp_two_opt_no_depot(
+                        split_customer(get_permutation(x1), max_capacity, demands), distances
+                    )
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
@@ -161,7 +178,10 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        # x2 = get_permutation(x2)
+                        x2 = cvrp_two_opt_no_depot(
+                            split_customer(get_permutation(x2), max_capacity, demands), distances
+                        )
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
 
@@ -171,7 +191,7 @@ def hho(objf, data, search_agent_no, max_iter):
             x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
-            if t < max_iter - 3:
+            if t < max_iter - 2:
                 x_hawks[i, :] = get_permutation(x_hawks[i, :])
             else:
                 x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
@@ -192,38 +212,33 @@ def hho(objf, data, search_agent_no, max_iter):
             )
         t = t + 1
 
-    next_best = float("inf")
-    the_best = []
-    n_v = n_vehicle(data.name)
-    for plan in split_array(rabbit_location.astype(int), n_v):
-        if all(test_capacity(r, max_capacity, demands) for r in plan):
-            temp = normal_cvrp([concat_depot(r) for r in plan], distances)
-            if temp < next_best:
-                next_best = temp
-                the_best = plan
+    final_route = [two_opt(h, distances)
+                   for h in split_customer(rabbit_location.astype(int), max_capacity, demands)
+                   ]
+    # print(f"final : {final_route}")
 
-    convergence_curve[t] = next_best
+    # print(rabbit_location)
+    #
+    # final_route = cvrp_two_opt_no_depot(
+    #     split_customer(rabbit_location.astype(int), max_capacity, demands), distances
+    # )
+
+    # final_route = cvrp_two_opt_no_depot(
+    #     split_customer(rabbit_location.astype(int), max_capacity, demands),
+    #     distances
+    # )
+    # print(final_route)
+
+    rabbit_energy = normal_cvrp(final_route, distances)
+
+    convergence_curve[t] = rabbit_energy
     if t % 1 == 0:
         print(
             "At iteration "
             + str(t)
             + " the best fitness is "
-            + str(next_best)
+            + str(rabbit_energy)
         )
-    t += 1
-
-    the_best = [two_opt(ru, distances) for ru in [concat_depot(t) for t in the_best]]
-    next_best = normal_cvrp(the_best, distances)
-
-    convergence_curve[t] = next_best
-    if t % 1 == 0:
-        print(
-            "At iteration "
-            + str(t)
-            + " the best fitness is "
-            + str(next_best)
-        )
-    t += 1
 
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
@@ -231,11 +246,10 @@ def hho(objf, data, search_agent_no, max_iter):
     s.convergence = convergence_curve
     s.optimizer = "HHO"
     s.objfname = objf.__name__
-    s.best = next_best
+    s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    # s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
-    s.routes = the_best
+    s.routes = final_route
     s.dim = data.dimension
     s.coordinates = data.coordinates
 
@@ -281,17 +295,6 @@ def cvrp_two_opt(routes, distances):
 
 def cvrp_two_opt_no_depot(routes, distances):
     return [y for r in routes for y in two_opt(r, distances)[1:-1]]
-
-
-def split_array(arr, k):
-    if k == 1:
-        yield [arr]
-    elif k == len(arr):
-        yield [arr[i:i + 1] for i in range(len(arr))]
-    else:
-        for i in range(1, len(arr)):
-            for right in split_array(arr[i:], k - 1):
-                yield [arr[:i]] + right
 
 
 def test_capacity(route, max_capacity, demands):
