@@ -51,7 +51,7 @@ def hho(objf, data, search_agent_no, max_iter):
     for i in range(0, search_agent_no):
 
         # Check boundaries
-        x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
+        # x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
         x_hawks[i, :] = random_key(x_hawks[i, :])
@@ -224,7 +224,7 @@ def hho(objf, data, search_agent_no, max_iter):
         for i in range(0, search_agent_no):
 
             # Check boundaries
-            x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
+            # x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
             # fitness of locations
             # if t < max_iter - 1:
