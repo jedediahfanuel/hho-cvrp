@@ -239,10 +239,11 @@ def levy(dim):
 
 def get_permutation(arr):
     """
-    This function takes a 1-dimensional list or array as input and returns a list of indices that correspond to the
-    sorted elements in the original list or array. The returned list of indices can be used to access the sorted
-    elements in the original list or array. The sorting is performed in ascending order based on the values of the
-    elements in the list or array.
+    This function takes a 1-dimensional list or array as input
+    and returns  a list of indices that correspond to the sorted
+    elements in the original list or array. The returned list of indices
+    can be used to access the sorted elements in the original list or array.
+    The sorting is performed in ascending order on the values of the elements.
 
     :param arr: 1-dimensional array-like
     :return: 1-dimensional array-like
