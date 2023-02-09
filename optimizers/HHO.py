@@ -23,11 +23,11 @@ def hho(objf, data, search_agent_no, max_iter):
     if not isinstance(lb, list):
         lb = [lb for _ in range(dim)]
         ub = [ub for _ in range(dim)]
-    lb = numpy.asarray(lb)
-    ub = numpy.asarray(ub)
+    lb = numpy.array(lb)
+    ub = numpy.array(ub)
 
     # Initialize the locations of Harris' hawks
-    x_hawks = numpy.asarray(
+    x_hawks = numpy.array(
         [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (search_agent_no, dim))]
     )
 
