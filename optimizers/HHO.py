@@ -1,6 +1,8 @@
 import time
 import random
 import math
+
+from optimizers.encoding import random_key
 from optimizers.two_opt import two_opt
 
 from solution import Solution
@@ -51,7 +53,7 @@ def hho(objf, data, search_agent_no, max_iter):
         x_hawks[i, :] = numpy.clip(x_hawks[i, :], lb, ub)
 
         # fitness of locations
-        x_hawks[i, :] = get_permutation(x_hawks[i, :])
+        x_hawks[i, :] = random_key(x_hawks[i, :])
         fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
 
         # Update the location of Rabbit
@@ -107,7 +109,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
 
                     x_hawks[i, :] = cvrp_two_opt_no_depot(
-                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
+                        split_customer(random_key(x_hawks[i, :].astype(int)), max_capacity, demands), distances
                     )
 
                 if (
@@ -121,7 +123,7 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
 
                     x_hawks[i, :] = cvrp_two_opt_no_depot(
-                        split_customer(get_permutation(x_hawks[i, :].astype(int)), max_capacity, demands), distances
+                        split_customer(random_key(x_hawks[i, :].astype(int)), max_capacity, demands), distances
                     )
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
@@ -135,7 +137,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    x1 = get_permutation(x1)
+                    x1 = random_key(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
@@ -146,7 +148,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        x2 = random_key(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                 if (
@@ -157,7 +159,7 @@ def hho(objf, data, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks.mean(0)
                     )
                     x1 = numpy.clip(x1, lb, ub)
-                    x1 = get_permutation(x1)
+                    x1 = random_key(x1)
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
@@ -168,7 +170,7 @@ def hho(objf, data, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = numpy.clip(x2, lb, ub)
-                        x2 = get_permutation(x2)
+                        x2 = random_key(x2)
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
 
@@ -179,9 +181,9 @@ def hho(objf, data, search_agent_no, max_iter):
 
             # fitness of locations
             if t < max_iter - 1:
-                x_hawks[i, :] = get_permutation(x_hawks[i, :])
+                x_hawks[i, :] = random_key(x_hawks[i, :])
             else:
-                x_hawks[i, :] = two_opt(concat_depot(get_permutation(x_hawks[i, :])), distances)[1:-1]
+                x_hawks[i, :] = two_opt(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
 
                 test_route = [two_opt(h, distances)
                               for h in split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
@@ -235,26 +237,6 @@ def levy(dim):
     zz = numpy.power(numpy.absolute(v), (1 / beta))
     step = numpy.divide(u, zz)
     return step
-
-
-def get_permutation(arr):
-    """
-    This function takes a 1-dimensional list or array as input and returns a list of indices that correspond to the
-    sorted elements in the original list or array. The returned list of indices can be used to access the sorted
-    elements in the original list or array. The sorting is performed in ascending order based on the values of the
-    elements in the list or array.
-
-    :param arr: 1-dimensional array-like
-    :return: 1-dimensional array-like
-
-    Examples
-    --------
-    >>> ary = [0.1, 0.5, 0.3, 0.7, 0.2]
-    >>> print(get_permutation(ary))
-    [0, 4, 2, 1, 3]
-
-    """
-    return [i + 1 for i, x in sorted(enumerate(arr), key=lambda x: x[1])]
 
 
 def cvrp_two_opt(routes, distances):
