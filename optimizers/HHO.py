@@ -88,8 +88,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     # )
 
                     x_hawks[i, :], _ = pmx(
-                        random_key(x_rand.astype(int)),
-                        random_key(x_hawks[i, :].astype(int))
+                        random_key((x_rand - random.random()).astype(int)),
+                        random_key(abs(
+                            x_rand - 2 * random.random() * x_hawks[i, :]
+                        ).astype(int))
                     )
 
                 elif q < 0.5:
@@ -99,8 +101,8 @@ def hho(objf, data, search_agent_no, max_iter):
                     # )
 
                     x_hawks[i, :], _ = pmx(
-                        random_key(rabbit_location.astype(int)),
-                        random_key(x_hawks.mean(0).astype(int))
+                        random_key(((rabbit_location - x_hawks.mean(0)) - random.random()).astype(int)),
+                        random_key(((ub - lb) * random.random() + lb).astype(int))
                     )
 
             # -------- Exploitation phase -------------------
