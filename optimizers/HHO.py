@@ -7,7 +7,6 @@ from solution import Solution
 from benchmarks import split_customer
 from benchmarks import concat_depot
 from benchmarks import normal_cvrp
-from generate import n_vehicle
 
 import numpy
 
@@ -264,7 +263,3 @@ def cvrp_two_opt(routes, distances):
 
 def cvrp_two_opt_no_depot(routes, distances):
     return [y for r in routes for y in two_opt(r, distances)[1:-1]]
-
-
-def test_capacity(route, max_capacity, demands):
-    return True if sum([demands[c] for c in route]) <= max_capacity else False
