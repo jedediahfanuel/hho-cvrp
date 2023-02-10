@@ -2,7 +2,7 @@ import cvrplib
 import random
 import unittest
 
-from optimizers.two_opt import two_opt
+from optimizers.local import two_opt
 
 
 class TwoOptCase(unittest.TestCase):

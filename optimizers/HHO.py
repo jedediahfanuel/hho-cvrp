@@ -4,7 +4,7 @@ import math
 
 from optimizers.crossover import pmx
 from optimizers.encoding import random_key
-from optimizers.two_opt import two_opt
+from optimizers.local import two_opt
 
 from solution import Solution
 from benchmarks import split_customer
