@@ -107,15 +107,15 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                         writer.writerow(a)
                     out.close()
 
-                if export_scatter:
-                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
-                    Path(rd).mkdir(parents=True, exist_ok=True)
-                    scatter_plot.run(x, rd, k)
-
                 if export_route:
                     rd = results_directory + "routes-" + x.optimizer + "/" + x.name + "/"
                     Path(rd).mkdir(parents=True, exist_ok=True)
                     write_routes.run(x, rd, k)
+
+                if export_scatter:
+                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
+                    Path(rd).mkdir(parents=True, exist_ok=True)
+                    scatter_plot.run(x, rd, k)
 
             if export:
                 export_to_file = results_directory + "experiment.csv"
