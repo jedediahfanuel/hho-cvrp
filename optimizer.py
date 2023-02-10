@@ -113,9 +113,11 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     write_routes.run(x, rd, k)
 
                 if export_scatter:
-                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + "/"
+                    close = "/" if x.coordinates is not None else "/None"
+                    rd = results_directory + "scatter-plot-" + x.optimizer + "/" + x.name + close
                     Path(rd).mkdir(parents=True, exist_ok=True)
-                    scatter_plot.run(x, rd, k)
+
+                    scatter_plot.run(x, rd, k) if x.coordinates is not None else ()
 
             if export:
                 export_to_file = results_directory + "experiment.csv"
