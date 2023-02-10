@@ -1,6 +1,29 @@
 import random
 
 
+def insertion(r):
+    """
+    Perform insertion sort of two points
+    Where i and j are randomly picked from
+    zero to the length of the input list.
+
+    :param r: one dimensional array-like
+    :return: one dimensional array-like after swap mutation
+
+    Examples
+    --------
+    >>> i, j = 2, 5
+    >>> A - B - F - E - D - C - G - H - A
+    >>>         |           |
+    >>>         |           |
+    >>> A - B - C - F - E - D - G - H - A
+    """
+    i, j = random_indices(len(r))
+
+    r[i], r[i+1:j+1] = r[j], r[i:j]
+    return r
+
+
 def inverse(r):
     """
     Inverse two edges, or the middle route.
