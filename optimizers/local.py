@@ -43,30 +43,32 @@ def inverse(r, i, j):
     return r
 
 
-# def two_opt_swap(route, distances):
-#     """
-#     Two opt is a heuristic method that swap two node in a graph.
-#     It iterates over the path and check if the swap is feasible,
-#     then swap the two node, otherwise continue iterates.
-#
-#     :param route: one dimensional array-like
-#     :param distances: matrix of distances
-#     :return: the array-like that have been swapped
-#     """
-#     improved = True
-#     while improved:
-#         improved = False
-#
-#         for i in range(1, len(route)):
-#             for j in range(i + 1, len(route) - 1):
-#                 len_delta = - distances[route[i]][route[i + 1]] - distances[route[j]][route[j + 1]] \
-#                             + distances[route[i + 1]][route[j + 1]] + distances[route[i]][route[j]]
-#
-#                 if len_delta < 0:
-#                     route = swap(route, i, j)
-#                     improved = True
-#
-#     return route
+def two_opt_swap(route, distances):
+    """
+    Two opt is a heuristic method that swap two node in a graph.
+    It iterates over the path and check if the swap is feasible,
+    then swap the two node, otherwise continue iterates.
+
+    :param route: one dimensional array-like
+    :param distances: matrix of distances
+    :return: the array-like that have been swapped
+    """
+    improved = True
+    while improved:
+        improved = False
+
+        for i in range(1, len(route)):
+            for j in range(i + 1, len(route) - 1):
+                len_delta = - distances[route[i - 1]][route[i]] - distances[route[i]][route[i + 1]] \
+                            - distances[route[j - 1]][route[i]] - distances[route[j]][route[j + 1]] \
+                            + distances[route[i - 1]][route[j]] + distances[route[j]][route[i + 1]] \
+                            + distances[route[j - 1]][route[i]] + distances[route[i]][route[j + 1]]
+
+                if len_delta < 0:
+                    route = swap(route, i, j)
+                    improved = True
+
+    return route
 
 
 def swap(r, i, j):
