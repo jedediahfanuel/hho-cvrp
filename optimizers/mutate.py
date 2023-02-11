@@ -20,7 +20,7 @@ def insertion(r):
     """
     i, j = random_indices(len(r))
 
-    r[i], r[i+1:j+1] = r[j], r[i:j]
+    r[i+1:j+1], r[i] = r[i:j], r[j]
     return r
 
 
