@@ -4,7 +4,7 @@ import math
 
 from optimizers.crossover import pmx
 from optimizers.encoding import random_key
-from optimizers.local import two_opt
+from optimizers.local import two_opt_inverse
 import optimizers.mutate as mutate
 
 from solution import Solution
@@ -229,9 +229,9 @@ def hho(objf, data, search_agent_no, max_iter):
             if t < max_iter - 1:
                 x_hawks[i, :] = random_key(x_hawks[i, :])
             else:
-                # x_hawks[i, :] = two_opt(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
+                # x_hawks[i, :] = two_opt_inverse(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
 
-                test_route = [two_opt(h, distances)
+                test_route = [two_opt_inverse(h, distances)
                               for h in split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
                               ]
 
@@ -262,7 +262,7 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = [two_opt(h, distances)
+    s.routes = [two_opt_inverse(h, distances)
                 for h in split_customer(rabbit_location.astype(int), max_capacity, demands)
                 ]
     # s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
@@ -286,8 +286,8 @@ def levy(dim):
 
 
 def cvrp_two_opt(routes, distances):
-    return [two_opt(r, distances) for r in routes]
+    return [two_opt_inverse(r, distances) for r in routes]
 
 
 def cvrp_two_opt_no_depot(routes, distances):
-    return [y for r in routes for y in two_opt(r, distances)[1:-1]]
+    return [y for r in routes for y in two_opt_inverse(r, distances)[1:-1]]
