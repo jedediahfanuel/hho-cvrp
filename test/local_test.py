@@ -2,7 +2,7 @@ import cvrplib
 import random
 import unittest
 
-from optimizers.local import two_opt
+from optimizers.local import two_opt_inverse
 
 
 class TwoOptCase(unittest.TestCase):
@@ -11,7 +11,7 @@ class TwoOptCase(unittest.TestCase):
 
     def test_two_opt_0(self):
         self.assertIn(
-            two_opt(
+            two_opt_inverse(
                 [0] + random.sample(self.sol.routes[0], len(self.sol.routes[0])) + [0],
                 self.instance.distances
             ),
@@ -23,7 +23,7 @@ class TwoOptCase(unittest.TestCase):
 
     def test_two_opt_1(self):
         self.assertIn(
-            two_opt(
+            two_opt_inverse(
                 [0] + random.sample(self.sol.routes[1], len(self.sol.routes[1])) + [0],
                 self.instance.distances
             ),
@@ -35,7 +35,7 @@ class TwoOptCase(unittest.TestCase):
 
     def test_two_opt_2(self):
         self.assertIn(
-            two_opt(
+            two_opt_inverse(
                 [0] + random.sample(self.sol.routes[2], len(self.sol.routes[2])) + [0],
                 self.instance.distances
             ),
@@ -47,7 +47,7 @@ class TwoOptCase(unittest.TestCase):
 
     def test_two_opt_3(self):
         self.assertIn(
-            two_opt(
+            two_opt_inverse(
                 [0] + random.sample(self.sol.routes[3], len(self.sol.routes[3])) + [0],
                 self.instance.distances
             ),
@@ -59,7 +59,7 @@ class TwoOptCase(unittest.TestCase):
 
     def test_two_opt_4(self):
         self.assertIn(
-            two_opt(
+            two_opt_inverse(
                 [0] + random.sample(self.sol.routes[4], len(self.sol.routes[4])) + [0],
                 self.instance.distances
             ),
