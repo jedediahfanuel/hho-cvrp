@@ -61,10 +61,10 @@ def two_opt_inverse(route, distances):
     while improved:
         improved = False
 
-        for i in range(len(route) - 2):
-            for j in range(i + 2, len(route) - 1):
-                len_delta = - distances[route[i]][route[i + 1]] - distances[route[j]][route[j + 1]] \
-                            + distances[route[i + 1]][route[j + 1]] + distances[route[i]][route[j]]
+        for i in range(1, len(route) - 2):
+            for j in range(i + 1, len(route) - 1):
+                len_delta = - distances[route[i - 1]][route[i]] - distances[route[j]][route[j + 1]] \
+                            + distances[route[i - 1]][route[j]] + distances[route[i]][route[j + 1]]
 
                 if len_delta < 0:
                     route = inverse(route, i, j)
@@ -88,7 +88,7 @@ def inverse(r, i, j):
     >>> A - B - E - D - C - F - G - H - A
     >>> A - B - C - D - E - F - G - H - A
     """
-    r[i + 1:j + 1] = r[j:i:-1]
+    r[i:j + 1] = r[j:i-1:-1]
     return r
 
 
