@@ -59,10 +59,14 @@ def two_opt_swap(route, distances):
 
         for i in range(1, len(route)):
             for j in range(i + 1, len(route) - 1):
-                len_delta = - distances[route[i - 1]][route[i]] - distances[route[i]][route[i + 1]] \
-                            - distances[route[j - 1]][route[j]] - distances[route[j]][route[j + 1]] \
-                            + distances[route[i - 1]][route[j]] + distances[route[j]][route[i + 1]] \
-                            + distances[route[j - 1]][route[i]] + distances[route[i]][route[j + 1]]
+                if i + 1 == j:
+                    len_delta = - distances[route[i - 1]][route[i]] - distances[route[j]][route[j + 1]] \
+                                + distances[route[i - 1]][route[j]] + distances[route[i]][route[j + 1]]
+                else:
+                    len_delta = - distances[route[i - 1]][route[i]] - distances[route[i]][route[i + 1]] \
+                                - distances[route[j - 1]][route[j]] - distances[route[j]][route[j + 1]] \
+                                + distances[route[i - 1]][route[j]] + distances[route[j]][route[i + 1]] \
+                                + distances[route[j - 1]][route[i]] + distances[route[i]][route[j + 1]]
 
                 if len_delta < 0:
                     route = swap(route, i, j)
