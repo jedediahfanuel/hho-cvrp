@@ -4,7 +4,9 @@ import math
 
 from optimizers.crossover import pmx
 from optimizers.encoding import random_key
-from optimizers.local import two_opt
+from optimizers.local import two_opt_inverse
+from optimizers.local import two_opt_insertion
+from optimizers.local import two_opt_swap
 import optimizers.mutate as mutate
 
 from solution import Solution
@@ -18,6 +20,7 @@ import numpy
 def hho(objf, data, search_agent_no, max_iter):
     lb, ub, dim, distances = 1, data.dimension - 0.01, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
+    best_route = None
 
     # initialize the location and Energy of the rabbit
     rabbit_location = numpy.zeros(dim)
@@ -102,8 +105,8 @@ def hho(objf, data, search_agent_no, max_iter):
                     )
                     x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
                     # x_hawks[i, :], _ = pmx(
-                    #     random_key(((rabbit_location - x_hawks.mean(0)) - random.random()).astype(int)),
-                    #     random_key(((ub - lb) * random.random() + lb).astype(int))
+                    #     random_key(two_opt_inverse(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]),
+                    #     random_key(x_hawks[i, :].astype(int))
                     # )
 
             # -------- Exploitation phase -------------------
@@ -165,9 +168,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     # x1 = numpy.clip(x1, lb, ub)
                     # x1 = random_key(x1)
                     x1 = mutate.swap(random_key(x1))
+                    # x1 = two_opt_inverse(concat_depot(random_key(x1)), distances)[1:-1]
                     # x1, _ = pmx(
-                    #     random_key(x1.astype(int)),
-                    #     random_key(x_hawks[i, :].astype(int))
+                    #     random_key(two_opt_inverse(concat_depot(random_key(x1)), distances)[1:-1]),
+                    #     random_key(rabbit_location)
                     # )
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
@@ -181,10 +185,11 @@ def hho(objf, data, search_agent_no, max_iter):
                         # x2 = numpy.clip(x2, lb, ub)
                         # x2 = random_key(x2)
                         # x2 = mutate.swap(random_key(x2))
-                        x2, _ = pmx(
-                            random_key(x2.astype(int)),
-                            random_key(x_hawks[i, :].astype(int))
-                        )
+                        x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
+                        # x2, _ = pmx(
+                        #     random_key(two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]),
+                        #     random_key(rabbit_location)
+                        # )
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
                 if (
@@ -197,9 +202,10 @@ def hho(objf, data, search_agent_no, max_iter):
                     # x1 = numpy.clip(x1, lb, ub)
                     # x1 = random_key(x1)
                     x1 = mutate.swap(random_key(x1))
+                    # x1 = two_opt_inverse(concat_depot(random_key(x1)), distances)[1:-1]
                     # x1, _ = pmx(
-                    #     random_key(x1.astype(int)),
-                    #     random_key(x_hawks[i, :].astype(int))
+                    #     random_key(two_opt_inverse(concat_depot(random_key(x1)), distances)[1:-1]),
+                    #     random_key(rabbit_location)
                     # )
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
@@ -212,11 +218,12 @@ def hho(objf, data, search_agent_no, max_iter):
                         )
                         # x2 = numpy.clip(x2, lb, ub)
                         # x2 = random_key(x2)
-                        # x2 = mutate.swap(random_key(x2))
-                        x2, _ = pmx(
-                            random_key(x2.astype(int)),
-                            random_key(x_hawks[i, :].astype(int))
-                        )
+                        x2 = mutate.swap(random_key(x2))
+                        # x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
+                        # x2, _ = pmx(
+                        #     random_key(two_opt_insertion(concat_depot(random_key(x2)), distances)[1:-1]),
+                        #     random_key(rabbit_location)
+                        # )
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
 
@@ -229,11 +236,11 @@ def hho(objf, data, search_agent_no, max_iter):
             if t < max_iter - 1:
                 x_hawks[i, :] = random_key(x_hawks[i, :])
             else:
-                # x_hawks[i, :] = two_opt(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
+                x_hawks[i, :] = two_opt_inverse(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
 
-                test_route = [two_opt(h, distances)
-                              for h in split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
-                              ]
+                test_route = split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
+                test_route = cvrp_inverse(test_route, distances)
+                test_route = cvrp_insertion(test_route, distances)
 
             fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands
             ) if t < max_iter - 1 else normal_cvrp(test_route, distances)
@@ -242,6 +249,9 @@ def hho(objf, data, search_agent_no, max_iter):
             if fitness < rabbit_energy:  # Change this to > for maximization problem
                 rabbit_energy = fitness
                 rabbit_location = x_hawks[i, :].copy()
+
+                if t == max_iter - 1:
+                    best_route = test_route
 
         convergence_curve[t] = rabbit_energy
         if t % 1 == 0:
@@ -262,9 +272,8 @@ def hho(objf, data, search_agent_no, max_iter):
     s.best = rabbit_energy
     s.best_individual = rabbit_location
     s.name = data.name
-    s.routes = [two_opt(h, distances)
-                for h in split_customer(rabbit_location.astype(int), max_capacity, demands)
-                ]
+    s.routes = best_route if best_route is not None else split_customer(
+        rabbit_location.astype(int), max_capacity, demands)
     # s.routes = split_customer(rabbit_location.astype(int), max_capacity, demands)
     s.dim = data.dimension
     s.coordinates = data.coordinates
@@ -285,9 +294,17 @@ def levy(dim):
     return step
 
 
-def cvrp_two_opt(routes, distances):
-    return [two_opt(r, distances) for r in routes]
+def cvrp_inverse(routes, distances):
+    return [two_opt_inverse(r, distances) for r in routes]
+
+
+def cvrp_insertion(routes, distances):
+    return [two_opt_insertion(r, distances) for r in routes]
+
+
+def cvrp_swap(routes, distances):
+    return [two_opt_swap(r, distances) for r in routes]
 
 
 def cvrp_two_opt_no_depot(routes, distances):
-    return [y for r in routes for y in two_opt(r, distances)[1:-1]]
+    return [y for r in routes for y in two_opt_inverse(r, distances)[1:-1]]
