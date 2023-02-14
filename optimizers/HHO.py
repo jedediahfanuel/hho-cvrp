@@ -16,19 +16,20 @@ from benchmarks import normal_cvrp
 import numpy
 
 
-def hho(objf, data, search_agent_no, max_iter):
+def hho(objf, data, sol, search_agent_no, max_iter):
     """
     This function is Harris Hawks Optimization for CVRP.
 
     :param objf: an objective function (check benchmarks.py)
-    :param data: an instance downloaded from cvrplib
+    :param data: an instance class downloaded from cvrplib
+    :param sol: a solution class downloaded from cvrplib
     :param search_agent_no: number of hawks
     :param max_iter: maximum iteration before it stopped
     :return:
     """
     lb, ub, dim, distances = 1, data.n_customers, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
-    best_route = None
+    best_route, bks = None, sol.cost
 
     # initialize the location and Energy of the rabbit
     rabbit_location = numpy.zeros(dim)
@@ -186,7 +187,10 @@ def hho(objf, data, search_agent_no, max_iter):
             if t < max_iter - 1:
                 x_hawks[i, :] = random_key(x_hawks[i, :])
             else:
-                x_hawks[i, :] = two_opt_inverse(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
+                if rabbit_energy > bks:
+                    x_hawks[i, :] = two_opt_inverse(
+                        concat_depot(random_key(x_hawks[i, :])), distances
+                    )[1:-1]
 
                 test_route = split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
                 test_route = cvrp_inverse(test_route, distances)

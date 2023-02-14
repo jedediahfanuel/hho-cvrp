@@ -4,12 +4,12 @@ import cvrplib
 
 def get_function_details(a):
     # Download instances
-    instance = cvrplib.download(a)
+    instance, solution = cvrplib.download(a, solution=True)
 
-    # [name, lb, ub, dim]
+    # [name, instance, solution]
     param = {
         # dimensi = banyaknya customer
-        "cvrp": ["cvrp", instance],
+        "cvrp": ["cvrp", instance, solution],
     }
     return param.get("cvrp", "nothing")
 
