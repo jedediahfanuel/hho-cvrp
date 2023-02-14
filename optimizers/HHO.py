@@ -17,6 +17,15 @@ import numpy
 
 
 def hho(objf, data, search_agent_no, max_iter):
+    """
+    This function is Harris Hawks Optimization for CVRP.
+
+    :param objf: an objective function (check benchmarks.py)
+    :param data: an instance downloaded from cvrplib
+    :param search_agent_no: number of hawks
+    :param max_iter: maximum iteration before it stopped
+    :return:
+    """
     lb, ub, dim, distances = 1, data.n_customers, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
     best_route = None
@@ -222,6 +231,12 @@ def hho(objf, data, search_agent_no, max_iter):
 
 
 def levy(dim):
+    """
+    This function is a Lévy flight function.
+
+    :param dim: integer of problem dimension
+    :return: value of Lévy flight
+    """
     beta = 1.5
     sigma = (
                     math.gamma(1 + beta) * math.sin(math.pi * beta / 2)
@@ -234,13 +249,37 @@ def levy(dim):
     return step
 
 
-def cvrp_inverse(routes, distances):
-    return [two_opt_inverse(r, distances) for r in routes]
-
-
 def cvrp_insertion(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using insertion 2-opt.
+
+    :param routes: list of routes
+    :param distances: distance matrix
+    :return: list of routes after insertion 2-opt
+    """
     return [two_opt_insertion(r, distances) for r in routes]
 
 
+def cvrp_inverse(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using inverse 2-opt.
+
+    :param routes: list of routes
+    :param distances: distance matrix
+    :return: list of routes after inverse 2-opt
+    """
+    return [two_opt_inverse(r, distances) for r in routes]
+
+
 def cvrp_swap(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using swap 2-opt.
+
+    :param routes: list of routes
+    :param distances: distance matrix
+    :return: list of routes after swap 2-opt
+    """
     return [two_opt_swap(r, distances) for r in routes]
