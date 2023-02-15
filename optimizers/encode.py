@@ -1,4 +1,4 @@
-def random_key(arr):
+def random_key_original(arr):
     """
     Return a list of indices that correspond to the sorted elements in the input list.
 
@@ -12,14 +12,14 @@ def random_key(arr):
     Examples
     --------
     >>> ary = [0.1, 0.5, 0.3, 0.7, 0.2]
-    >>> print(random_key(ary))
+    >>> print(random_key_original(ary))
     [1, 5, 3, 2, 4]
 
     """
     return [i + 1 for i, _ in sorted(enumerate(arr), key=lambda x: x[1])]
 
 
-def random_key_original(arr):
+def random_key(arr):
     """
     Return a list of indices that correspond to the sorted elements in the original sequence.
 
@@ -33,7 +33,7 @@ def random_key_original(arr):
     Examples
     --------
     >>> ary = [0.1, 0.5, 0.3, 0.7, 0.2]
-    >>> print(random_key(ary))
+    >>> print(random_key_original(ary))
     [1, 4, 3, 5, 2]
 
     """
