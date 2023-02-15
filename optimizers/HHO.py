@@ -103,7 +103,6 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
-                    x_hawks[i, :] = two_opt_inverse(concat_depot(random_key(x_hawks[i, :])), distances)[1:-1]
                     x_hawks[i, :] = mutate.inverse(random_key(x_hawks[i, :]))
 
             # -------- Exploitation phase -------------------
@@ -156,7 +155,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = mutate.insertion(random_key(x2))
-                        # x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
+                        x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
 
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
