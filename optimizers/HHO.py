@@ -2,6 +2,7 @@ import time
 import random
 import math
 
+from optimizers.crossover import pmx
 from optimizers.encode import random_key
 from optimizers.local import two_opt_inverse
 from optimizers.local import two_opt_insertion
@@ -144,6 +145,10 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = mutate.swap(random_key(x1))
+                    x1, _ = pmx(
+                        random_key(rabbit_location),
+                        random_key(x1)
+                    )
 
                     if objf(x1, distances, max_capacity, demands) < fitness:  # improved move?
                         x_hawks[i, :] = x1.copy()
