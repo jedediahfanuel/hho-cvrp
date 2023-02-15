@@ -32,6 +32,16 @@ class CvrpTest(unittest.TestCase):
             )
         )
 
+    def test_e_n23_k3(self):
+        data, sol = cvrplib.download("E-n23-k3", solution=True)
+        self.assertEqual(
+            sol.cost,
+            benchmarks.normal_cvrp(
+                [[0] + route + [0] for route in sol.routes],
+                data.distances
+            )
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
