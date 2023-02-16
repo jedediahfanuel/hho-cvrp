@@ -145,7 +145,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = mutate.swap(random_key(x1))
-                    x1, _ = pmx(
+                    _, x1 = pmx(
                         random_key(rabbit_location),
                         random_key(x1)
                     )
@@ -159,8 +159,8 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                                 * abs(jump_strength * rabbit_location - x_hawks[i, :])
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
-                        x2 = mutate.insertion(random_key(x2))
                         x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
+                        x2 = mutate.insertion(random_key(x2))
 
                         if objf(x2, distances, max_capacity, demands) < fitness:
                             x_hawks[i, :] = x2.copy()
