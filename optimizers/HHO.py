@@ -223,6 +223,10 @@ def hho(objf, data, sol, search_agent_no, max_iter):
             )
         t = t + 1
 
+        if rabbit_energy <= bks:
+            convergence_curve = [rabbit_energy if conv == 0 else conv for conv in convergence_curve]
+            break
+
     timer_end = time.time()
     s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
     s.execution_time = timer_end - timer_start
