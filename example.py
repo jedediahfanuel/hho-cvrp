@@ -8,7 +8,7 @@ instances = ["E-n22-k4"]
 
 # Select number of repetitions for each experiment.
 # To obtain meaningful statistical results, usually 30 independent runs are executed for each algorithm.
-num_of_runs = 1
+num_of_runs = 5
 
 # Select general parameters for all optimizers (population size, number of iterations) ....
 params = {
