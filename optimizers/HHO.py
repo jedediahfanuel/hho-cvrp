@@ -147,13 +147,19 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
                     x1 = mutate.swap(random_key(x1))
-                    _, x1 = pmx(
+                    x1, x2 = pmx(
                         random_key(rabbit_location),
                         random_key(x1)
                     )
 
-                    if objf(x1, distances, max_capacity, demands) < fs[i]:  # improved move?
-                        x_hawks[i, :] = x1.copy()
+                    xo1 = objf(x1, distances, max_capacity, demands)
+                    xo2 = objf(x2, distances, max_capacity, demands)
+
+                    yobjf = xo1 if xo1 < xo2 else xo2
+                    y = x1 if xo1 < xo2 else x2
+
+                    if yobjf < fs[i]:  # improved move?
+                        x_hawks[i, :] = y.copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
