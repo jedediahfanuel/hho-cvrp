@@ -17,4 +17,3 @@ def run(s: Solution, results_directory, k: int):
 
         out.write(str(f"Cost {s.best}"))
     out.close()
-
