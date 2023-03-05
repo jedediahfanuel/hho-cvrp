@@ -1,5 +1,8 @@
 import tkinter as tk
 import cvrplib
+import configure
+
+running = False
 
 
 class IntegerInputField(tk.Entry):
@@ -27,20 +30,30 @@ def validate_inputs(*args):
             and nruns_input.get().isdigit() \
             and int(iteration_input.get()) >= 1 \
             and int(population_input.get()) >= 1 \
-            and int(nruns_input.get()) >= 1\
-            and items_listbox.curselection():
+            and int(nruns_input.get()) >= 1 \
+            and items_listbox.curselection() \
+            and not running:
         submit_button.config(state='normal')
     else:
         submit_button.config(state='disabled')
 
 
 def submit_button_callback():
+    # disable submit button
+    global running
+    running = True
+    submit_button.config(state='disabled')
+
     # Handle input values
-    print(f"Iteration: {iteration_input.get()}")
-    print(f"Population: {population_input.get()}")
-    print(f"Num of run: {nruns_input.get()}")
-    selected_items = [items_listbox.get(idx) for idx in items_listbox.curselection()]
-    print(f"Selected Items: {selected_items}")
+    configure.conf(
+        int(nruns_input.get()),
+        int(population_input.get()),
+        int(iteration_input.get()),
+        [items_listbox.get(idx) for idx in items_listbox.curselection()]
+    )
+
+    running = False
+    submit_button.config(state='normal')
 
 
 # Create main window
@@ -49,17 +62,20 @@ root.title("HHO-CVRP")
 root.configure(bg="white")
 
 # Create input fields
-iteration_label = tk.Label(root, text="Iteration:", bg="white")
-iteration_input = IntegerInputField(root)
-iteration_input.bind('<KeyRelease>', validate_inputs)
+nruns_label = tk.Label(root, text="Num of run:", bg="white")
+nruns_input = IntegerInputField(root)
+nruns_input.insert(0, 5)
+nruns_input.bind('<KeyRelease>', validate_inputs)
 
 population_label = tk.Label(root, text="Population:", bg="white")
 population_input = IntegerInputField(root)
+population_input.insert(0, 20)
 population_input.bind('<KeyRelease>', validate_inputs)
 
-nruns_label = tk.Label(root, text="Num of run:", bg="white")
-nruns_input = IntegerInputField(root)
-nruns_input.bind('<KeyRelease>', validate_inputs)
+iteration_label = tk.Label(root, text="Iteration:", bg="white")
+iteration_input = IntegerInputField(root)
+iteration_input.insert(0, 500)
+iteration_input.bind('<KeyRelease>', validate_inputs)
 
 # Create dropdown menu with checkboxes
 items = cvrplib.list_names(vrp_type='cvrp')
@@ -73,14 +89,14 @@ items_listbox.bind('<<ListboxSelect>>', validate_inputs)
 submit_button = tk.Button(root, text="Submit", command=submit_button_callback, state='disabled')
 
 # Arrange widgets in grid
-iteration_label.grid(row=0, column=0, padx=5, pady=5, sticky='E')
-iteration_input.grid(row=0, column=1, padx=5, pady=5, sticky='W')
+nruns_label.grid(row=2, column=0, padx=5, pady=5, sticky='E')
+nruns_input.grid(row=2, column=1, padx=5, pady=5, sticky='W')
 
 population_label.grid(row=1, column=0, padx=5, pady=5, sticky='E')
 population_input.grid(row=1, column=1, padx=5, pady=5, sticky='W')
 
-nruns_label.grid(row=2, column=0, padx=5, pady=5, sticky='E')
-nruns_input.grid(row=2, column=1, padx=5, pady=5, sticky='W')
+iteration_label.grid(row=0, column=0, padx=5, pady=5, sticky='E')
+iteration_input.grid(row=0, column=1, padx=5, pady=5, sticky='W')
 
 items_label.grid(row=3, column=0, padx=5, pady=5, sticky='E')
 items_listbox.grid(row=3, column=1, padx=5, pady=5, sticky='W')
