@@ -41,12 +41,14 @@ def submit_button_callback():
 # Create main window
 root = tk.Tk()
 root.title("Integer Input Fields")
+root.configure(bg="white")
 
 # Create input fields
-iteration_label = tk.Label(root, text="Iteration:")
+iteration_label = tk.Label(root, text="Iteration:", bg="white")
 iteration_input = IntegerInputField(root)
 iteration_input.bind('<KeyRelease>', validate_button)
-population_label = tk.Label(root, text="Population:")
+
+population_label = tk.Label(root, text="Population:", bg="white")
 population_input = IntegerInputField(root)
 population_input.bind('<KeyRelease>', validate_button)
 
@@ -55,7 +57,7 @@ items = ['Item 1', 'Item 2', 'Item 3']
 items_listbox = tk.Listbox(root, selectmode=tk.MULTIPLE, exportselection=False)
 for item in items:
     items_listbox.insert(tk.END, item)
-items_label = tk.Label(root, text="Selected Items:")
+items_label = tk.Label(root, text="Instances:", bg="white")
 
 # Create submit button
 submit_button = tk.Button(root, text="Submit", command=submit_button_callback, state='disabled')
