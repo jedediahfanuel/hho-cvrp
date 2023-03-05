@@ -7,6 +7,7 @@ import numpy
 
 import benchmarks
 from optimizers.HHO import hho
+from benchmarks import gap
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 import plot_scatter as scatter_plot
@@ -85,6 +86,8 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         for j in range(0, len(instances)):
             convergence = [0] * num_of_runs
             execution_time = [0] * num_of_runs
+            best_solution = [0] * num_of_runs
+            gap_solution = [0] * num_of_runs
             for k in range(0, num_of_runs):
                 func_details = benchmarks.get_function_details(instances[j])
                 x = selector(optimizer[i], func_details, population_size, iterations)
@@ -97,13 +100,25 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                         if not flag_details:
                             # just one time to write the header of the CSV file
                             header = numpy.concatenate(
-                                [["Optimizer", "Instance", "ExecutionTime"], cnvg_header]
+                                [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], cnvg_header]
                             )
                             writer.writerow(header)
                             flag_details = True  # at least one experiment
                         execution_time[k] = x.execution_time
+                        best_solution[k] = x.best
+                        gap_solution[k] = gap(x.bks, x.best)
                         a = numpy.concatenate(
-                            [[x.optimizer, x.name, x.execution_time], x.convergence]
+                            [
+                                [
+                                    x.optimizer,
+                                    x.name,
+                                    x.bks,
+                                    x.best,
+                                    gap_solution[k],
+                                    x.execution_time
+                                ],
+                                x.convergence
+                            ]
                         )
                         writer.writerow(a)
                     out.close()
@@ -121,24 +136,36 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     scatter_plot.run(x, rd, k) if x.coordinates is not None else ()
 
             if export:
-                export_to_file = results_directory + "experiment.csv"
+                export_to_file = results_directory + "experiment_avg.csv"
 
                 with open(export_to_file, "a", newline="\n") as out:
                     writer = csv.writer(out, delimiter=",")
                     if not flag:
                         # just one time to write the header of the CSV file
                         header = numpy.concatenate(
-                            [["Optimizer", "Instance", "ExecutionTime"], cnvg_header]
+                            [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], cnvg_header]
                         )
                         writer.writerow(header)
                         flag = True
 
                     avg_execution_time = float("%0.2f" % (sum(execution_time) / num_of_runs))
+                    avg_bs = float("%0.2f" % (sum(best_solution) / num_of_runs))
+                    avg_gap = float("%0.4f" % (sum(gap_solution) / num_of_runs))
                     avg_convergence = numpy.around(
                         numpy.mean(convergence, axis=0, dtype=numpy.float64), decimals=2
                     ).tolist()
                     a = numpy.concatenate(
-                        [[x.optimizer, x.name, avg_execution_time], avg_convergence]
+                        [
+                            [
+                                x.optimizer,
+                                x.name,
+                                x.bks,
+                                avg_bs,
+                                avg_gap,
+                                avg_execution_time
+                            ],
+                            avg_convergence
+                        ]
                     )
                     writer.writerow(a)
                 out.close()
