@@ -1,5 +1,5 @@
 import tkinter as tk
-
+import cvrplib
 
 class IntegerInputField(tk.Entry):
     """Custom Entry widget that only accepts integer input."""
@@ -53,7 +53,7 @@ population_input = IntegerInputField(root)
 population_input.bind('<KeyRelease>', validate_button)
 
 # Create dropdown menu with checkboxes
-items = ['Item 1', 'Item 2', 'Item 3']
+items = cvrplib.list_names(vrp_type='cvrp')
 items_listbox = tk.Listbox(root, selectmode=tk.MULTIPLE, exportselection=False)
 for item in items:
     items_listbox.insert(tk.END, item)
