@@ -1,6 +1,7 @@
 import tkinter as tk
 import cvrplib
 
+
 class IntegerInputField(tk.Entry):
     """Custom Entry widget that only accepts integer input."""
 
