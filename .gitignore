@@ -3,4 +3,5 @@ venv/bin
 .idea
 venv
 out
+build
 __pycache__
