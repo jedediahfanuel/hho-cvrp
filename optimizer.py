@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy
 
 import benchmarks
-from optimizers.HHO import hho
+from optimizers.hho_cvrp import hho
 from benchmarks import gap
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
