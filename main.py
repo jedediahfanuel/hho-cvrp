@@ -34,6 +34,8 @@ def submit_button_callback():
     # Handle input values
     print(f"Iteration: {iteration_input.get()}")
     print(f"Population: {population_input.get()}")
+    selected_items = [items_listbox.get(idx) for idx in items_listbox.curselection()]
+    print(f"Selected Items: {selected_items}")
 
 
 # Create main window
@@ -48,6 +50,13 @@ population_label = tk.Label(root, text="Population:")
 population_input = IntegerInputField(root)
 population_input.bind('<KeyRelease>', validate_button)
 
+# Create dropdown menu with checkboxes
+items = ['Item 1', 'Item 2', 'Item 3']
+items_listbox = tk.Listbox(root, selectmode=tk.MULTIPLE, exportselection=False)
+for item in items:
+    items_listbox.insert(tk.END, item)
+items_label = tk.Label(root, text="Selected Items:")
+
 # Create submit button
 submit_button = tk.Button(root, text="Submit", command=submit_button_callback, state='disabled')
 
@@ -56,7 +65,9 @@ iteration_label.grid(row=0, column=0, padx=5, pady=5, sticky='E')
 iteration_input.grid(row=0, column=1, padx=5, pady=5, sticky='W')
 population_label.grid(row=1, column=0, padx=5, pady=5, sticky='E')
 population_input.grid(row=1, column=1, padx=5, pady=5, sticky='W')
-submit_button.grid(row=2, column=1, padx=5, pady=5, sticky='E')
+items_label.grid(row=2, column=0, padx=5, pady=5, sticky='E')
+items_listbox.grid(row=2, column=1, padx=5, pady=5, sticky='W')
+submit_button.grid(row=3, column=1, padx=5, pady=5, sticky='E')
 
 # Run main event loop
 root.mainloop()
