@@ -26,6 +26,7 @@ def conf(num, pop, iterate, names):
         "export_boxplot": True,
         "export_scatter": True,
         "export_route": True,
+        "export_configuration": True,
     }
 
     run(optimizer, instances, num_of_runs, params, export_flags)
