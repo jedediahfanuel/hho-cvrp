@@ -4,7 +4,7 @@ import pandas as pd
 
 def run(results_directory, optimizer, instances, iterations):
     plt.ioff()
-    file_results_data = pd.read_csv(results_directory + "../experiment.csv")
+    file_results_data = pd.read_csv(results_directory + "../experiment_avg.csv")
 
     for j in range(0, len(instances)):
         instance_name = instances[j]
@@ -21,7 +21,7 @@ def run(results_directory, optimizer, instances, iterations):
                 (file_results_data["Optimizer"] == optimizer_name)
                 & (file_results_data["Instance"] == instance_name)
                 ]
-            row = row.iloc[:, 3 + start_iteration:]
+            row = row.iloc[:, 6 + start_iteration:]
             plt.plot(all_generations, row.values.tolist()[0], label=optimizer_name)
         plt.xlabel("Iterations")
         plt.ylabel("Fitness")

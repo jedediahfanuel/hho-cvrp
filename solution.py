@@ -1,5 +1,6 @@
 class Solution:
     def __init__(self):
+        self.bks = 0
         self.best = 0
         self.best_individual = []
         self.convergence = []

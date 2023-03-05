@@ -79,3 +79,7 @@ def concat_depot(s):
     return numpy.concatenate((
         numpy.zeros(1, dtype=int), s, numpy.zeros(1, dtype=int)
     ))
+
+
+def gap(bks, bs):
+    return (bs - bks) / bks
