@@ -19,7 +19,7 @@ build_options = {'packages': [], 'excludes': [
 base = 'Win32GUI' if sys.platform == 'win32' else None
 
 executables = [
-    Executable('main.py', base=base, target_name='hho_cvrp')
+    Executable('main.py', base=base, target_name='hho_cvrp', icon="./icon/hho_cvrp.ico")
 ]
 
 setup(name='hho_cvrp',
