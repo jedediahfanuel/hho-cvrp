@@ -43,6 +43,8 @@ def submit_button_callback():
     process_label.config(text="Running")
 
     # disable submit button
+    global running
+    running = True
     submit_button.config(state='disabled')
 
     def run_hho():
@@ -57,11 +59,11 @@ def submit_button_callback():
         root.after(0, lambda: update_ui())
 
     def update_ui():
-        global running
-        running = False
-        process_label.config(text="Execution Complete")
+        process_label.config(text="Completed")
 
         # enabling submit button
+        global running
+        running = False
         submit_button.config(state='normal')
 
     calculation_thread = threading.Thread(target=run_hho)
