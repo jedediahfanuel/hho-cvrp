@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy
 
 import benchmarks
+from benchmarks import get_function_details
 from optimizers.hho_cvrp import hho
-from benchmarks import gap
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 import plot_scatter as scatter_plot
@@ -108,7 +108,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                             flag_details = True  # at least one experiment
                         execution_time[k] = x.execution_time
                         best_solution[k] = x.best
-                        gap_solution[k] = gap(x.bks, x.best)
+                        gap_solution[k] = benchmarks.gap(x.bks, x.best)
                         a = numpy.concatenate(
                             [
                                 [
