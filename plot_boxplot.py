@@ -4,6 +4,25 @@ import matplotlib.pyplot as plt
 
 
 def run(results_directory, optimizer, instances, iterations):
+    """
+    Create a boxplot of fitness value of each algorithm
+
+    Parameters
+    ----------
+    results_directory : str
+        directory path the file will be saved
+    optimizer :
+        list of optimizers
+    instances : CVRPLIB CVRP Class
+        instance of problem
+    iterations :
+        number of iterations
+
+    Returns
+    -------
+    N/A
+    """
+
     plt.ioff()
 
     file_results_details_data = pd.read_csv(results_directory + "../experiment_details.csv")

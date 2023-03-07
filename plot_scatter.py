@@ -12,6 +12,23 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
 
 
 def run(s: Solution, results_directory, k: int):
+    """
+    Create a picture & PDF that plot customers location and routes lines
+
+    Parameters
+    ----------
+    s : Solution
+        solution class (check solution.py)
+    results_directory : str
+        directory path the file will be saved
+    k : int
+        number of current run
+
+    Returns
+    -------
+    N/A
+    """
+
     plt.ioff()
     fn = "scatter-" + s.name + "-" + str(k) + "-" + str(s.best)
     plot_cities(s, pathsave=results_directory, filename=fn)

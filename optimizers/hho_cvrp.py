@@ -2,17 +2,16 @@ import time
 import random
 import math
 
+import optimizers.mutate as mutate
 from optimizers.crossover import pmx
 from optimizers.encode import random_key
 from optimizers.local import two_opt_inverse
 from optimizers.local import two_opt_insertion
-from optimizers.local import two_opt_swap
-import optimizers.mutate as mutate
 
 from solution import Solution
-from benchmarks import split_customer
 from benchmarks import concat_depot
 from benchmarks import normal_cvrp
+from benchmarks import split_customer
 
 import numpy
 
@@ -21,21 +20,34 @@ def hho(objf, data, sol, search_agent_no, max_iter):
     """
     This function is Harris Hawks Optimization for CVRP.
 
-    :param objf: an objective function (check benchmarks.py)
-    :param data: an instance class downloaded from cvrplib
-    :param sol: a solution class downloaded from cvrplib
-    :param search_agent_no: number of hawks
-    :param max_iter: maximum iteration before it stopped
-    :return:
+    Parameters
+    ----------
+    objf : function
+        an objective function (check benchmarks.py)
+    data : CVRP Class
+        an instance class downloaded from cvrplib
+    sol : Solution Class
+        a solution class downloaded from cvrplib
+    search_agent_no : int
+        equivalent as population size (number of hawks)
+    max_iter : int
+        equivalent as number of iterations (maximum iteration before it stopped)
+
+    Returns
+    -------
+    s : Solution
+        a local defined solution class (check solution.py)
     """
+
     lb, ub, dim, distances = 1, data.n_customers, data.n_customers, data.distances
     max_capacity, demands = data.capacity, data.demands
     best_route, bks = None, sol.cost
 
     # initialize the location and Energy of the rabbit
     rabbit_location = numpy.zeros(dim)
-    rabbit_energy = float("inf")  # change this to -inf for maximization problems
-    fitness = float("inf")
+
+    # change this to -inf for maximization problems
+    rabbit_energy = float("inf")
     fs = [float("inf") for _ in range(search_agent_no)]
 
     if not isinstance(lb, list):
@@ -102,7 +114,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
 
                 elif q < 0.5:
-                    # perch on a random tall tree (random site inside group's home range)
+                    # perch on a random tall tree (random site inside group'single_route home range)
                     x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
@@ -221,13 +233,11 @@ def hho(objf, data, sol, search_agent_no, max_iter):
         convergence_curve[t] = rabbit_energy
         if t % 1 == 0:
             print(
-                "At iteration "
-                + str(t)
-                + " the best fitness is "
-                + str(rabbit_energy)
+                "At iteration " + str(t) + " the best fitness is " + str(rabbit_energy)
             )
         t = t + 1
 
+        # stop iteration if bks is reached, fill convergence with bks
         if rabbit_energy <= bks:
             convergence_curve = [rabbit_energy if conv == 0 else conv for conv in convergence_curve]
             break
@@ -272,34 +282,40 @@ def levy(dim):
 def cvrp_insertion(routes, distances):
     """
     This function accepts a list of routes in which
-    each route will be processed using insertion 2-opt.
+    each route will be processed using insertion 2-opt
 
-    :param routes: list of routes
-    :param distances: distance matrix
-    :return: list of routes after insertion 2-opt
+    Parameters
+    ----------
+    routes : cvrp solution representation
+        list of routes
+    distances : list
+        matrix of distance
+
+    Returns
+    -------
+    x : cvrp solution representation
+        list of routes after insertion 2-opt
     """
+
     return [two_opt_insertion(r, distances) for r in routes]
 
 
 def cvrp_inverse(routes, distances):
     """
     This function accepts a list of routes in which
-    each route will be processed using inverse 2-opt.
+    each route will be processed using inverse 2-opt
 
-    :param routes: list of routes
-    :param distances: distance matrix
-    :return: list of routes after inverse 2-opt
+    Parameters
+    ----------
+    routes : cvrp solution representation
+        list of routes
+    distances : list
+        matrix of distance
+
+    Returns
+    -------
+    x : cvrp solution representation
+        list of routes after inverse 2-opt
     """
+
     return [two_opt_inverse(r, distances) for r in routes]
-
-
-def cvrp_swap(routes, distances):
-    """
-    This function accepts a list of routes in which
-    each route will be processed using swap 2-opt.
-
-    :param routes: list of routes
-    :param distances: distance matrix
-    :return: list of routes after swap 2-opt
-    """
-    return [two_opt_swap(r, distances) for r in routes]

@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy
 
 import benchmarks
-from benchmarks import get_function_details
 from optimizers.hho_cvrp import hho
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
@@ -18,6 +17,25 @@ warnings.simplefilter(action="ignore")
 
 
 def selector(algo, func_details, pop_size, n_iter):
+    """
+
+    Parameters
+    ----------
+    algo : list of str
+        list of algorithm used to solve the problem
+    func_details : list
+        Contain name of objective function, instance, and solution
+    pop_size : int
+        population size for each algorithm
+    n_iter : int
+        number of iteration for each algorithm
+
+    Returns
+    -------
+    x : Solution Class
+        Solution class that include much information about optimizer process result
+    """
+
     function_name = func_details[0]
     instance = func_details[1]
     solution = func_details[2]
@@ -51,8 +69,9 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         2. export_details (Exporting the detailed results in files)
         3. export_convergence (Exporting the convergence plots)
         4. export_boxplot (Exporting the box plots)
-        5. export_scatter: (Exporting the scatter plots)
-        6. export_route: (Exporting the routes for each iteration)
+        5. export_scatter (Exporting the scatter plots)
+        6. export_route (Exporting the routes for each iteration)
+        7. export_configuration: (Exporting the configuration of current test)
 
     Returns
     -----------
@@ -184,7 +203,6 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
 
     if export_configuration:
         export_to_file = results_directory + "configuration.txt"
-        Path(rd).mkdir(parents=True, exist_ok=True)
         write_configuration.run(export_to_file, num_of_runs, population_size, iterations, instances)
 
     if not flag:  # Failed to run at least one experiment

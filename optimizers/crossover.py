@@ -3,6 +3,24 @@ import numpy as np
 
 
 def pmx(parent1, parent2):
+    """
+    PMX (Partially Mapped Crossover)
+
+    Parameters
+    ----------
+    parent1 : list
+        a single route
+    parent2 : list
+        another single route
+
+    Returns
+    -------
+    offspring1 : list
+        first child solution
+    offspring2 : list
+        second child solution
+    """
+
     # randomly select two crossover points
     cp = sorted(np.random.randint(len(parent1), size=2))
 

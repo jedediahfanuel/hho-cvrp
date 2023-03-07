@@ -2,6 +2,25 @@ from optimizer import run
 
 
 def conf(num, pop, iterate, names):
+    """
+    Parameter configuration
+
+    Parameters
+    ----------
+    num : int
+        number of run
+    pop : int
+        population size
+    iterate : int
+        number of iteration
+    names : list of str
+        list of instance name to be tested
+
+    Returns
+    -------
+    N/A
+    """
+
     # Select optimizers
     optimizer = ["HHO"]
 

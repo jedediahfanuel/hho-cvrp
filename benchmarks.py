@@ -2,9 +2,22 @@ import numpy
 import cvrplib
 
 
-def get_function_details(a):
+def get_function_details(name):
+    """
+    Return the name of objective function, instance, and solution
+
+    Parameters
+    ----------
+    name : str
+        instance name (ex: A-n32-k5)
+
+    Returns
+    -------
+    x : list
+        as described before
+    """
     # Download instances
-    instance, solution = cvrplib.download(a, solution=True)
+    instance, solution = cvrplib.download(name, solution=True)
 
     return ["cvrp", instance, solution]
 
@@ -12,28 +25,49 @@ def get_function_details(a):
 def cvrp(solution, distances, max_capacity, demands):
     """
     CVRP objective function sum all distance of routes.
-    This function take tsp solution, convert it into cvrp solution,
+    This function take tsp single_route, convert it into cvrp single_route,
     then calculate its total distance (fitness value)
 
-    :param solution: 1D list of tsp solution representation
-    :param distances: matrix of distances
-    :param max_capacity: maximum capacity of truck (homogeneous)
-    :param demands: matrix od demands
-    :return: the fitness value of cvrp (total distance)
+    Parameters
+    ----------
+    solution : list
+        1D list of tsp single_route representation
+    distances : list
+        matrix of distances
+    max_capacity : number
+        maximum capacity of truck (homogeneous)
+    demands : list
+        matrox of demands
 
-    room for improvement : using built in sum() function instead loops
+    Returns
+    -------
+    total : number
+        the fitness value of cvrp (total distance)
     """
+
     routes = split_customer(solution, max_capacity, demands)
 
-    total = 0
-    for r in routes:
-        for i in range(len(r) - 1):
-            total += distances[r[i]][r[i + 1]]
-
-    return total
+    return normal_cvrp(routes, distances)
 
 
 def normal_cvrp(solution, distances):
+    """
+    This function is CVRP objective function with
+    CVRP single_route representation as input single_route
+
+    Parameters
+    ----------
+    solution : list
+        list of routes (CVRP single_route representation)
+    distances : list
+        matrix of distances
+
+    Returns
+    -------
+    total : number
+        the fitness value of cvrp (total distance)
+    """
+
     total = 0
     for r in solution:
         for i in range(len(r) - 1):
@@ -44,16 +78,23 @@ def normal_cvrp(solution, distances):
 
 def split_customer(solution, max_capacity, demands):
     """
-    This function split tsp solution into cvrp solution
+    This function split tsp single_route into cvrp single_route
 
-    :param solution: 1D list of tsp solution representation
-    :param max_capacity: maximum capacity of truck (homogeneous)
-    :param demands: matrix demands
-    :return: Lists of route,
-             where regular customers are sorted from left -> right
+    Parameters
+    ----------
+    solution : list
+        1D list of tsp single_route representation
+    max_capacity : number
+        maximum capacity of truck (homogeneous)
+    demands : list
+        matrix of demands
 
-    room for improvement: use numpy
+    Returns
+    -------
+    routes : multidimensional list
+        Lists of route, where regular customers are sorted from left -> right
     """
+
     routes, load, v = [[0]], 0, 0
 
     for i in solution:
@@ -70,11 +111,42 @@ def split_customer(solution, max_capacity, demands):
     return routes
 
 
-def concat_depot(s):
+def concat_depot(single_route):
+    """
+    Add depot (index zero) in-front and in-end of route, like sandwich
+
+    Parameters
+    ----------
+    single_route : list
+        name single route that represent customers order
+
+    Returns
+    -------
+    new_route : list
+        the same route with extra depot (depot -> route -> depot)
+    """
+
     return numpy.concatenate((
-        numpy.zeros(1, dtype=int), s, numpy.zeros(1, dtype=int)
+        numpy.zeros(1, dtype=int), single_route, numpy.zeros(1, dtype=int)
     ))
 
 
 def gap(bks, bs):
+    """
+    Calculate gap of two route in percentage. If the result is positive number,
+    that means bks has name better value, and vice versa
+
+    Parameters
+    ----------
+    bks : number
+        best solution known
+    bs : number
+        best solution
+
+    Returns
+    -------
+    gap : number
+        the gap of bks and bs (in percentage)
+    """
+
     return (bs - bks) / bks
