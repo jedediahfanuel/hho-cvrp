@@ -1,6 +1,7 @@
 import tkinter as tk
 import cvrplib
 import configure
+import threading
 
 running = False
 
@@ -39,21 +40,34 @@ def validate_inputs(*args):
 
 
 def submit_button_callback():
+    process_label.config(text="Running")
+
     # disable submit button
     global running
     running = True
     submit_button.config(state='disabled')
 
-    # Handle input values
-    configure.conf(
-        int(nruns_input.get()),
-        int(population_input.get()),
-        int(iteration_input.get()),
-        [items_listbox.get(idx) for idx in items_listbox.curselection()]
-    )
+    def run_hho():
+        # Handle input values
+        configure.conf(
+            int(nruns_input.get()),
+            int(population_input.get()),
+            int(iteration_input.get()),
+            [items_listbox.get(idx) for idx in items_listbox.curselection()]
+        )
 
-    running = False
-    submit_button.config(state='normal')
+        root.after(0, lambda: update_ui())
+
+    def update_ui():
+        process_label.config(text="Completed")
+
+        # enabling submit button
+        global running
+        running = False
+        submit_button.config(state='normal')
+
+    calculation_thread = threading.Thread(target=run_hho)
+    calculation_thread.start()
 
 
 # Create main window
@@ -85,6 +99,9 @@ for item in items:
     items_listbox.insert(tk.END, item)
 items_listbox.bind('<<ListboxSelect>>', validate_inputs)
 
+# Create process label
+process_label = tk.Label(root, text="", bg="white")
+
 # Create submit button
 submit_button = tk.Button(root, text="Submit", command=submit_button_callback, state='disabled')
 
@@ -101,7 +118,8 @@ iteration_input.grid(row=2, column=1, padx=5, pady=5, sticky='W')
 items_label.grid(row=3, column=0, padx=5, pady=5, sticky='E')
 items_listbox.grid(row=3, column=1, padx=5, pady=5, sticky='W')
 
-submit_button.grid(row=4, column=1, padx=5, pady=5, sticky='E')
+process_label.grid(row=4, column=0, padx=5, pady=5, sticky='E')
+submit_button.grid(row=4, column=1, padx=5, pady=5, sticky='W')
 
 # Run main event loop
 root.mainloop()
