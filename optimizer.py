@@ -20,10 +20,10 @@ warnings.simplefilter(action="ignore")
 def selector(algo, func_details, pop_size, n_iter):
     function_name = func_details[0]
     instance = func_details[1]
-    bks = func_details[2]
+    solution = func_details[2]
 
     if algo == "HHO":
-        x = hho(getattr(benchmarks, function_name), instance, bks, pop_size, n_iter)
+        x = hho(getattr(benchmarks, function_name), instance, solution, pop_size, n_iter)
     else:
         return None
     return x
