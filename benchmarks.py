@@ -149,4 +149,4 @@ def gap(bks, bs):
         the gap of bks and bs (in percentage)
     """
 
-    return (bs - bks) / bks
+    return (bs - bks) * 100 / bks
