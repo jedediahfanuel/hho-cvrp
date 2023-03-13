@@ -31,7 +31,7 @@ def run(s: Solution, results_directory, k: int):
 
     plt.ioff()
     fn = "scatter-" + s.name + "-" + str(k) + "-" + str(s.best)
-    plot_cities(s, pathsave=results_directory, filename=fn)
+    plot_cities(s, pathsave=results_directory, filename=fn, size=50, show_id=True)
 
 
 def get_space(coordinates):
@@ -61,11 +61,14 @@ def plot_cities(s: Solution, filename: str, pathsave: str, exts=(".png", ".pdf")
         line_x = np.array([coordinates[x, 0] for x in r])
         line_y = np.array([coordinates[y, 1] for y in r])
 
-        # draw cities
-        plt.scatter(point_x, point_y, s=size)
-
-        # draw lines
+        # draw customer & routes
+        plt.scatter(point_x[1:-1], point_y[1:-1], s=size)
         plt.plot(line_x, line_y, '-', label=str(f'route {i + 1}'), lw=0.5)
+
+        # draw depot
+        plt.scatter(point_x[0], point_y[0], s=size, marker='^')
+        plt.plot(coordinates[0, 0], coordinates[0, 1])  # dummy line for color correction
+
         plt.text(x_min - 2 * space_x, y_min - 2 * space_y, f"Total distance: {s.best}",
                  fontdict={'size': 8, 'color': 'red'})
 
