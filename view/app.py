@@ -2,6 +2,7 @@ import cvrplib
 import threading
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 
 from controller import configure
 
@@ -75,6 +76,7 @@ def run():
             submit_button.config(state="normal")
 
         calculation_thread = threading.Thread(target=run_hho)
+        calculation_thread.daemon = True
         calculation_thread.start()
 
     def select_directory():
@@ -89,10 +91,15 @@ def run():
 
         path_entry.config(state=tk.DISABLED)
 
+    def on_closing():
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            root.destroy()
+
     # Create main window
     root = tk.Tk()
     root.title("HHO-CVRP")
     root.configure(bg="white")
+    root.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Left frame
     left_frame = tk.Frame(root, padx=5, pady=5, bg="white")
