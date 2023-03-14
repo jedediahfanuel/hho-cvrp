@@ -59,8 +59,7 @@ def run():
                 int(iteration_input.get()),
                 [items_listbox.get(idx) for idx in items_listbox.curselection()],
                 [i in export_listbox.curselection() for i in range(7)],
-                path_input.get(),
-                None,
+                path_input.get()
             )
 
             root.after(0, lambda: update_ui())
