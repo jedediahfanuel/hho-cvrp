@@ -18,7 +18,7 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
 
 
 class Export:
-    def __init__(self, avg, detail, conv, box, scatter, route, config, iterations):
+    def __init__(self, avg, box, config, conv, detail, route, scatter, iteration):
         self.avg = avg
         self.boxplot = box
         self.configuration = config
@@ -28,7 +28,7 @@ class Export:
         self.scatter = scatter
 
         # CSV header for convergence
-        self.cnvg_header = ["Iter" + str(it + 1) for it in range(0, iterations)]
+        self.cnvg_header = ["Iter" + str(it + 1) for it in range(0, iteration)]
         self.flag = False
         self.flag_detail = False
 
@@ -319,7 +319,7 @@ class Export:
 
         plt.ioff()
         filename = "scatter-" + solution.name + "-" + str(k) + "-" + str(solution.best)
-        plot_cities(solution, pathsave=rd, filename=filename, size=10, show_id=False)
+        plot_cities(solution, pathsave=rd, filename=filename, size=params.city_size, show_id=params.city_id)
 
 
 def get_space(coordinates):
