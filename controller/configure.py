@@ -1,5 +1,5 @@
 from model.export import Export
-from optimizer import run
+from controller.optimizer import run
 
 
 def conf(num, pop, iterate, names):
