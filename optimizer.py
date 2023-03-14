@@ -8,6 +8,7 @@ import numpy
 import benchmarks
 from optimizers.hho_cvrp import hho
 from model.collection import Collection
+from model.export import Export
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 import plot_scatter as scatter_plot
@@ -49,7 +50,7 @@ def selector(algo, func_details, pop_size, n_iter):
     return x
 
 
-def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags: dict[str, bool]):
+def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Export):
     """
     It serves as the main interface of the framework for running the experiments.
 
@@ -65,15 +66,15 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
         The set of parameters which are:
         1. Size of population (population_size)
         2. The number of iterations (iterations)
-    export_flags : set
+    export : Export
         The set of Boolean flags which are:
-        1. export (Exporting the results in a file)
-        2. export_details (Exporting the detailed results in files)
-        3. export_convergence (Exporting the convergence plots)
-        4. export_boxplot (Exporting the box plots)
-        5. export_scatter (Exporting the scatter plots)
-        6. export_route (Exporting the routes for each iteration)
-        7. export_configuration: (Exporting the configuration of current test)
+        1. export.avg (Exporting the results in a file)
+        2. export.boxplot (Exporting the box plots)
+        3. export.configuration: (Exporting the configuration of current test)
+        4. export.convergence (Exporting the convergence plots)
+        5. export.details (Exporting the detailed results in files)
+        6. export.route (Exporting the routes for each iteration)
+        7. export.scatter (Exporting the scatter plots)
 
     Returns
     -----------
@@ -83,15 +84,6 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
     # Select general parameters for all optimizers (population size, number of iterations) ....
     population_size = params["population_size"]
     iterations = params["iterations"]
-
-    # export results ?
-    export = export_flags["export_avg"]
-    export_details = export_flags["export_details"]
-    export_convergence = export_flags["export_convergence"]
-    export_boxplot = export_flags["export_boxplot"]
-    export_scatter = export_flags["export_scatter"]
-    export_route = export_flags["export_route"]
-    export_configuration = export_flags["export_configuration"]
 
     flag = False
 
@@ -112,23 +104,23 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                 solution = selector(optimizer[i], func_details, population_size, iterations)
                 collection.convergence[k] = solution.convergence
 
-                if export_details:
+                if export.details:
                     export_to_file = results_directory + "experiment_details.csv"
                     write_details.run(export_to_file, collection, solution, cnvg_header, k)
 
-                if export_route:
+                if export.route:
                     rd = results_directory + "routes-" + solution.optimizer + "/" + solution.name + "/"
                     Path(rd).mkdir(parents=True, exist_ok=True)
                     write_routes.run(solution, rd, k)
 
-                if export_scatter:
+                if export.scatter:
                     close = "/" if solution.coordinates is not None else "/None"
                     rd = results_directory + "scatter-plot-" + solution.optimizer + "/" + solution.name + close
                     Path(rd).mkdir(parents=True, exist_ok=True)
 
                     scatter_plot.run(solution, rd, k) if solution.coordinates is not None else ()
 
-            if export:
+            if export.avg:
                 export_to_file = results_directory + "experiment_avg.csv"
 
                 with open(export_to_file, "a", newline="\n") as out:
@@ -163,17 +155,17 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export_flags:
                     writer.writerow(a)
                 out.close()
 
-    if export_convergence:
+    if export.convergence:
         rd = results_directory + "convergence-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
         conv_plot.run(rd, optimizer, instances, iterations)
 
-    if export_boxplot:
+    if export.boxplot:
         rd = results_directory + "box-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
         box_plot.run(rd, optimizer, instances, iterations)
 
-    if export_configuration:
+    if export.configuration:
         export_to_file = results_directory + "configuration.txt"
         write_configuration.run(export_to_file, num_of_runs, population_size, iterations, instances)
 

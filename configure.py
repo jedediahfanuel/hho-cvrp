@@ -1,3 +1,4 @@
+from model.export import Export
 from optimizer import run
 
 
@@ -38,14 +39,6 @@ def conf(num, pop, iterate, names):
     }
 
     # Choose whether to Export the results in different formats
-    export_flags = {
-        "export_avg": True,
-        "export_details": True,
-        "export_convergence": True,
-        "export_boxplot": True,
-        "export_scatter": True,
-        "export_route": True,
-        "export_configuration": True,
-    }
+    export_flags = Export(True, True, True, True, True, True, True)
 
     run(optimizer, instances, num_of_runs, params, export_flags)
