@@ -87,8 +87,8 @@ def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Expo
                 collection.convergence[k] = solution.convergence
 
                 if export.details:
-                    export_to_file = results_directory + "experiment_details.csv"
-                    export.write_detail(export_to_file, collection, solution, k)
+                    filename = results_directory + "experiment_details.csv"
+                    export.write_detail(filename, collection, solution, k)
 
                 if export.route:
                     rd = results_directory + "routes-" + solution.optimizer + "/" + solution.name + "/"
@@ -102,8 +102,8 @@ def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Expo
                     export.write_scatter(solution, rd, k) if solution.coordinates is not None else ()
 
             if export.avg:
-                export_to_file = results_directory + "experiment_avg.csv"
-                export.write_avg(export_to_file, collection, solution, num_of_runs)
+                filename = results_directory + "experiment_avg.csv"
+                export.write_avg(filename, collection, solution, num_of_runs)
 
     if export.convergence:
         rd = results_directory + "convergence-plot/"
@@ -116,7 +116,7 @@ def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Expo
         export.write_boxplot(rd, optimizers, instances, iterations)
 
     if export.configuration:
-        export_to_file = results_directory + "configuration.txt"
-        export.write_configuration(export_to_file, num_of_runs, population_size, iterations, instances)
+        filename = results_directory + "configuration.txt"
+        export.write_configuration(filename, num_of_runs, population_size, iterations, instances)
 
     print("Execution completed")
