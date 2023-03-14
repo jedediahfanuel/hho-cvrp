@@ -1,7 +1,7 @@
 import unittest
 
-from optimizers.encode import random_key_original
-from optimizers.encode import random_key
+from method.encode import random_key_original
+from method.encode import random_key
 
 
 class EncodeTest(unittest.TestCase):

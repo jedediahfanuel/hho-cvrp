@@ -1,5 +1,5 @@
 import unittest
-from optimizers.crossover import pmx
+from method.crossover import pmx
 
 
 class CrossoverTestCase(unittest.TestCase):

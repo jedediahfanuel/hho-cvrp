@@ -2,16 +2,16 @@ import time
 import random
 import math
 
-import optimizers.mutate as mutate
-from optimizers.crossover import pmx
-from optimizers.encode import random_key
-from optimizers.local import two_opt_inverse
-from optimizers.local import two_opt_insertion
+import method.mutate as mutate
+from method.crossover import pmx
+from method.encode import random_key
+from method.local import two_opt_inverse
+from method.local import two_opt_insertion
 
-from solution import Solution
-from benchmarks import concat_depot
-from benchmarks import normal_cvrp
-from benchmarks import split_customer
+from model.solution import Solution
+from controller.benchmarks import concat_depot
+from controller.benchmarks import normal_cvrp
+from controller.benchmarks import split_customer
 
 import numpy
 

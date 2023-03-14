@@ -3,6 +3,7 @@ venv/bin
 .idea
 venv
 out
+hho_cvrp
 build
 dist
 __pycache__
