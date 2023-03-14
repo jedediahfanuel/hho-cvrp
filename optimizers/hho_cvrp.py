@@ -8,7 +8,7 @@ from optimizers.encode import random_key
 from optimizers.local import two_opt_inverse
 from optimizers.local import two_opt_insertion
 
-from solution import Solution
+from model.solution import Solution
 from benchmarks import concat_depot
 from benchmarks import normal_cvrp
 from benchmarks import split_customer

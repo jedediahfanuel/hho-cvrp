@@ -2,8 +2,8 @@ import csv
 import numpy
 import benchmarks
 
-from optimizer import Collection
-from solution import Solution
+from model.collection import Collection
+from model.solution import Solution
 
 
 def run(fn, collection: Collection, s: Solution, cnvg_header, k: int):

@@ -1,4 +1,4 @@
-from solution import Solution
+from model.solution import Solution
 
 
 def run(s: Solution, results_directory, k: int):
