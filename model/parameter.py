@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class Parameter:
-    results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
+    results_directory = "hho_cvrp/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
     optimizers = ["HHO"]
 
     def __init__(self, n_runs, population, iteration, instances, results_directory="", optimizers=None):
@@ -16,8 +16,8 @@ class Parameter:
             self.optimizers = optimizers
 
         if results_directory != "":
-            self.results_directory = results_directory + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
+            self.results_directory = results_directory + "/hho_cvrp/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
         else:
-            self.results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
+            self.results_directory = "hho_cvrp/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
 
         Path(self.results_directory).mkdir(parents=True, exist_ok=True)
