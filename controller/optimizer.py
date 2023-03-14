@@ -1,16 +1,15 @@
-import time
 import warnings
-from pathlib import Path
 
 import controller.benchmarks as benchmarks
 from method.hho_cvrp import hho
 from model.collection import Collection
 from model.export import Export
+from model.parameter import Parameter
 
 warnings.simplefilter(action="ignore")
 
 
-def selector(algo, func_details, pop_size, n_iter):
+def selector(algo, func_details, params):
     """
 
     Parameters
@@ -19,10 +18,8 @@ def selector(algo, func_details, pop_size, n_iter):
         list of algorithm used to solve the problem
     func_details : list
         Contain name of objective function, instance, and solution
-    pop_size : int
-        population size for each algorithm
-    n_iter : int
-        number of iteration for each algorithm
+    params : Parameter
+        Collection of configurable user parameter
 
     Returns
     -------
@@ -35,30 +32,22 @@ def selector(algo, func_details, pop_size, n_iter):
     solution = func_details[2]
 
     if algo == "HHO":
-        x = hho(getattr(benchmarks, function_name), instance, solution, pop_size, n_iter)
+        solution = hho(getattr(benchmarks, function_name), instance, solution, params.population, params.iteration)
     else:
         return None
-    return x
+    return solution
 
 
-def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Export):
+def run(params: Parameter, export: Export):
     """
     It serves as the main interface of the framework for running the experiments.
 
     Parameters
     ----------
-    optimizers : list
-        The list of optimizers names
-    instances : list
-        The list of benchmark instances
-    num_of_runs : int
-        The number of independent runs
-    params  : set
-        The set of parameters which are:
-        1. Size of population (population_size)
-        2. The number of iterations (iterations)
+    params : Parameter
+        collection of configurable user parameter
     export : Export
-        The set of Boolean flags which are:
+        the set of Boolean flags which are:
         1. export.avg (Exporting the results in a file)
         2. export.boxplot (Exporting the box plots)
         3. export.configuration: (Exporting the configuration of current test)
@@ -72,51 +61,33 @@ def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Expo
     N/A
     """
 
-    population_size = params["population_size"]
-    iterations = params["iterations"]
-
-    results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
-    Path(results_directory).mkdir(parents=True, exist_ok=True)
-
-    for i, optimizer_name in enumerate(optimizers):
-        for instance_name in instances:
-            collection = Collection(num_of_runs)
-            for k in range(num_of_runs):
+    for i, optimizer_name in enumerate(params.optimizers):
+        for instance_name in params.instances:
+            collection = Collection(params.n_runs)
+            for k in range(params.n_runs):
                 func_details = benchmarks.get_function_details(instance_name)
-                solution = selector(optimizer_name, func_details, population_size, iterations)
+                solution = selector(optimizer_name, func_details, params)
                 collection.convergence[k] = solution.convergence
 
                 if export.details:
-                    filename = results_directory + "experiment_details.csv"
-                    export.write_detail(filename, collection, solution, k)
+                    export.write_detail(collection, solution, params, k)
 
                 if export.route:
-                    rd = results_directory + "routes-" + solution.optimizer + "/" + solution.name + "/"
-                    Path(rd).mkdir(parents=True, exist_ok=True)
-                    export.write_route(rd, solution, k)
+                    export.write_route(solution, params, k)
 
                 if export.scatter:
-                    close = "/" if solution.coordinates is not None else "/None"
-                    rd = results_directory + "scatter-plot-" + solution.optimizer + "/" + solution.name + close
-                    Path(rd).mkdir(parents=True, exist_ok=True)
-                    export.write_scatter(solution, rd, k) if solution.coordinates is not None else ()
+                    export.write_scatter(solution, params, k) if solution.coordinates is not None else ()
 
             if export.avg:
-                filename = results_directory + "experiment_avg.csv"
-                export.write_avg(filename, collection, solution, num_of_runs)
+                export.write_avg(collection, solution, params)
 
     if export.convergence:
-        rd = results_directory + "convergence-plot/"
-        Path(rd).mkdir(parents=True, exist_ok=True)
-        export.write_convergence(rd, optimizers, instances, iterations)
+        export.write_convergence(params)
 
     if export.boxplot:
-        rd = results_directory + "box-plot/"
-        Path(rd).mkdir(parents=True, exist_ok=True)
-        export.write_boxplot(rd, optimizers, instances, iterations)
+        export.write_boxplot(params)
 
     if export.configuration:
-        filename = results_directory + "configuration.txt"
-        export.write_configuration(filename, num_of_runs, population_size, iterations, instances)
+        export.write_configuration(params)
 
     print("Execution completed")

@@ -1,8 +1,9 @@
 from model.export import Export
 from controller.optimizer import run
+from model.parameter import Parameter
 
 
-def conf(num, pop, iterate, names):
+def conf(num, pop, iterate, names, result_directory=None, optimizer=None):
     """
     Parameter configuration
 
@@ -16,29 +17,28 @@ def conf(num, pop, iterate, names):
         number of iteration
     names : list of str
         list of instance name to be tested
+    result_directory : str
+        path of root directory for result files
+    optimizer : list of str
+        list of optimizer name to be tested
 
     Returns
     -------
     N/A
     """
 
-    # Select optimizers
-    optimizer = ["HHO"]
-
-    # Select benchmark function
-    instances = names
-
-    # Select number of repetitions for each experiment.
-    # To obtain meaningful statistical results, usually 30 independent runs are executed for each algorithm.
-    num_of_runs = num
-
-    # Select general parameters for all optimizers (population size, number of iterations) ....
-    params = {
-        "population_size": pop,
-        "iterations": iterate
-    }
+    # Collection of params
+    params = Parameter(num, pop, iterate, names, result_directory, optimizer)
 
     # Choose whether to Export the results in different formats
-    export_flags = Export(True, True, True, True, True, True, True, iterate)
+    export_flags = Export(
+        True,  # average
+        True,  # details
+        True,  # convergence
+        True,  # boxplot
+        True,  # scatter-plot
+        True,  # routes
+        True,  # configuration
+        iterate)
 
-    run(optimizer, instances, num_of_runs, params, export_flags)
+    run(params, export_flags)
