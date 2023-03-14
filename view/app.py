@@ -1,6 +1,7 @@
 import cvrplib
 import threading
 import tkinter as tk
+from tkinter import filedialog
 
 from controller import configure
 
@@ -75,6 +76,14 @@ def run():
         calculation_thread = threading.Thread(target=run_hho)
         calculation_thread.start()
 
+    def select_directory():
+        # get the directory path using the file dialog
+        directory_path = filedialog.askdirectory()
+
+        # update the path entry field with the selected directory path
+        path_entry.delete(0, tk.END)
+        path_entry.insert(0, directory_path)
+
     # Create main window
     root = tk.Tk()
     root.title("HHO-CVRP")
@@ -134,7 +143,7 @@ def run():
     right_frame = tk.Frame(root, padx=5, pady=5, bg="white")
     right_frame.grid(row=0, column=1)
 
-    path_label = tk.Label(right_frame, text="Path:", bg="white")
+    path_button = tk.Button(right_frame, text="Path", command=select_directory)
     path_input = tk.StringVar(right_frame)
     path_input.set("")
     path_entry = tk.Entry(right_frame, textvariable=path_input)
@@ -160,7 +169,7 @@ def run():
     export_listbox.select_set(0, tk.END)
 
     # Arrange widgets in grid
-    path_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")
+    path_button.grid(row=0, column=0, padx=5, pady=5, sticky="E")
     path_entry.grid(row=0, column=1, padx=5, pady=5, sticky="W")
 
     city_size_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
