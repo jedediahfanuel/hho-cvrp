@@ -41,13 +41,13 @@ def selector(algo, func_details, pop_size, n_iter):
     return x
 
 
-def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Export):
+def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Export):
     """
     It serves as the main interface of the framework for running the experiments.
 
     Parameters
     ----------
-    optimizer : list
+    optimizers : list
         The list of optimizers names
     instances : list
         The list of benchmark instances
@@ -78,12 +78,12 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
     Path(results_directory).mkdir(parents=True, exist_ok=True)
 
-    for i in range(0, len(optimizer)):
-        for j in range(0, len(instances)):
+    for i, optimizer_name in enumerate(optimizers):
+        for j, instance_name in enumerate(instances):
             collection = Collection(num_of_runs)
             for k in range(0, num_of_runs):
                 func_details = benchmarks.get_function_details(instances[j])
-                solution = selector(optimizer[i], func_details, population_size, iterations)
+                solution = selector(optimizer_name, func_details, population_size, iterations)
                 collection.convergence[k] = solution.convergence
 
                 if export.details:
@@ -108,12 +108,12 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     if export.convergence:
         rd = results_directory + "convergence-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        export.write_convergence(rd, optimizer, instances, iterations)
+        export.write_convergence(rd, optimizers, instances, iterations)
 
     if export.boxplot:
         rd = results_directory + "box-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        export.write_boxplot(rd, optimizer, instances, iterations)
+        export.write_boxplot(rd, optimizers, instances, iterations)
 
     if export.configuration:
         export_to_file = results_directory + "configuration.txt"
