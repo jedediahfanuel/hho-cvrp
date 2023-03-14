@@ -1,9 +1,6 @@
-import csv
 import time
 import warnings
 from pathlib import Path
-
-import numpy
 
 import benchmarks
 from optimizers.hho_cvrp import hho
@@ -12,9 +9,6 @@ from model.export import Export
 import plot_boxplot as box_plot
 import plot_convergence as conv_plot
 import plot_scatter as scatter_plot
-import write_configuration
-import write_details
-import write_routes
 
 warnings.simplefilter(action="ignore")
 
@@ -86,6 +80,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     iterations = params["iterations"]
 
     flag = False
+    flag_detail = False
 
     # CSV Header for the convergence
     cnvg_header = []
@@ -106,12 +101,13 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
 
                 if export.details:
                     export_to_file = results_directory + "experiment_details.csv"
-                    write_details.run(export_to_file, collection, solution, cnvg_header, k)
+                    export.write_detail(export_to_file, flag_detail, collection, solution, cnvg_header, k)
+                    flag_detail = True
 
                 if export.route:
                     rd = results_directory + "routes-" + solution.optimizer + "/" + solution.name + "/"
                     Path(rd).mkdir(parents=True, exist_ok=True)
-                    write_routes.run(solution, rd, k)
+                    export.write_route(rd, solution, k)
 
                 if export.scatter:
                     close = "/" if solution.coordinates is not None else "/None"
@@ -122,38 +118,8 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
 
             if export.avg:
                 export_to_file = results_directory + "experiment_avg.csv"
-
-                with open(export_to_file, "a", newline="\n") as out:
-                    writer = csv.writer(out, delimiter=",")
-                    if not flag:
-                        # just one time to write the header of the CSV file
-                        header = numpy.concatenate(
-                            [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], cnvg_header]
-                        )
-                        writer.writerow(header)
-                        flag = True
-
-                    avg_execution_time = float("%0.2f" % (sum(collection.execution_time) / num_of_runs))
-                    avg_bs = float("%0.2f" % (sum(collection.best_solution) / num_of_runs))
-                    avg_gap = float("%0.4f" % (sum(collection.gap_solution) / num_of_runs))
-                    avg_convergence = numpy.around(
-                        numpy.mean(collection.convergence, axis=0, dtype=numpy.float64), decimals=2
-                    ).tolist()
-                    a = numpy.concatenate(
-                        [
-                            [
-                                solution.optimizer,
-                                solution.name,
-                                solution.bks,
-                                avg_bs,
-                                avg_gap,
-                                avg_execution_time
-                            ],
-                            avg_convergence
-                        ]
-                    )
-                    writer.writerow(a)
-                out.close()
+                export.write_avg(export_to_file, flag, collection, solution, num_of_runs, cnvg_header)
+                flag = True
 
     if export.convergence:
         rd = results_directory + "convergence-plot/"
@@ -167,7 +133,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
 
     if export.configuration:
         export_to_file = results_directory + "configuration.txt"
-        write_configuration.run(export_to_file, num_of_runs, population_size, iterations, instances)
+        export.write_configuration(export_to_file, num_of_runs, population_size, iterations, instances)
 
     if not flag:  # Failed to run at least one experiment
         print(
