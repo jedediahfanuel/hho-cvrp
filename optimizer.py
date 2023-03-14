@@ -6,9 +6,6 @@ import benchmarks
 from optimizers.hho_cvrp import hho
 from model.collection import Collection
 from model.export import Export
-import plot_boxplot as box_plot
-import plot_convergence as conv_plot
-import plot_scatter as scatter_plot
 
 warnings.simplefilter(action="ignore")
 
@@ -113,8 +110,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
                     close = "/" if solution.coordinates is not None else "/None"
                     rd = results_directory + "scatter-plot-" + solution.optimizer + "/" + solution.name + close
                     Path(rd).mkdir(parents=True, exist_ok=True)
-
-                    scatter_plot.run(solution, rd, k) if solution.coordinates is not None else ()
+                    export.write_scatter(solution, rd, k) if solution.coordinates is not None else ()
 
             if export.avg:
                 export_to_file = results_directory + "experiment_avg.csv"
@@ -124,12 +120,12 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     if export.convergence:
         rd = results_directory + "convergence-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        conv_plot.run(rd, optimizer, instances, iterations)
+        export.write_convergence(rd, optimizer, instances, iterations)
 
     if export.boxplot:
         rd = results_directory + "box-plot/"
         Path(rd).mkdir(parents=True, exist_ok=True)
-        box_plot.run(rd, optimizer, instances, iterations)
+        export.write_boxplot(rd, optimizer, instances, iterations)
 
     if export.configuration:
         export_to_file = results_directory + "configuration.txt"
