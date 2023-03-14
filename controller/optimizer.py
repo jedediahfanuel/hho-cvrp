@@ -81,7 +81,7 @@ def run(optimizers, instances, num_of_runs, params: dict[str, int], export: Expo
     for i, optimizer_name in enumerate(optimizers):
         for instance_name in instances:
             collection = Collection(num_of_runs)
-            for k in range(0, num_of_runs):
+            for k in range(num_of_runs):
                 func_details = benchmarks.get_function_details(instance_name)
                 solution = selector(optimizer_name, func_details, population_size, iterations)
                 collection.convergence[k] = solution.convergence
