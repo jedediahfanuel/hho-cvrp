@@ -17,7 +17,7 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
 
 
 class Export:
-    def __init__(self, avg, detail, conv, box, scatter, route, config):
+    def __init__(self, avg, detail, conv, box, scatter, route, config, iterations):
         self.avg = avg
         self.boxplot = box
         self.configuration = config
@@ -26,16 +26,21 @@ class Export:
         self.route = route
         self.scatter = scatter
 
-    @staticmethod
-    def write_avg(filename, flag, collection: Collection, solution: Solution, num_of_runs: int, cnvg_header):
+        # CSV header for convergence
+        self.cnvg_header = ["Iter" + str(it + 1) for it in range(0, iterations)]
+        self.flag = False
+        self.flag_detail = False
+
+    def write_avg(self, filename, collection: Collection, solution: Solution, num_of_runs: int):
         with open(filename, "a", newline="\n") as out:
             writer = csv.writer(out, delimiter=",")
-            if not flag:
+            if not self.flag:
                 # just one time to write the header of the CSV file
                 header = np.concatenate(
-                    [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], cnvg_header]
+                    [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], self.cnvg_header]
                 )
                 writer.writerow(header)
+                self.flag = True
 
             avg_execution_time = float("%0.2f" % (sum(collection.execution_time) / num_of_runs))
             avg_bs = float("%0.2f" % (sum(collection.best_solution) / num_of_runs))
@@ -88,16 +93,16 @@ class Export:
             out.write(str(f'Instances  : {names}\n'))
         out.close()
 
-    @staticmethod
-    def write_detail(filename, flag_detail, collection: Collection, s: Solution, cnvg_header, k: int):
+    def write_detail(self, filename, collection: Collection, s: Solution, k: int):
         with open(filename, "a", newline="\n") as out:
             writer = csv.writer(out, delimiter=",")
-            if not flag_detail:
+            if not self.flag_detail:
                 # just one time to write the header of the CSV file
                 header = np.concatenate(
-                    [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], cnvg_header]
+                    [["Optimizer", "Instance", "BKS", "BS", "Gap", "ExecutionTime"], self.cnvg_header]
                 )
                 writer.writerow(header)
+                self.flag_detail = True
 
             collection.execution_time[k] = s.execution_time
             collection.best_solution[k] = s.best

@@ -72,21 +72,11 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     N/A
     """
 
-    # Select general parameters for all optimizers (population size, number of iterations) ....
     population_size = params["population_size"]
     iterations = params["iterations"]
 
-    flag = False
-    flag_detail = False
-
-    # CSV Header for the convergence
-    cnvg_header = []
-
     results_directory = "out/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
     Path(results_directory).mkdir(parents=True, exist_ok=True)
-
-    for it in range(0, iterations):
-        cnvg_header.append("Iter" + str(it + 1))
 
     for i in range(0, len(optimizer)):
         for j in range(0, len(instances)):
@@ -98,8 +88,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
 
                 if export.details:
                     export_to_file = results_directory + "experiment_details.csv"
-                    export.write_detail(export_to_file, flag_detail, collection, solution, cnvg_header, k)
-                    flag_detail = True
+                    export.write_detail(export_to_file, collection, solution, k)
 
                 if export.route:
                     rd = results_directory + "routes-" + solution.optimizer + "/" + solution.name + "/"
@@ -114,8 +103,7 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
 
             if export.avg:
                 export_to_file = results_directory + "experiment_avg.csv"
-                export.write_avg(export_to_file, flag, collection, solution, num_of_runs, cnvg_header)
-                flag = True
+                export.write_avg(export_to_file, collection, solution, num_of_runs)
 
     if export.convergence:
         rd = results_directory + "convergence-plot/"
@@ -130,10 +118,5 @@ def run(optimizer, instances, num_of_runs, params: dict[str, int], export: Expor
     if export.configuration:
         export_to_file = results_directory + "configuration.txt"
         export.write_configuration(export_to_file, num_of_runs, population_size, iterations, instances)
-
-    if not flag:  # Failed to run at least one experiment
-        print(
-            "No Optimizer or Cost function is selected. Check lists of available optimizers and cost functions"
-        )
 
     print("Execution completed")

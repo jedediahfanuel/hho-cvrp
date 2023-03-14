@@ -39,6 +39,6 @@ def conf(num, pop, iterate, names):
     }
 
     # Choose whether to Export the results in different formats
-    export_flags = Export(True, True, True, True, True, True, True)
+    export_flags = Export(True, True, True, True, True, True, True, iterate)
 
     run(optimizer, instances, num_of_runs, params, export_flags)
