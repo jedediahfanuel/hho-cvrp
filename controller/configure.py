@@ -18,7 +18,7 @@ def conf(num, pop, iterate, names, exports, result_directory="", optimizer=None)
     names : list of str
         list of instance name to be tested
     exports : list of bool
-        list of which export will be proceed
+        list of which export will be proceeded
     result_directory : str
         path of root directory for result files
     optimizer : list of str
