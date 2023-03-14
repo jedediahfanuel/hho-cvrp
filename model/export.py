@@ -18,7 +18,7 @@ if platform.system() == "Linux":  # Linux: "Linux", Mac: "Darwin", Windows: "Win
 
 
 class Export:
-    def __init__(self, avg, detail, conv, box, scatter, route, config, iterations):
+    def __init__(self, avg, box, config, conv, detail, route, scatter, iteration):
         self.avg = avg
         self.boxplot = box
         self.configuration = config
@@ -28,7 +28,7 @@ class Export:
         self.scatter = scatter
 
         # CSV header for convergence
-        self.cnvg_header = ["Iter" + str(it + 1) for it in range(0, iterations)]
+        self.cnvg_header = ["Iter" + str(it + 1) for it in range(0, iteration)]
         self.flag = False
         self.flag_detail = False
 
