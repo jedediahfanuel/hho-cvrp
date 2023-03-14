@@ -3,7 +3,7 @@ from controller.optimizer import run
 from model.parameter import Parameter
 
 
-def conf(num, pop, iterate, names, exports, result_directory="", optimizer=None):
+def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory="", optimizer=None):
     """
     Parameter configuration
 
@@ -19,6 +19,10 @@ def conf(num, pop, iterate, names, exports, result_directory="", optimizer=None)
         list of instance name to be tested
     exports : list of bool
         list of which export will be proceeded
+    city_size : int
+        the size of scatter-plot dots
+    city_id : bool
+        show city id in scatter-plot
     result_directory : str
         path of root directory for result files
     optimizer : list of str
@@ -30,7 +34,7 @@ def conf(num, pop, iterate, names, exports, result_directory="", optimizer=None)
     """
 
     # Collection of params
-    params = Parameter(num, pop, iterate, names, result_directory, optimizer)
+    params = Parameter(num, pop, iterate, names, city_size, city_id, result_directory, optimizer)
 
     # Choose whether to Export the results in different formats
     export_flags = Export(

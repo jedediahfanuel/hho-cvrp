@@ -59,6 +59,8 @@ def run():
                 int(iteration_input.get()),
                 [items_listbox.get(idx) for idx in items_listbox.curselection()],
                 [i in export_listbox.curselection() for i in range(7)],
+                int(city_size_input.get()),
+                True if city_id_listbox.curselection()[0] else False,
                 path_input.get()
             )
 
@@ -159,10 +161,10 @@ def run():
 
     city_id_label = tk.Label(right_frame, text="Display City ID:", bg="white")
     city_id_listbox = tk.Listbox(right_frame, selectmode=tk.SINGLE, height=2, exportselection=False)
-    for item in ["True", "False"]:
+    for item in ["False", "True"]:
         city_id_listbox.insert(tk.END, item)
     city_id_listbox.bind("<<ListboxSelect>>", validate_inputs)
-    city_id_listbox.select_set(1)
+    city_id_listbox.select_set(0)
 
     export_label = tk.Label(right_frame, text="Export Flag:", bg="white")
     export_listbox = tk.Listbox(right_frame, selectmode=tk.MULTIPLE, height=5, exportselection=False)

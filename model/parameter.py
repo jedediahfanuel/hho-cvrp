@@ -6,11 +6,13 @@ class Parameter:
     results_directory = "hho_cvrp/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
     optimizers = ["HHO"]
 
-    def __init__(self, n_runs, population, iteration, instances, results_directory="", optimizers=None):
+    def __init__(self, n_runs, population, iteration, instances, city_size, city_id, results_directory="", optimizers=None):
         self.n_runs = n_runs
         self.population = population
         self.iteration = iteration
         self.instances = instances
+        self.city_size = city_size,
+        self.city_id = city_id
 
         if optimizers is not None:
             self.optimizers = optimizers

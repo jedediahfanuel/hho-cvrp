@@ -319,7 +319,7 @@ class Export:
 
         plt.ioff()
         filename = "scatter-" + solution.name + "-" + str(k) + "-" + str(solution.best)
-        plot_cities(solution, pathsave=rd, filename=filename, size=10, show_id=False)
+        plot_cities(solution, pathsave=rd, filename=filename, size=params.city_size, show_id=params.city_id)
 
 
 def get_space(coordinates):
