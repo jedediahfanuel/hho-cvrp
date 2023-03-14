@@ -9,9 +9,9 @@ from optimizers.local import two_opt_inverse
 from optimizers.local import two_opt_insertion
 
 from model.solution import Solution
-from benchmarks import concat_depot
-from benchmarks import normal_cvrp
-from benchmarks import split_customer
+from controller.benchmarks import concat_depot
+from controller.benchmarks import normal_cvrp
+from controller.benchmarks import split_customer
 
 import numpy
 

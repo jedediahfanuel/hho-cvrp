@@ -2,7 +2,7 @@ import time
 import warnings
 from pathlib import Path
 
-import benchmarks
+import controller.benchmarks as benchmarks
 from optimizers.hho_cvrp import hho
 from model.collection import Collection
 from model.export import Export
