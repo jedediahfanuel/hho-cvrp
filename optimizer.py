@@ -3,7 +3,7 @@ import warnings
 from pathlib import Path
 
 import controller.benchmarks as benchmarks
-from optimizers.hho_cvrp import hho
+from method.hho_cvrp import hho
 from model.collection import Collection
 from model.export import Export
 

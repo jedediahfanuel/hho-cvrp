@@ -1,7 +1,7 @@
 import unittest
 import cvrplib
 from benchmarks import split_customer
-from optimizers.hho_cvrp import cvrp_two_opt_no_depot
+from method.hho_cvrp import cvrp_two_opt_no_depot
 
 
 class MyTestCase(unittest.TestCase):

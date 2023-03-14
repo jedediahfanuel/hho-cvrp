@@ -1,6 +1,6 @@
 import unittest
 
-from optimizers.local import inverse
+from method.local import inverse
 
 
 class InverseCase(unittest.TestCase):
