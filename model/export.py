@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from controller.benchmarks import gap
 from model.collection import Collection
 from model.parameter import Parameter
 from model.solution import Solution
@@ -140,7 +139,7 @@ class Export:
 
             collection.execution_time[k] = solution.execution_time
             collection.best_solution[k] = solution.best
-            collection.gap_solution[k] = gap(solution.bks, solution.best)
+            collection.gap_solution[k] = solution.gap()
             a = np.concatenate(
                 [
                     [
