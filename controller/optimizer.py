@@ -3,9 +3,9 @@ import warnings
 import controller.benchmarks as benchmarks
 from method.hho_cvrp import HHOCVRP
 from model.collection import Collection
+from model.parameter import Parameter
 from model.solution import Solution
 from model.export import Export
-from model.parameter import Parameter
 
 warnings.simplefilter(action="ignore")
 
