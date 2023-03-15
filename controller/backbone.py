@@ -30,9 +30,9 @@ def selector(algo, func_details, params, solution: Solution):
     instance = func_details[1]
 
     solution.bks = func_details[2].cost
-    solution.name = func_details[1].name
-    solution.dim = func_details[1].dimension
-    solution.coordinates = func_details[1].coordinates
+    solution.name = instance.name
+    solution.dim = instance.dimension
+    solution.coordinates = instance.coordinates
 
     if algo == "HHO":
         HHOCVRP(
