@@ -3,13 +3,14 @@ import warnings
 import controller.benchmarks as benchmarks
 from method.hho_cvrp import HarrisHawksOptimization
 from model.collection import Collection
+from model.solution import Solution
 from model.export import Export
 from model.parameter import Parameter
 
 warnings.simplefilter(action="ignore")
 
 
-def selector(algo, func_details, params):
+def selector(algo, func_details, params, solution: Solution):
     """
 
     Parameters
@@ -20,27 +21,30 @@ def selector(algo, func_details, params):
         Contain name of objective function, instance, and solution
     params : Parameter
         Collection of configurable user parameter
+    solution : Solution
+        Class of solution (check solution.py)
 
     Returns
     -------
-    x : Solution Class
-        Solution class that include much information about optimizer process result
+    N/A
     """
 
     function_name = func_details[0]
     instance = func_details[1]
-    solution = func_details[2]
+
+    solution.bks = func_details[2].cost
+    solution.name = func_details[1].name
+    solution.dim = func_details[1].dimension
+    solution.coordinates = func_details[1].coordinates
 
     if algo == "HHO":
         hho = HarrisHawksOptimization(
-            getattr(benchmarks, function_name),
-            params.iteration, params.population,
-            solution.cost, instance
+            getattr(benchmarks, function_name), params.iteration, params.population, instance
         )
-        solution = hho.run(solution)
-    else:
-        return None
-    return solution
+        hho.run(solution)
+    # else:
+    #     return None
+    # return solution
 
 
 def run(params: Parameter, export: Export):
@@ -69,9 +73,10 @@ def run(params: Parameter, export: Export):
     for i, optimizer_name in enumerate(params.optimizers):
         for instance_name in params.instances:
             collection = Collection(params.n_runs)
+            solution = Solution(optimizer=optimizer_name)
             for k in range(params.n_runs):
                 func_details = benchmarks.get_function_details(instance_name)
-                solution = selector(optimizer_name, func_details, params)
+                selector(optimizer_name, func_details, params, solution)
                 collection.convergence[k] = solution.convergence
 
                 if export.details:

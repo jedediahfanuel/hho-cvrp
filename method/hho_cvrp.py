@@ -1,4 +1,3 @@
-import time
 import random
 import math
 import numpy as np
@@ -24,22 +23,18 @@ class HarrisHawksOptimization:
             objf,
             iteration: int,
             population: int,
-            bks,
             data
     ):
         self.objf = objf
         self.iteration = iteration
         self.population = population
 
-        self.bks = bks
         self.lb = 1
         self.ub = data.n_customers
         self.capacity = data.capacity
         self.dimension = data.n_customers
         self.distance = data.distances
         self.demands = data.demands
-        self.coordinates = data.coordinates  # ?
-        self.problem_name = data.name  # ?
 
         self.hawks = np.zeros(self.dimension)
         self.rabbit_location = np.zeros(self.dimension)
@@ -75,9 +70,9 @@ class HarrisHawksOptimization:
         N/A
         """
 
-        if self.rabbit_energy <= self.bks:
-            solution.convergence_curve = [
-                self.rabbit_energy if conv == 0 else conv for conv in solution.convergence_curve
+        if self.rabbit_energy <= solution.bks:
+            solution.convergence = [
+                self.rabbit_energy if conv == 0 else conv for conv in solution.convergence
             ]
             self.t = self.iteration
 
@@ -134,23 +129,18 @@ class HarrisHawksOptimization:
 
         Returns
         -------
-        s : Solution
+        solution : Solution
             a local defined solution class (check solution.py)
         """
 
         self.initiate_population()
 
         # Initialize convergence
-        solution.convergence_curve = np.zeros(self.iteration)
+        solution.convergence = np.zeros(self.iteration)
 
-        ############################
-        s = Solution()
+        print('HHO is now tackling "' + self.objf.__name__ + '" ' + solution.name)
 
-        print('HHO is now tackling "' + self.objf.__name__ + '" ' + self.problem_name)
-
-        timer_start = time.time()
-        s.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
-        ############################
+        solution.start_timer()
 
         self.determine_rabbit()
 
@@ -276,31 +266,19 @@ class HarrisHawksOptimization:
 
             self.update_location(self.t)
 
-            solution.convergence_curve[self.t] = self.rabbit_energy
+            solution.convergence[self.t] = self.rabbit_energy
             if self.t % 1 == 0:
-                print(
-                    "At iteration " + str(self.t) + " the best fitness is " + str(self.rabbit_energy)
-                )
+                print("At iteration " + str(self.t) + " the best fitness is " + str(self.rabbit_energy))
             self.t += 1
 
             self.check_solution(solution)
 
-        timer_end = time.time()
-        s.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
-        s.execution_time = timer_end - timer_start
-        # s.convergence = convergence_curve
-        s.optimizer = "HHO"
-        s.objfname = self.objf.__name__
-        s.bks = self.bks
-        s.best = self.rabbit_energy
-        s.best_individual = self.rabbit_location
-        s.name = self.problem_name
-        s.routes = self.best_route if self.best_route is not None else split_customer(
+        solution.stop_timer()
+        solution.objfname = self.objf.__name__
+        solution.best = self.rabbit_energy
+        solution.best_individual = self.rabbit_location
+        solution.routes = self.best_route if self.best_route is not None else split_customer(
             self.rabbit_location.astype(int), self.capacity, self.demands)
-        s.dim = self.dimension
-        s.coordinates = self.coordinates
-
-        return s
 
     def levy(self):
         """
