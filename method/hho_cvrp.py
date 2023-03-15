@@ -292,10 +292,7 @@ class HHOCVRP:
             self.hawks[i, :] = np.array(y).copy()
         else:
             x2 = (
-                    self.rabbit_location
-                    - self.escaping_energy
-                    * abs(jump_strength * self.rabbit_location - self.hawks[i, :])
-                    + np.multiply(np.random.randn(self.dimension), self.levy())
+                    np.array(y) + np.multiply(np.random.randn(self.dimension), self.levy())
             )
             x2 = mutate.insertion(random_key(x2))
             x2 = two_opt_inverse(concat_depot(x2), self.distance)[1:-1]
@@ -323,10 +320,7 @@ class HHOCVRP:
             self.hawks[i, :] = x1.copy()
         else:
             x2 = (
-                    self.rabbit_location
-                    - self.escaping_energy
-                    * abs(jump_strength * self.rabbit_location - self.hawks.mean(0))
-                    + np.multiply(np.random.randn(self.dimension), self.levy())
+                    x1 + np.multiply(np.random.randn(self.dimension), self.levy())
             )
             x2 = mutate.insertion(random_key(x2))
 
