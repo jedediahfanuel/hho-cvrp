@@ -1,7 +1,7 @@
 import warnings
 
 import controller.benchmarks as benchmarks
-from method.hho_cvrp import hho
+from method.hho_cvrp import HarrisHawksOptimization
 from model.collection import Collection
 from model.export import Export
 from model.parameter import Parameter
@@ -32,7 +32,12 @@ def selector(algo, func_details, params):
     solution = func_details[2]
 
     if algo == "HHO":
-        solution = hho(getattr(benchmarks, function_name), instance, solution, params.population, params.iteration)
+        hho = HarrisHawksOptimization(
+            getattr(benchmarks, function_name),
+            params.iteration, params.population,
+            solution.cost, instance
+        )
+        solution = hho.run()
     else:
         return None
     return solution
