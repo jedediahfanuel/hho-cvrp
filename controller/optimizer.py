@@ -37,7 +37,7 @@ def selector(algo, func_details, params):
             params.iteration, params.population,
             solution.cost, instance
         )
-        solution = hho.run()
+        solution = hho.run(solution)
     else:
         return None
     return solution
