@@ -141,3 +141,66 @@ def two_opt_swap(route, distances):
                     improved = True
 
     return route
+
+
+def cvrp_insertion(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using insertion 2-opt
+
+    Parameters
+    ----------
+    routes : cvrp solution representation
+        list of routes
+    distances : list
+        matrix of distance
+
+    Returns
+    -------
+    x : cvrp solution representation
+        list of routes after insertion 2-opt
+    """
+
+    return [two_opt_insertion(r, distances) for r in routes]
+
+
+def cvrp_inverse(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using inverse 2-opt
+
+    Parameters
+    ----------
+    routes : cvrp solution representation
+        list of routes
+    distances : list
+        matrix of distance
+
+    Returns
+    -------
+    x : cvrp solution representation
+        list of routes after inverse 2-opt
+    """
+
+    return [two_opt_inverse(r, distances) for r in routes]
+
+
+def cvrp_swap(routes, distances):
+    """
+    This function accepts a list of routes in which
+    each route will be processed using swap 2-opt
+
+    Parameters
+    ----------
+    routes : cvrp solution representation
+        list of routes
+    distances : list
+        matrix of distance
+
+    Returns
+    -------
+    x : cvrp solution representation
+        list of routes after swap 2-opt
+    """
+
+    return [two_opt_swap(r, distances) for r in routes]

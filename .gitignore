@@ -4,6 +4,7 @@ venv/bin
 venv
 out
 hho_cvrp
+hho_cvrp_result
 build
 dist
 __pycache__
