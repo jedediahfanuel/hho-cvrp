@@ -5,9 +5,9 @@ import numpy as np
 import method.mutate as mutate
 from method.crossover import pmx
 from method.encode import random_key
-from method.local_search import cvrp_inverse
-from method.local_search import cvrp_insertion
 from method.local_search import two_opt_inverse
+from method.local_search import two_opt_cvrp_inverse
+from method.local_search import two_opt_cvrp_insertion
 
 from model.solution import Solution
 from controller.benchmarks import concat_depot
@@ -385,8 +385,8 @@ class HHOCVRP:
         """
 
         self.test_route = split_customer(random_key(self.hawks[i, :]), self.capacity, self.demands)
-        self.test_route = cvrp_inverse(self.test_route, self.distance)
-        self.test_route = cvrp_insertion(self.test_route, self.distance)
+        self.test_route = two_opt_cvrp_inverse(self.test_route, self.distance)
+        self.test_route = two_opt_cvrp_insertion(self.test_route, self.distance)
 
     def levy(self):
         """
