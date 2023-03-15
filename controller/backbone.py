@@ -12,6 +12,7 @@ warnings.simplefilter(action="ignore")
 
 def selector(algo, func_details, params, solution: Solution):
     """
+    This function select and run each optimizer
 
     Parameters
     ----------

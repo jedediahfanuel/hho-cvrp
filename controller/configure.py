@@ -1,5 +1,5 @@
+from controller import backbone
 from model.export import Export
-from controller.optimizer import run
 from model.parameter import Parameter
 
 
@@ -47,4 +47,4 @@ def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory
         exports[4],  # scatter-plot
         iterate)
 
-    run(params, export_flags)
+    backbone.run(params, export_flags)
