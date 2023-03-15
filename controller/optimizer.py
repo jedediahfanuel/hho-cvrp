@@ -38,13 +38,9 @@ def selector(algo, func_details, params, solution: Solution):
     solution.coordinates = func_details[1].coordinates
 
     if algo == "HHO":
-        hho = HarrisHawksOptimization(
+        HarrisHawksOptimization(
             getattr(benchmarks, function_name), params.iteration, params.population, instance
-        )
-        hho.run(solution)
-    # else:
-    #     return None
-    # return solution
+        ).run(solution)
 
 
 def run(params: Parameter, export: Export):

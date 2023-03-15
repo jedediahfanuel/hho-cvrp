@@ -1,5 +1,5 @@
-import random
 import math
+import random
 import numpy as np
 
 import method.mutate as mutate
@@ -133,12 +133,12 @@ class HarrisHawksOptimization:
             a local defined solution class (check solution.py)
         """
 
-        self.initiate_population()
-
         # Initialize convergence
         solution.convergence = np.zeros(self.iteration)
 
         print('HHO is now tackling "' + self.objf.__name__ + '" ' + solution.name)
+
+        self.initiate_population()
 
         solution.start_timer()
 
