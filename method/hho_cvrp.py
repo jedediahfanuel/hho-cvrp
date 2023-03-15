@@ -5,8 +5,9 @@ import math
 import method.mutate as mutate
 from method.crossover import pmx
 from method.encode import random_key
-from method.local import two_opt_inverse
-from method.local import two_opt_insertion
+from method.local_search import cvrp_inverse
+from method.local_search import cvrp_insertion
+from method.local_search import two_opt_inverse
 
 from model.solution import Solution
 from controller.benchmarks import concat_depot
@@ -14,6 +15,11 @@ from controller.benchmarks import normal_cvrp
 from controller.benchmarks import split_customer
 
 import numpy
+
+
+class HarrisHawksOptimization:
+    def __init__(self):
+        pass
 
 
 def hho(objf, data, sol, search_agent_no, max_iter):
@@ -57,7 +63,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
     ub = numpy.array(ub)
 
     # Initialize the locations of Harris' hawks
-    x_hawks = numpy.array(
+    hawks = numpy.array(
         [x * (ub - lb) + lb for x in numpy.random.uniform(0, 1, (search_agent_no, dim))]
     )
 
@@ -78,14 +84,14 @@ def hho(objf, data, sol, search_agent_no, max_iter):
     for i in range(0, search_agent_no):
 
         # fitness of locations
-        x_hawks[i, :] = random_key(x_hawks[i, :])
-        fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands)
+        hawks[i, :] = random_key(hawks[i, :])
+        fitness = objf(hawks[i, :].astype(int), distances, max_capacity, demands)
         fs[i] = fitness
 
         # Update the location of Rabbit
         if fitness < rabbit_energy:  # Change this to > for maximization problem
             rabbit_energy = fitness
-            rabbit_location = x_hawks[i, :].copy()
+            rabbit_location = hawks[i, :].copy()
 
     # Main loop
     while t < max_iter:
@@ -105,20 +111,20 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                 # Harris' hawks perch randomly based on 2 strategy:
                 q = random.random()
                 rand_hawk_index = math.floor(search_agent_no * random.random())
-                x_rand = x_hawks[rand_hawk_index, :]
+                x_rand = hawks[rand_hawk_index, :]
                 if q >= 0.5:
                     # perch based on other family members
-                    x_hawks[i, :] = x_rand - random.random() * abs(
-                        x_rand - 2 * random.random() * x_hawks[i, :]
+                    hawks[i, :] = x_rand - random.random() * abs(
+                        x_rand - 2 * random.random() * hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
+                    hawks[i, :] = mutate.swap(random_key(hawks[i, :]))
 
                 elif q < 0.5:
                     # perch on a random tall tree (random site inside group's home range)
-                    x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
+                    hawks[i, :] = (rabbit_location - hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
-                    x_hawks[i, :] = mutate.inverse(random_key(x_hawks[i, :]))
+                    hawks[i, :] = mutate.inverse(random_key(hawks[i, :]))
 
             # -------- Exploitation phase -------------------
             elif abs(escaping_energy) < 1:
@@ -132,10 +138,10 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                 if (
                         r >= 0.5 > abs(escaping_energy)
                 ):  # Hard besiege Eq. (6) in paper
-                    x_hawks[i, :] = rabbit_location - escaping_energy * abs(
-                        rabbit_location - x_hawks[i, :]
+                    hawks[i, :] = rabbit_location - escaping_energy * abs(
+                        rabbit_location - hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
+                    hawks[i, :] = mutate.swap(random_key(hawks[i, :]))
 
                 if (
                         r >= 0.5 and abs(escaping_energy) >= 0.5
@@ -143,10 +149,10 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     jump_strength = 2 * (
                             1 - random.random()
                     )  # random jump strength of the rabbit
-                    x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
-                        jump_strength * rabbit_location - x_hawks[i, :]
+                    hawks[i, :] = (rabbit_location - hawks[i, :]) - escaping_energy * abs(
+                        jump_strength * rabbit_location - hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
+                    hawks[i, :] = mutate.swap(random_key(hawks[i, :]))
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
 
@@ -156,7 +162,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     # rabbit try to escape by many zigzag deceptive motions
                     jump_strength = 2 * (1 - random.random())
                     x1 = rabbit_location - escaping_energy * abs(
-                        jump_strength * rabbit_location - x_hawks[i, :]
+                        jump_strength * rabbit_location - hawks[i, :]
                     )
                     x1 = mutate.swap(random_key(x1))
                     x1, x2 = pmx(
@@ -171,59 +177,59 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     y = x1 if xo1 < xo2 else x2
 
                     if yobjf < fs[i]:  # improved move?
-                        x_hawks[i, :] = numpy.array(y).copy()
+                        hawks[i, :] = numpy.array(y).copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
                                 - escaping_energy
-                                * abs(jump_strength * rabbit_location - x_hawks[i, :])
+                                * abs(jump_strength * rabbit_location - hawks[i, :])
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = mutate.insertion(random_key(x2))
                         x2 = two_opt_inverse(concat_depot(x2), distances)[1:-1]
 
                         if objf(x2, distances, max_capacity, demands) < fs[i]:
-                            x_hawks[i, :] = x2.copy()
+                            hawks[i, :] = x2.copy()
                 if (
                         r < 0.5 and abs(escaping_energy) < 0.5
                 ):  # Hard besiege Eq. (11) in paper
                     jump_strength = 2 * (1 - random.random())
                     x1 = rabbit_location - escaping_energy * abs(
-                        jump_strength * rabbit_location - x_hawks.mean(0)
+                        jump_strength * rabbit_location - hawks.mean(0)
                     )
                     x1 = mutate.inverse(random_key(x1))
 
                     if objf(x1, distances, max_capacity, demands) < fs[i]:  # improved move?
-                        x_hawks[i, :] = x1.copy()
+                        hawks[i, :] = x1.copy()
                     else:  # Perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
                                 - escaping_energy
-                                * abs(jump_strength * rabbit_location - x_hawks.mean(0))
+                                * abs(jump_strength * rabbit_location - hawks.mean(0))
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = mutate.insertion(random_key(x2))
 
                         if objf(x2, distances, max_capacity, demands) < fs[i]:
-                            x_hawks[i, :] = x2.copy()
+                            hawks[i, :] = x2.copy()
 
         for i in range(0, search_agent_no):
 
             # fitness of locations
             if t == max_iter - 1:
                 # Finishing Phase
-                test_route = split_customer(random_key(x_hawks[i, :]), max_capacity, demands)
+                test_route = split_customer(random_key(hawks[i, :]), max_capacity, demands)
                 test_route = cvrp_inverse(test_route, distances)
                 test_route = cvrp_insertion(test_route, distances)
 
-            fitness = objf(x_hawks[i, :].astype(int), distances, max_capacity, demands
+            fitness = objf(hawks[i, :].astype(int), distances, max_capacity, demands
                            ) if t < max_iter - 1 else normal_cvrp(test_route, distances)
             fs[i] = fitness
 
             # Update the location of Rabbit
             if fitness < rabbit_energy:  # Change this to > for maximization problem
                 rabbit_energy = fitness
-                rabbit_location = x_hawks[i, :].copy()
+                rabbit_location = hawks[i, :].copy()
 
                 if t == max_iter - 1:
                     best_route = test_route
@@ -276,44 +282,3 @@ def levy(dim):
     step = numpy.divide(u, zz)
     return step
 
-
-def cvrp_insertion(routes, distances):
-    """
-    This function accepts a list of routes in which
-    each route will be processed using insertion 2-opt
-
-    Parameters
-    ----------
-    routes : cvrp solution representation
-        list of routes
-    distances : list
-        matrix of distance
-
-    Returns
-    -------
-    x : cvrp solution representation
-        list of routes after insertion 2-opt
-    """
-
-    return [two_opt_insertion(r, distances) for r in routes]
-
-
-def cvrp_inverse(routes, distances):
-    """
-    This function accepts a list of routes in which
-    each route will be processed using inverse 2-opt
-
-    Parameters
-    ----------
-    routes : cvrp solution representation
-        list of routes
-    distances : list
-        matrix of distance
-
-    Returns
-    -------
-    x : cvrp solution representation
-        list of routes after inverse 2-opt
-    """
-
-    return [two_opt_inverse(r, distances) for r in routes]
