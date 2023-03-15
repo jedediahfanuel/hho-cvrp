@@ -3,6 +3,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import ttk
 
 from controller import configure
 
@@ -87,7 +88,7 @@ class App:
 
         # Right frame
         self.right_frame = tk.Frame(self.root, padx=5, pady=5, bg="white")
-        self.right_frame.grid(row=0, column=1)
+        self.right_frame.grid(row=0, column=1, sticky="nsew")
 
         self.path_button = tk.Button(self.right_frame, text="Path", command=self.select_directory)
         self.path_input = tk.StringVar(self.right_frame)
@@ -127,6 +128,15 @@ class App:
         self.export_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
         self.export_listbox.grid(row=3, column=1, padx=5, pady=5, sticky="W")
 
+        # Progress Bar
+        self.progress_label = tk.Label(self.right_frame, text="", bg="white")
+        self.progress_bar = ttk.Progressbar(self.right_frame, orient=tk.HORIZONTAL,
+                                            length=145, maximum=100, mode="determinate")
+        self.progress_bar['value'] = 0
+
+        self.progress_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")
+        self.progress_bar.grid(row=4, column=1, padx=5, pady=5, sticky="W")
+
         # Run main event loop
         self.root.mainloop()
 
@@ -148,6 +158,8 @@ class App:
 
     def submit_button_callback(self):
         self.process_label.config(text="Running")
+        self.progress_label.config(text="0%")
+        self.progress_bar['value'] = 0
 
         # disable submit button
         global running
@@ -168,6 +180,7 @@ class App:
             [i in self.export_listbox.curselection() for i in range(7)],
             int(self.city_size_input.get()),
             True if self.city_id_listbox.curselection()[0] else False,
+            self.set_progress_bar_value,
             self.path_input.get()
         )
 
@@ -175,6 +188,7 @@ class App:
 
     def update_ui(self):
         self.process_label.config(text="Completed")
+        self.progress_label.config(text="100%")
 
         # enabling submit button
         global running
@@ -192,6 +206,10 @@ class App:
         self.path_entry.insert(0, directory_path)
 
         self.path_entry.config(state=tk.DISABLED)
+
+    def set_progress_bar_value(self, value):
+        self.progress_bar['value'] = round(value)
+        self.progress_label.config(text=str(int(value))+"%")
 
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
