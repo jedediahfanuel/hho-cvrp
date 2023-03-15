@@ -27,171 +27,172 @@ class IntegerInputField(tk.Entry):
             return False
 
 
-def run():
-    def validate_inputs(*args):
-        # Check if input values are valid integers greater than or equal to 1
-        if iteration_input.get().isdigit() \
-                and population_input.get().isdigit() \
-                and nruns_input.get().isdigit() \
-                and int(iteration_input.get()) > 0 \
-                and int(population_input.get()) > 0 \
-                and int(nruns_input.get()) > 0 \
-                and items_listbox.curselection() \
-                and city_size_input.get().isdigit() \
-                and int(city_size_input.get()) > 0 \
-                and not running:
-            submit_button.config(state="normal")
-        else:
-            submit_button.config(state="disabled")
+class App:
+    def __init__(self):
+        # Create main window
+        self.root = tk.Tk()
+        self.root.title("HHO-CVRP")
+        self.root.configure(bg="white")
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-    def submit_button_callback():
-        process_label.config(text="Running")
+        # Left frame
+        self.left_frame = tk.Frame(self.root, padx=5, pady=5, bg="white")
+        self.left_frame.grid(row=0, column=0)
+
+        # Create input fields
+        self.nruns_label = tk.Label(self.left_frame, text="Num of run:", bg="white")
+        self.nruns_input = IntegerInputField(self.left_frame)
+        self.nruns_input.insert(0, "5")
+        self.nruns_input.bind("<KeyRelease>", self.validate_inputs)
+
+        self.population_label = tk.Label(self.left_frame, text="Population:", bg="white")
+        self.population_input = IntegerInputField(self.left_frame)
+        self.population_input.insert(0, "20")
+        self.population_input.bind("<KeyRelease>", self.validate_inputs)
+
+        self.iteration_label = tk.Label(self.left_frame, text="Iteration:", bg="white")
+        self.iteration_input = IntegerInputField(self.left_frame)
+        self.iteration_input.insert(0, "500")
+        self.iteration_input.bind("<KeyRelease>", self.validate_inputs)
+
+        # Create dropdown menu with checkboxes
+        self.items = cvrplib.list_names(vrp_type="cvrp")
+        self.items_label = tk.Label(self.left_frame, text="Instances:", bg="white")
+        self.items_listbox = tk.Listbox(self.left_frame, selectmode=tk.MULTIPLE, height=8, exportselection=False)
+        for item in self.items:
+            self.items_listbox.insert(tk.END, item)
+        self.items_listbox.bind("<<ListboxSelect>>", self.validate_inputs)
+
+        # Create process label
+        self.process_label = tk.Label(self.left_frame, text="", bg="white")
+
+        # Create submit button
+        self.submit_button = tk.Button(self.left_frame, text="Submit", command=self.submit_button_callback, state="disabled")
+
+        # Arrange widgets in grid
+        self.nruns_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")
+        self.nruns_input.grid(row=0, column=1, padx=5, pady=5, sticky="W")
+
+        self.population_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
+        self.population_input.grid(row=1, column=1, padx=5, pady=5, sticky="W")
+
+        self.iteration_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")
+        self.iteration_input.grid(row=2, column=1, padx=5, pady=5, sticky="W")
+
+        self.items_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
+        self.items_listbox.grid(row=3, column=1, padx=5, pady=5, sticky="W")
+
+        self.process_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")
+        self.submit_button.grid(row=4, column=1, padx=5, pady=5, sticky="W")
+
+        # Right frame
+        self.right_frame = tk.Frame(self.root, padx=5, pady=5, bg="white")
+        self.right_frame.grid(row=0, column=1)
+
+        self.path_button = tk.Button(self.right_frame, text="Path", command=self.select_directory)
+        self.path_input = tk.StringVar(self.right_frame)
+        self.path_input.set("")
+        self.path_entry = tk.Entry(self.right_frame, textvariable=self.path_input, state=tk.DISABLED)
+        self.path_input.trace("w", self.validate_inputs)
+
+        self.city_size_label = tk.Label(self.right_frame, text="City Size:", bg="white")
+        self.city_size_input = IntegerInputField(self.right_frame)
+        self.city_size_input.insert(0, "10")
+        self.city_size_input.bind("<KeyRelease>", self.validate_inputs)
+
+        self.city_id_label = tk.Label(self.right_frame, text="Display City ID:", bg="white")
+        self.city_id_listbox = tk.Listbox(self.right_frame, selectmode=tk.SINGLE, height=2, exportselection=False)
+        for item in ["False", "True"]:
+            self.city_id_listbox.insert(tk.END, item)
+        self.city_id_listbox.bind("<<ListboxSelect>>", self.validate_inputs)
+        self.city_id_listbox.select_set(0)
+
+        self.export_label = tk.Label(self.right_frame, text="Export Flag:", bg="white")
+        self.export_listbox = tk.Listbox(self.right_frame, selectmode=tk.MULTIPLE, height=5, exportselection=False)
+        for item in ["Boxplot", "Configuration", "Convergence", "Route", "Scatter-plot"]:
+            self.export_listbox.insert(tk.END, item)
+        self.export_listbox.bind("<<ListboxSelect>>", self.validate_inputs)
+        self.export_listbox.select_set(0, tk.END)
+
+        # Arrange widgets in grid
+        self.path_button.grid(row=0, column=0, padx=5, pady=5, sticky="E")
+        self.path_entry.grid(row=0, column=1, padx=5, pady=5, sticky="W")
+
+        self.city_size_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
+        self.city_size_input.grid(row=1, column=1, padx=5, pady=5, sticky="W")
+
+        self.city_id_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")
+        self.city_id_listbox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
+
+        self.export_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
+        self.export_listbox.grid(row=3, column=1, padx=5, pady=5, sticky="W")
+
+        # Run main event loop
+        self.root.mainloop()
+
+    def validate_inputs(self, *args):
+        # Check if input values are valid integers greater than or equal to 1
+        if self.iteration_input.get().isdigit() \
+                and self.population_input.get().isdigit() \
+                and self.nruns_input.get().isdigit() \
+                and int(self.iteration_input.get()) > 0 \
+                and int(self.population_input.get()) > 0 \
+                and int(self.nruns_input.get()) > 0 \
+                and self.items_listbox.curselection() \
+                and self.city_size_input.get().isdigit() \
+                and int(self.city_size_input.get()) > 0 \
+                and not running:
+            self.submit_button.config(state=tk.NORMAL)
+        else:
+            self.submit_button.config(state=tk.DISABLED)
+
+    def submit_button_callback(self):
+        self.process_label.config(text="Running")
 
         # disable submit button
         global running
         running = True
-        submit_button.config(state="disabled")
+        self.submit_button.config(state=tk.DISABLED)
 
-        def run_hho():
-            # Handle input values
-            configure.conf(
-                int(nruns_input.get()),
-                int(population_input.get()),
-                int(iteration_input.get()),
-                [items_listbox.get(idx) for idx in items_listbox.curselection()],
-                [i in export_listbox.curselection() for i in range(7)],
-                int(city_size_input.get()),
-                True if city_id_listbox.curselection()[0] else False,
-                path_input.get()
-            )
-
-            root.after(0, lambda: update_ui())
-
-        def update_ui():
-            process_label.config(text="Completed")
-
-            # enabling submit button
-            global running
-            running = False
-            submit_button.config(state="normal")
-
-        calculation_thread = threading.Thread(target=run_hho)
+        calculation_thread = threading.Thread(target=self.run_hho)
         calculation_thread.daemon = True
         calculation_thread.start()
 
-    def select_directory():
-        path_entry.config(state=tk.NORMAL)
+    def run_hho(self):
+        # Handle input values
+        configure.conf(
+            int(self.nruns_input.get()),
+            int(self.population_input.get()),
+            int(self.iteration_input.get()),
+            [self.items_listbox.get(idx) for idx in self.items_listbox.curselection()],
+            [i in self.export_listbox.curselection() for i in range(7)],
+            int(self.city_size_input.get()),
+            True if self.city_id_listbox.curselection()[0] else False,
+            self.path_input.get()
+        )
+
+        self.root.after(0, lambda: self.update_ui())
+
+    def update_ui(self):
+        self.process_label.config(text="Completed")
+
+        # enabling submit button
+        global running
+        running = False
+        self.submit_button.config(state=tk.NORMAL)
+
+    def select_directory(self):
+        self.path_entry.config(state=tk.NORMAL)
 
         # get the directory path using the file dialog
         directory_path = filedialog.askdirectory()
 
         # update the path entry field with the selected directory path
-        path_entry.delete(0, tk.END)
-        path_entry.insert(0, directory_path)
+        self.path_entry.delete(0, tk.END)
+        self.path_entry.insert(0, directory_path)
 
-        path_entry.config(state=tk.DISABLED)
+        self.path_entry.config(state=tk.DISABLED)
 
-    def on_closing():
+    def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            root.destroy()
-
-    # Create main window
-    root = tk.Tk()
-    root.title("HHO-CVRP")
-    root.configure(bg="white")
-    root.protocol("WM_DELETE_WINDOW", on_closing)
-
-    # Left frame
-    left_frame = tk.Frame(root, padx=5, pady=5, bg="white")
-    left_frame.grid(row=0, column=0)
-
-    # Create input fields
-    nruns_label = tk.Label(left_frame, text="Num of run:", bg="white")
-    nruns_input = IntegerInputField(left_frame)
-    nruns_input.insert(0, "5")
-    nruns_input.bind("<KeyRelease>", validate_inputs)
-
-    population_label = tk.Label(left_frame, text="Population:", bg="white")
-    population_input = IntegerInputField(left_frame)
-    population_input.insert(0, "20")
-    population_input.bind("<KeyRelease>", validate_inputs)
-
-    iteration_label = tk.Label(left_frame, text="Iteration:", bg="white")
-    iteration_input = IntegerInputField(left_frame)
-    iteration_input.insert(0, "500")
-    iteration_input.bind("<KeyRelease>", validate_inputs)
-
-    # Create dropdown menu with checkboxes
-    items = cvrplib.list_names(vrp_type="cvrp")
-    items_label = tk.Label(left_frame, text="Instances:", bg="white")
-    items_listbox = tk.Listbox(left_frame, selectmode=tk.MULTIPLE, height=8, exportselection=False)
-    for item in items:
-        items_listbox.insert(tk.END, item)
-    items_listbox.bind("<<ListboxSelect>>", validate_inputs)
-
-    # Create process label
-    process_label = tk.Label(left_frame, text="", bg="white")
-
-    # Create submit button
-    submit_button = tk.Button(left_frame, text="Submit", command=submit_button_callback, state="disabled")
-
-    # Arrange widgets in grid
-    nruns_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")
-    nruns_input.grid(row=0, column=1, padx=5, pady=5, sticky="W")
-
-    population_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
-    population_input.grid(row=1, column=1, padx=5, pady=5, sticky="W")
-
-    iteration_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")
-    iteration_input.grid(row=2, column=1, padx=5, pady=5, sticky="W")
-
-    items_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
-    items_listbox.grid(row=3, column=1, padx=5, pady=5, sticky="W")
-
-    process_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")
-    submit_button.grid(row=4, column=1, padx=5, pady=5, sticky="W")
-
-    # Right frame
-    right_frame = tk.Frame(root, padx=5, pady=5, bg="white")
-    right_frame.grid(row=0, column=1)
-
-    path_button = tk.Button(right_frame, text="Path", command=select_directory)
-    path_input = tk.StringVar(right_frame)
-    path_input.set("")
-    path_entry = tk.Entry(right_frame, textvariable=path_input, state=tk.DISABLED)
-    path_input.trace("w", validate_inputs)
-
-    city_size_label = tk.Label(right_frame, text="City Size:", bg="white")
-    city_size_input = IntegerInputField(right_frame)
-    city_size_input.insert(0, "10")
-    city_size_input.bind("<KeyRelease>", validate_inputs)
-
-    city_id_label = tk.Label(right_frame, text="Display City ID:", bg="white")
-    city_id_listbox = tk.Listbox(right_frame, selectmode=tk.SINGLE, height=2, exportselection=False)
-    for item in ["False", "True"]:
-        city_id_listbox.insert(tk.END, item)
-    city_id_listbox.bind("<<ListboxSelect>>", validate_inputs)
-    city_id_listbox.select_set(0)
-
-    export_label = tk.Label(right_frame, text="Export Flag:", bg="white")
-    export_listbox = tk.Listbox(right_frame, selectmode=tk.MULTIPLE, height=5, exportselection=False)
-    for item in ["Boxplot", "Configuration", "Convergence", "Route", "Scatter-plot"]:
-        export_listbox.insert(tk.END, item)
-    export_listbox.bind("<<ListboxSelect>>", validate_inputs)
-    export_listbox.select_set(0, tk.END)
-
-    # Arrange widgets in grid
-    path_button.grid(row=0, column=0, padx=5, pady=5, sticky="E")
-    path_entry.grid(row=0, column=1, padx=5, pady=5, sticky="W")
-
-    city_size_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
-    city_size_input.grid(row=1, column=1, padx=5, pady=5, sticky="W")
-
-    city_id_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")
-    city_id_listbox.grid(row=2, column=1, padx=5, pady=5, sticky="W")
-
-    export_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
-    export_listbox.grid(row=3, column=1, padx=5, pady=5, sticky="W")
-
-    # Run main event loop
-    root.mainloop()
+            self.root.destroy()

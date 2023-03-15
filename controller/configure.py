@@ -1,11 +1,11 @@
+from controller import backbone
 from model.export import Export
-from controller.optimizer import run
 from model.parameter import Parameter
 
 
 def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory="", optimizer=None):
     """
-    Parameter configuration
+    Parameter configuration for test
 
     Parameters
     ----------
@@ -27,10 +27,6 @@ def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory
         path of root directory for result files
     optimizer : list of str
         list of optimizer name to be tested
-
-    Returns
-    -------
-    N/A
     """
 
     # Collection of params
@@ -47,4 +43,4 @@ def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory
         exports[4],  # scatter-plot
         iterate)
 
-    run(params, export_flags)
+    backbone.run(params, export_flags)

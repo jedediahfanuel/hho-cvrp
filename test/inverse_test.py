@@ -1,6 +1,6 @@
 import unittest
 
-from method.local_search import inverse
+from method.extra.local_search import inverse
 
 
 class InverseCase(unittest.TestCase):

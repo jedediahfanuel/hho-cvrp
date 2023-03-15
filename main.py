@@ -1,4 +1,4 @@
-from view import app
+from view.app import App
 
 if __name__ == "__main__":
-    app.run()
+    app = App()

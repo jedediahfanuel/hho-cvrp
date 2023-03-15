@@ -16,6 +16,7 @@ def get_function_details(name):
     x : list
         as described before
     """
+
     # Download instances
     instance, solution = cvrplib.download(name, solution=True)
 
@@ -129,24 +130,3 @@ def concat_depot(single_route):
     return numpy.concatenate((
         numpy.zeros(1, dtype=int), single_route, numpy.zeros(1, dtype=int)
     ))
-
-
-def gap(bks, bs):
-    """
-    Calculate gap of two route in percentage. If the result is positive number,
-    that means bks has name better value, and vice versa
-
-    Parameters
-    ----------
-    bks : number
-        best solution known
-    bs : number
-        best solution
-
-    Returns
-    -------
-    gap : number
-        the gap of bks and bs (in percentage)
-    """
-
-    return (bs - bks) * 100 / bks

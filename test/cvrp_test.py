@@ -1,6 +1,6 @@
 import unittest
 import cvrplib
-import benchmarks
+from controller import benchmarks
 
 
 class CvrpTest(unittest.TestCase):
