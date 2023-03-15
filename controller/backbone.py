@@ -40,7 +40,7 @@ def selector(algo, func_details, params, solution: Solution):
         ).run(solution)
 
 
-def run(params: Parameter, export: Export):
+def run(params: Parameter, export: Export, progress):
     """
     It serves as the main interface of the framework for running the experiments.
 
@@ -57,10 +57,14 @@ def run(params: Parameter, export: Export):
         5. export.details (Exporting the detailed results in files)
         6. export.route (Exporting the routes for each iteration)
         7. export.scatter (Exporting the scatter plots)
+    progress : function
+        a progress bar update function
     """
 
+    maximum, counter = len(params.optimizers) * len(params.instances) * params.n_runs, 0
+
     for i, optimizer_name in enumerate(params.optimizers):
-        for instance_name in params.instances:
+        for j, instance_name in enumerate(params.instances):
             collection = Collection(params.n_runs)
             solution = Solution(optimizer=optimizer_name)
             for k in range(params.n_runs):
@@ -76,6 +80,9 @@ def run(params: Parameter, export: Export):
 
                 if export.scatter:
                     export.write_scatter(solution, params, k) if solution.coordinates is not None else ()
+
+                counter += 1
+                progress(counter * 100 / maximum)
 
             if export.avg:
                 export.write_avg(collection, solution, params)
