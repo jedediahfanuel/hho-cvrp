@@ -4,7 +4,7 @@ from pathlib import Path
 
 class Parameter:
     results_directory = "hho_cvrp_result/" + time.strftime("%Y-%m-%d-%H-%M-%S") + "/"
-    optimizers = ["HHO"]
+    optimizers = ["HHOCVRP"]
 
     def __init__(self, n_runs, population, iteration, instances, city_size, city_id, results_directory="", optimizers=None):
         self.n_runs = n_runs

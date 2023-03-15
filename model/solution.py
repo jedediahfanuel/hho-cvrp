@@ -2,7 +2,7 @@ import time
 
 
 class Solution:
-    def __init__(self, optimizer="HHO"):
+    def __init__(self, optimizer="HHOCVRP"):
         self.bks = 0
         self.best = 0
         self.best_individual = []

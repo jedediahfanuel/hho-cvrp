@@ -34,7 +34,7 @@ def selector(algo, func_details, params, solution: Solution):
     solution.dim = instance.dimension
     solution.coordinates = instance.coordinates
 
-    if algo == "HHO":
+    if algo == "HHOCVRP":
         HHOCVRP(
             getattr(benchmarks, function_name), params.iteration, params.population, instance
         ).run(solution)
