@@ -15,7 +15,7 @@ from controller.benchmarks import normal_cvrp
 from controller.benchmarks import split_customer
 
 
-class HarrisHawksOptimization:
+class HHOCVRP:
     t = 0
 
     def __init__(
@@ -129,8 +129,7 @@ class HarrisHawksOptimization:
 
         Returns
         -------
-        solution : Solution
-            a local defined solution class (check solution.py)
+        N/A
         """
 
         # Initialize convergence

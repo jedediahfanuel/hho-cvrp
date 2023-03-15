@@ -1,7 +1,7 @@
 import warnings
 
 import controller.benchmarks as benchmarks
-from method.hho_cvrp import HarrisHawksOptimization
+from method.hho_cvrp import HHOCVRP
 from model.collection import Collection
 from model.solution import Solution
 from model.export import Export
@@ -38,7 +38,7 @@ def selector(algo, func_details, params, solution: Solution):
     solution.coordinates = func_details[1].coordinates
 
     if algo == "HHO":
-        HarrisHawksOptimization(
+        HHOCVRP(
             getattr(benchmarks, function_name), params.iteration, params.population, instance
         ).run(solution)
 
