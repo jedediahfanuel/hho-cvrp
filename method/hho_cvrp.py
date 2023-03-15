@@ -111,14 +111,14 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x_hawks[i, :] = x_rand - random.random() * abs(
                         x_rand - 2 * random.random() * x_hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(x_hawks[i, :])
+                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
 
                 elif q < 0.5:
                     # perch on a random tall tree (random site inside group's home range)
                     x_hawks[i, :] = (rabbit_location - x_hawks.mean(0)) - random.random() * (
                             (ub - lb) * random.random() + lb
                     )
-                    x_hawks[i, :] = mutate.inverse(x_hawks[i, :])
+                    x_hawks[i, :] = mutate.inverse(random_key(x_hawks[i, :]))
 
             # -------- Exploitation phase -------------------
             elif abs(escaping_energy) < 1:
@@ -135,7 +135,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x_hawks[i, :] = rabbit_location - escaping_energy * abs(
                         rabbit_location - x_hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(x_hawks[i, :])
+                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
 
                 if (
                         r >= 0.5 and abs(escaping_energy) >= 0.5
@@ -146,7 +146,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x_hawks[i, :] = (rabbit_location - x_hawks[i, :]) - escaping_energy * abs(
                         jump_strength * rabbit_location - x_hawks[i, :]
                     )
-                    x_hawks[i, :] = mutate.swap(x_hawks[i, :])
+                    x_hawks[i, :] = mutate.swap(random_key(x_hawks[i, :]))
 
                 # phase 2: --------performing team rapid dives (leapfrog movements)----------
 
@@ -161,7 +161,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     x1 = mutate.swap(random_key(x1))
                     x1, x2 = pmx(
                         random_key(rabbit_location),
-                        random_key(x1)
+                        x1
                     )
 
                     xo1 = objf(x1, distances, max_capacity, demands)
@@ -171,7 +171,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                     y = x1 if xo1 < xo2 else x2
 
                     if yobjf < fs[i]:  # improved move?
-                        x_hawks[i, :] = y.copy()
+                        x_hawks[i, :] = numpy.array(y).copy()
                     else:  # hawks perform levy-based short rapid dives around the rabbit
                         x2 = (
                                 rabbit_location
@@ -180,7 +180,7 @@ def hho(objf, data, sol, search_agent_no, max_iter):
                                 + numpy.multiply(numpy.random.randn(dim), levy(dim))
                         )
                         x2 = mutate.insertion(random_key(x2))
-                        x2 = two_opt_inverse(concat_depot(random_key(x2)), distances)[1:-1]
+                        x2 = two_opt_inverse(concat_depot(x2), distances)[1:-1]
 
                         if objf(x2, distances, max_capacity, demands) < fs[i]:
                             x_hawks[i, :] = x2.copy()
@@ -210,11 +210,9 @@ def hho(objf, data, sol, search_agent_no, max_iter):
         for i in range(0, search_agent_no):
 
             # fitness of locations
-            if t < max_iter - 1:
-                x_hawks[i, :] = random_key(x_hawks[i, :])
-            else:
+            if t == max_iter - 1:
                 # Finishing Phase
-                test_route = split_customer(x_hawks[i, :].astype(int), max_capacity, demands)
+                test_route = split_customer(random_key(x_hawks[i, :]), max_capacity, demands)
                 test_route = cvrp_inverse(test_route, distances)
                 test_route = cvrp_insertion(test_route, distances)
 
