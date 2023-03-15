@@ -16,6 +16,7 @@ def get_function_details(name):
     x : list
         as described before
     """
+
     # Download instances
     instance, solution = cvrplib.download(name, solution=True)
 

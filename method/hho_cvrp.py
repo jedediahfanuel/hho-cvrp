@@ -48,13 +48,7 @@ class HHOCVRP:
         self.hawks_fitness = [float("inf") for _ in range(self.population)]
 
     def initiate_population(self):
-        """
-        This function create a randomized array with size of population x dimension
-
-        Returns
-        -------
-        N/
-        """
+        """This function create a randomized array with size of population x dimension"""
 
         self.hawks = np.array(
             [
@@ -65,13 +59,8 @@ class HHOCVRP:
 
     def check_solution(self, solution: Solution):
         """
-        This function stop iteration process if current best solution has
-        reached the best known solution, then the convergence curve will be filled
-        with bks
-
-        Returns
-        -------
-        N/A
+        This function stop iteration process if current best solution has reached
+        the best known solution, then the convergence curve will be filled with bks
         """
 
         if self.rabbit_energy <= solution.bks:
@@ -81,13 +70,7 @@ class HHOCVRP:
             self.t = self.iteration
 
     def determine_rabbit(self):
-        """
-        This function is setter for the rabbit at the start of hho-cvrp
-
-        Returns
-        -------
-        N/A
-        """
+        """This function is setter for the rabbit at the start of hho-cvrp"""
 
         for i in range(0, self.population):
 
@@ -108,10 +91,6 @@ class HHOCVRP:
         ----------
         t : int
             current iteration number
-
-        Returns
-        -------
-        N/A
         """
 
         for i in range(0, self.population):
@@ -132,24 +111,12 @@ class HHOCVRP:
                     self.best_route = self.test_route
 
     def update_escaping_energy(self):
-        """
-        Escaping energy of rabbit
-
-        Returns
-        -------
-        N/A
-        """
+        """Escaping energy of rabbit"""
 
         self.escaping_energy = 2 * (2 * random.random() - 1) * (1 - (self.t / self.iteration))
 
     def run(self, solution: Solution):
-        """
-        This function is Harris Hawks Optimization for CVRP.
-
-        Returns
-        -------
-        N/A
-        """
+        """This function is Harris Hawks Optimization for CVRP"""
 
         # Initialize convergence
         solution.convergence = np.zeros(self.iteration)
@@ -199,10 +166,6 @@ class HHOCVRP:
         ----------
         i : int
             index of current hawk
-
-        Returns
-        -------
-        N/A
         """
 
         q = random.random()
@@ -222,10 +185,6 @@ class HHOCVRP:
         ----------
         i : int
             index of current hawk
-
-        Returns
-        -------
-        N/A
         """
 
         r = random.random()  # probability of each event
@@ -410,13 +369,7 @@ class HHOCVRP:
         return step
 
     def extend_bound(self):
-        """
-        This function extend lower bound and upper bound into a list
-
-        Returns
-        -------
-        N/A
-        """
+        """This function extend lower bound and upper bound into a list"""
 
         if not isinstance(self.lb, list):
             self.lb = [self.lb for _ in range(self.dimension)]

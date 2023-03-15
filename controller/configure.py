@@ -5,7 +5,7 @@ from model.parameter import Parameter
 
 def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory="", optimizer=None):
     """
-    Parameter configuration
+    Parameter configuration for test
 
     Parameters
     ----------
@@ -27,10 +27,6 @@ def conf(num, pop, iterate, names, exports, city_size, city_id, result_directory
         path of root directory for result files
     optimizer : list of str
         list of optimizer name to be tested
-
-    Returns
-    -------
-    N/A
     """
 
     # Collection of params

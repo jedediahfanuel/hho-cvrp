@@ -24,10 +24,6 @@ def selector(algo, func_details, params, solution: Solution):
         Collection of configurable user parameter
     solution : Solution
         Class of solution (check solution.py)
-
-    Returns
-    -------
-    N/A
     """
 
     function_name = func_details[0]
@@ -61,10 +57,6 @@ def run(params: Parameter, export: Export):
         5. export.details (Exporting the detailed results in files)
         6. export.route (Exporting the routes for each iteration)
         7. export.scatter (Exporting the scatter plots)
-
-    Returns
-    -----------
-    N/A
     """
 
     for i, optimizer_name in enumerate(params.optimizers):
