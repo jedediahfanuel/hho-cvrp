@@ -2,12 +2,12 @@ import math
 import random
 import numpy as np
 
-import method.mutate as mutate
-from method.crossover import pmx
-from method.encode import random_key
-from method.local_search import two_opt_inverse
-from method.local_search import two_opt_cvrp_inverse
-from method.local_search import two_opt_cvrp_insertion
+import method.extra.mutate as mutate
+from method.extra.crossover import pmx
+from method.extra.encode import random_key
+from method.extra.local_search import two_opt_inverse
+from method.extra.local_search import two_opt_cvrp_inverse
+from method.extra.local_search import two_opt_cvrp_insertion
 
 from model.solution import Solution
 from controller.benchmarks import concat_depot

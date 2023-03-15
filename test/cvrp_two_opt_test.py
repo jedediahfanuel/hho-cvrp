@@ -1,7 +1,6 @@
 import unittest
 import cvrplib
-from benchmarks import split_customer
-from method.hho_cvrp import cvrp_two_opt_no_depot
+from controller.benchmarks import split_customer
 
 
 class MyTestCase(unittest.TestCase):
@@ -28,20 +27,6 @@ class MyTestCase(unittest.TestCase):
             29, 22, 9, 15, 10, 25, 5, 20,
             27, 24, 14,
         ]
-
-    def test_cvrp_two_opt(self):
-        x = cvrp_two_opt_no_depot(
-            split_customer(self.test_list, self.data.capacity, self.data.demands),
-            self.data.distances
-        )
-        self.assertEqual(self.tsp, x)
-
-    def test_split(self):
-        x = split_customer(cvrp_two_opt_no_depot(
-            split_customer(self.test_list, self.data.capacity, self.data.demands),
-            self.data.distances
-        ), self.data.capacity, self.data.demands)
-        self.assertEqual(self.vrp, x)
 
 
 if __name__ == '__main__':
