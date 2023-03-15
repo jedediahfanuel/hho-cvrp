@@ -276,29 +276,29 @@ class HHOCVRP:
         """
 
         jump_strength = 2 * (1 - random.random())
-        x1 = self.rabbit_location - self.escaping_energy * abs(
+        y = self.rabbit_location - self.escaping_energy * abs(
             jump_strength * self.rabbit_location - self.hawks[i, :]
         )
-        x1 = mutate.swap(random_key(x1))
-        x1, x2 = pmx(random_key(self.rabbit_location), x1)
+        y = mutate.swap(random_key(y))
+        y, z = pmx(random_key(self.rabbit_location), y)
 
-        xo1 = self.objf(x1, self.distance, self.capacity, self.demands)
-        xo2 = self.objf(x2, self.distance, self.capacity, self.demands)
+        xo1 = self.objf(y, self.distance, self.capacity, self.demands)
+        xo2 = self.objf(z, self.distance, self.capacity, self.demands)
 
         yobjf = xo1 if xo1 < xo2 else xo2
-        y = x1 if xo1 < xo2 else x2
+        y = y if xo1 < xo2 else z
 
         if yobjf < self.hawks_fitness[i]:  # improved move?
             self.hawks[i, :] = np.array(y).copy()
         else:
-            x2 = (
+            z = (
                     np.array(y) + np.multiply(np.random.randn(self.dimension), self.levy())
             )
-            x2 = mutate.insertion(random_key(x2))
-            x2 = two_opt_inverse(concat_depot(x2), self.distance)[1:-1]
+            z = mutate.insertion(random_key(z))
+            z = two_opt_inverse(concat_depot(z), self.distance)[1:-1]
 
-            if self.objf(x2, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
-                self.hawks[i, :] = x2.copy()
+            if self.objf(z, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
+                self.hawks[i, :] = z.copy()
 
     def hard_besiege_with_progressive_rapid_dives(self, i):
         """
@@ -311,21 +311,21 @@ class HHOCVRP:
         """
 
         jump_strength = 2 * (1 - random.random())
-        x1 = self.rabbit_location - self.escaping_energy * abs(
+        y = self.rabbit_location - self.escaping_energy * abs(
             jump_strength * self.rabbit_location - self.hawks.mean(0)
         )
-        x1 = mutate.inverse(random_key(x1))
+        y = mutate.inverse(random_key(y))
 
-        if self.objf(x1, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
-            self.hawks[i, :] = x1.copy()
+        if self.objf(y, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
+            self.hawks[i, :] = y.copy()
         else:
-            x2 = (
-                    x1 + np.multiply(np.random.randn(self.dimension), self.levy())
+            z = (
+                    y + np.multiply(np.random.randn(self.dimension), self.levy())
             )
-            x2 = mutate.insertion(random_key(x2))
+            z = mutate.insertion(random_key(z))
 
-            if self.objf(x2, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
-                self.hawks[i, :] = x2.copy()
+            if self.objf(z, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
+                self.hawks[i, :] = z.copy()
 
     def finishing_phase(self, i: int):
         """
