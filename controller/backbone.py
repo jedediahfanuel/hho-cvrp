@@ -82,7 +82,7 @@ def run(params: Parameter, export: Export, progress):
                     export.write_scatter(solution, params, k) if solution.coordinates is not None else ()
 
                 counter += 1
-                progress(counter * 100 / maximum)
+                progress(counter / maximum)
 
             if export.avg:
                 export.write_avg(collection, solution, params)
