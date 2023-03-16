@@ -110,6 +110,8 @@ class App:
                                                            "Convergence",
                                                            "Route",
                                                            "Scatter-plot"])
+        for export_flag in self.export_checkbox.checkbox_list:
+            export_flag.select()
 
         # Arrange right frame widgets in grid
         self.path_button.grid(row=0, column=0, sticky="E", padx=5, pady=5)
