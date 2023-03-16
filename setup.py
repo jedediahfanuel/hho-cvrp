@@ -6,7 +6,7 @@ from cx_Freeze import setup, Executable
 build_options = {'packages': [], 'excludes': [
     "altgraph", "asttokens", "asyncio", "attr", "backcall", "bs4", "cairo", "certifi", "cffi",
     "colorama", "comm", "concurrent", "contourpy", "cryptography", "curses", "Cython",
-    "debugpy", "defusedxml", "distutils", "_distutils_hack", "docutils", "executing", "fastjsonschema",
+    "debugpy", "defusedxml", "_distutils_hack", "docutils", "executing", "fastjsonschema",
     "gi", "ipykernel", "IPython", "jaraco", "jedi", "jinja2", "jsonschema",
     "jupyter_client", "jupyter_core", "lib2to3", "lxml", "markupsafe", "more_itertools",
     "nbformat", "ordered_set", "parso", "pexpect", "pkg_resources",
