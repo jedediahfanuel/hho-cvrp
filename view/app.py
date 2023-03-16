@@ -18,7 +18,7 @@ class App:
     def __init__(self):
         self.root = ctk.CTk()
         self.root.title("HHO-CVRP")
-        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.protocol("WM_DELETE_WINDOW", self.__on_closing)
 
         # Left frame
         self.left_frame = ctk.CTkFrame(self.root)
@@ -29,19 +29,19 @@ class App:
         self.nruns_label.configure(padx=5, pady=5)
         self.nruns_input = IntegerInputField(self.left_frame)
         self.nruns_input.insert(0, "5")
-        self.nruns_input.bind("<KeyRelease>", self.validate_inputs)
+        self.nruns_input.bind("<KeyRelease>", self.__validate_inputs)
 
         self.population_label = ctk.CTkLabel(self.left_frame, text="Population:")
         self.population_label.configure(padx=5, pady=5)
         self.population_input = IntegerInputField(self.left_frame)
         self.population_input.insert(0, "20")
-        self.population_input.bind("<KeyRelease>", self.validate_inputs)
+        self.population_input.bind("<KeyRelease>", self.__validate_inputs)
 
         self.iteration_label = ctk.CTkLabel(self.left_frame, text="Iteration:")
         self.iteration_label.configure(padx=5, pady=5)
         self.iteration_input = IntegerInputField(self.left_frame)
         self.iteration_input.insert(0, "500")
-        self.iteration_input.bind("<KeyRelease>", self.validate_inputs)
+        self.iteration_input.bind("<KeyRelease>", self.__validate_inputs)
 
         # Create dropdown menu with checkboxes
         self.items = cvrplib.list_names(vrp_type="cvrp")
@@ -49,7 +49,7 @@ class App:
         self.items_label.configure(padx=5, pady=5)
         self.items_checkbox = ScrollableCheckBoxFrame(self.left_frame,
                                                       width=120,
-                                                      command=self.validate_inputs,
+                                                      command=self.__validate_inputs,
                                                       item_list=self.items)
 
         # Create process label
@@ -58,7 +58,7 @@ class App:
 
         # Create submit button
         self.submit_button = ctk.CTkButton(self.left_frame, text="Submit", state="disabled", width=140,
-                                           command=self.submit_button_callback)
+                                           command=self.__submit_button_callback)
 
         # Arrange left frame widgets in grid
         self.nruns_label.grid(row=0, column=0, sticky="E", padx=5, pady=5)
@@ -80,24 +80,24 @@ class App:
         self.right_frame = ctk.CTkFrame(self.root)
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
-        self.path_button = ctk.CTkButton(self.right_frame, text="Path", width=50, command=self.select_directory)
+        self.path_button = ctk.CTkButton(self.right_frame, text="Path", width=50, command=self.__select_directory)
         self.path_input = ctk.StringVar(self.right_frame)
         self.path_input.set("")
         self.path_entry = ctk.CTkEntry(self.right_frame, border_width=1, textvariable=self.path_input,
                                        state=ctk.DISABLED)
-        self.path_input.trace("w", self.validate_inputs)
+        self.path_input.trace("w", self.__validate_inputs)
 
         self.city_size_label = ctk.CTkLabel(self.right_frame, text="City Size:")
         self.city_size_label.configure(padx=5, pady=5)
         self.city_size_input = IntegerInputField(self.right_frame, border_width=1)
         self.city_size_input.insert(0, "10")
-        self.city_size_input.bind("<KeyRelease>", self.validate_inputs)
+        self.city_size_input.bind("<KeyRelease>", self.__validate_inputs)
 
         self.city_id_label = ctk.CTkLabel(self.right_frame, text="Display City ID:")
         self.city_id_label.configure(padx=5, pady=5)
         self.city_id_dropdown = ctk.CTkOptionMenu(self.right_frame,
                                                   values=["True", "False"],
-                                                  command=self.get_city_id)
+                                                  command=self.__is_city_id)
         self.city_id_dropdown.set("False")
 
         self.export_label = ctk.CTkLabel(self.right_frame, text="Export Flag:")
@@ -134,7 +134,7 @@ class App:
         self.progress_label.grid(row=4, column=0, sticky="E", padx=5, pady=5)
         self.progress_bar.grid(row=4, column=1, sticky="W", padx=5, pady=5)
 
-    def validate_inputs(self, *args):
+    def __validate_inputs(self, *args):
         # Check if input values are valid integers greater than or equal to 1
         # and at least one instance is selected
         if self.iteration_input.get().isdigit() \
@@ -151,7 +151,7 @@ class App:
         else:
             self.submit_button.configure(state=ctk.DISABLED)
 
-    def submit_button_callback(self):
+    def __submit_button_callback(self):
         self.process_label.configure(text="Running")
         self.progress_label.configure(text="0%")
         self.progress_bar.set(0)
@@ -161,11 +161,11 @@ class App:
         running = True
         self.submit_button.configure(state=ctk.DISABLED)
 
-        calculation_thread = threading.Thread(target=self.run_hho)
+        calculation_thread = threading.Thread(target=self.__execute)
         calculation_thread.daemon = True
         calculation_thread.start()
 
-    def run_hho(self):
+    def __execute(self):
         # Handle input values
         configure.conf(
             int(self.nruns_input.get()),
@@ -179,9 +179,9 @@ class App:
             self.path_input.get()
         )
 
-        self.root.after(0, lambda: self.update_ui())
+        self.root.after(0, lambda: self.__update_ui())
 
-    def update_ui(self):
+    def __update_ui(self):
         self.process_label.configure(text="Completed")
         self.progress_label.configure(text="100%")
 
@@ -190,7 +190,7 @@ class App:
         running = False
         self.submit_button.configure(state=ctk.NORMAL)
 
-    def select_directory(self):
+    def __select_directory(self):
         self.path_entry.configure(state=ctk.NORMAL)
 
         # get the directory path using the file dialog
@@ -202,7 +202,7 @@ class App:
 
         self.path_entry.configure(state=ctk.DISABLED)
 
-    def get_city_id(self, choice):
+    def __is_city_id(self, choice):
         if choice == "True":
             self.city_id = True
         else:
@@ -212,6 +212,6 @@ class App:
         self.progress_bar.set(value)
         self.progress_label.configure(text=str(int(value * 100)) + "%")
 
-    def on_closing(self):
+    def __on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.root.destroy()
