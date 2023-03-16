@@ -10,7 +10,7 @@ from view.custom_widget import ScrollableCheckBoxFrame
 
 ctk.set_appearance_mode("Dark")
 running = False
-count = 0
+
 
 class App:
     city_id = ""
