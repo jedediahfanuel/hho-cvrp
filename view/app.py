@@ -3,10 +3,10 @@ import threading
 import customtkinter as ctk
 
 from tkinter import filedialog
-from tkinter import messagebox
 from controller import configure
 from view.custom_widget import IntegerInputField
 from view.custom_widget import ScrollableCheckBoxFrame
+from CTkMessagebox import CTkMessagebox
 
 ctk.set_appearance_mode("Dark")
 running = False
@@ -215,5 +215,9 @@ class App:
         self.progress_label.configure(text=str(int(value * 100)) + "%")
 
     def __on_closing(self):
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        msg = CTkMessagebox(title="Exit", message="Do you want to quit?",
+                            icon="question", option_1="No", option_2="Yes",
+                            width=200, border_width=0)
+
+        if msg.get() == "Yes":
             self.root.destroy()
