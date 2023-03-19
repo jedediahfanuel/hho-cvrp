@@ -23,7 +23,7 @@ def get_function_details(name):
     return ["cvrp", instance, solution]
 
 
-def cvrp(solution, distances, max_capacity, demands):
+def cvrp(solution, distances, capacity, demands):
     """
     CVRP objective function sum all distance of routes.
     This function take tsp single_route, convert it into cvrp single_route,
@@ -35,7 +35,7 @@ def cvrp(solution, distances, max_capacity, demands):
         1D list of tsp single_route representation
     distances : list
         matrix of distances
-    max_capacity : number
+    capacity : number
         maximum capacity of truck (homogeneous)
     demands : list
         matrox of demands
@@ -46,7 +46,7 @@ def cvrp(solution, distances, max_capacity, demands):
         the fitness value of cvrp (total distance)
     """
 
-    routes = split_customer(solution, max_capacity, demands)
+    routes = split_customer(solution, capacity, demands)
 
     return normal_cvrp(routes, distances)
 
@@ -77,7 +77,7 @@ def normal_cvrp(solution, distances):
     return total
 
 
-def split_customer(solution, max_capacity, demands):
+def split_customer(solution, capacity, demands):
     """
     This function split tsp single_route into cvrp single_route
 
@@ -85,7 +85,7 @@ def split_customer(solution, max_capacity, demands):
     ----------
     solution : list
         1D list of tsp single_route representation
-    max_capacity : number
+    capacity : number
         maximum capacity of truck (homogeneous)
     demands : list
         matrix of demands
@@ -99,7 +99,7 @@ def split_customer(solution, max_capacity, demands):
     routes, load, v = [[0]], 0, 0
 
     for i in solution:
-        if demands[i] + load <= max_capacity:
+        if demands[i] + load <= capacity:
             routes[v].append(i)
             load += demands[i]
         else:
@@ -112,13 +112,13 @@ def split_customer(solution, max_capacity, demands):
     return routes
 
 
-def concat_depot(single_route):
+def concat_depot(route):
     """
     Add depot (index zero) in-front and in-end of route, like sandwich
 
     Parameters
     ----------
-    single_route : list
+    route : list
         name single route that represent customers order
 
     Returns
@@ -128,5 +128,5 @@ def concat_depot(single_route):
     """
 
     return numpy.concatenate((
-        numpy.zeros(1, dtype=int), single_route, numpy.zeros(1, dtype=int)
+        numpy.zeros(1, dtype=int), route, numpy.zeros(1, dtype=int)
     ))
