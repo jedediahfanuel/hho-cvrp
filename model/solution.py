@@ -11,8 +11,6 @@ class Solution:
         self.objfname = ""
         self.timer_start = 0
         self.timer_end = 0
-        self.start_time = 0
-        self.end_time = 0
         self.execution_time = 0
         self.lb = 0
         self.ub = 0
@@ -37,10 +35,8 @@ class Solution:
     def start_timer(self):
         """Start the timer for testing"""
         self.timer_start = time.time()
-        self.start_time = time.strftime("%Y-%m-%d-%H-%M-%S")
 
     def stop_timer(self):
         """Stop the timer for testing"""
         self.timer_end = time.time()
-        self.end_time = time.strftime("%Y-%m-%d-%H-%M-%S")
         self.execution_time = self.timer_end - self.timer_start
