@@ -1,6 +1,6 @@
 import unittest
 
-from method.extra.encode import random_key
+from method.extra.encode import rke
 
 
 class EncodeTest(unittest.TestCase):
@@ -11,7 +11,7 @@ class EncodeTest(unittest.TestCase):
     def test_random_key(self):
         self.assertEqual(
             self.result,
-            random_key(self.arr)
+            rke(self.arr)
         )
 
 

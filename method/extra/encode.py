@@ -1,4 +1,4 @@
-def random_key(arr):
+def rke(arr):
     """
     Return a list of indices that correspond to the sorted elements in the original sequence.
 
@@ -12,10 +12,10 @@ def random_key(arr):
     Examples
     --------
     >>> ary = [0.1, 0.5, 0.3, 0.7, 0.2]
-    >>> print(random_key_original(ary))
+    >>> print(rke(ary))
     [1, 4, 3, 5, 2]
-
     """
+
     indices = list(range(len(arr)))
     indices.sort(key=lambda i: arr[i])
     return [i + 1 for i, _ in sorted(enumerate(indices), key=lambda x: x[1])]

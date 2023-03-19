@@ -4,7 +4,7 @@ import numpy as np
 
 import method.extra.mutate as mutate
 from method.extra.crossover import pmx
-from method.extra.encode import random_key
+from method.extra.encode import rke
 from method.extra.local_search import two_opt_inverse
 from method.extra.local_search import two_opt_cvrp_inverse
 from method.extra.local_search import two_opt_cvrp_insertion
@@ -75,7 +75,7 @@ class HHOCVRP:
         for i in range(0, self.population):
 
             # Update the location of Hawks
-            self.hawks[i, :] = random_key(self.hawks[i, :])
+            self.hawks[i, :] = rke(self.hawks[i, :])
             self.hawks_fitness[i] = self.objf(self.hawks[i, :].astype(int), self.distance, self.capacity, self.demands)
 
             # Update the location of Rabbit
@@ -217,7 +217,7 @@ class HHOCVRP:
         self.hawks[i, :] = rand_hawk - random.random() * abs(
             rand_hawk - 2 * random.random() * self.hawks[i, :]
         )
-        self.hawks[i, :] = mutate.swap(random_key(self.hawks[i, :]))
+        self.hawks[i, :] = mutate.swap(rke(self.hawks[i, :]))
 
     def perching_based_on_the_position_of_other_hawks(self, i):
         """
@@ -232,7 +232,7 @@ class HHOCVRP:
         self.hawks[i, :] = (self.rabbit_location - self.hawks.mean(0)) - random.random() * (
                 (self.ub - self.lb) * random.random() + self.lb
         )
-        self.hawks[i, :] = mutate.inverse(random_key(self.hawks[i, :]))
+        self.hawks[i, :] = mutate.inverse(rke(self.hawks[i, :]))
 
     def soft_besiege(self, i):
         """
@@ -248,7 +248,7 @@ class HHOCVRP:
         self.hawks[i, :] = (self.rabbit_location - self.hawks[i, :]) - self.escaping_energy * abs(
             jump_strength * self.rabbit_location - self.hawks[i, :]
         )
-        self.hawks[i, :] = mutate.swap(random_key(self.hawks[i, :]))
+        self.hawks[i, :] = mutate.swap(rke(self.hawks[i, :]))
 
     def hard_besiege(self, i: int):
         """
@@ -263,7 +263,7 @@ class HHOCVRP:
         self.hawks[i, :] = self.rabbit_location - self.escaping_energy * abs(
             self.rabbit_location - self.hawks[i, :]
         )
-        self.hawks[i, :] = mutate.swap(random_key(self.hawks[i, :]))
+        self.hawks[i, :] = mutate.swap(rke(self.hawks[i, :]))
 
     def soft_besiege_with_progressive_rapid_dives(self, i: int):
         """
@@ -279,8 +279,8 @@ class HHOCVRP:
         y = self.rabbit_location - self.escaping_energy * abs(
             jump_strength * self.rabbit_location - self.hawks[i, :]
         )
-        y = mutate.swap(random_key(y))
-        y, z = pmx(random_key(self.rabbit_location), y)
+        y = mutate.swap(rke(y))
+        y, z = pmx(rke(self.rabbit_location), y)
 
         xo1 = self.objf(y, self.distance, self.capacity, self.demands)
         xo2 = self.objf(z, self.distance, self.capacity, self.demands)
@@ -294,7 +294,7 @@ class HHOCVRP:
             z = (
                     np.array(y) + np.multiply(np.random.randn(self.dimension), self.levy())
             )
-            z = mutate.insertion(random_key(z))
+            z = mutate.insertion(rke(z))
             z = two_opt_inverse(concat_depot(z), self.distance)[1:-1]
 
             if self.objf(z, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
@@ -314,7 +314,7 @@ class HHOCVRP:
         y = self.rabbit_location - self.escaping_energy * abs(
             jump_strength * self.rabbit_location - self.hawks.mean(0)
         )
-        y = mutate.inverse(random_key(y))
+        y = mutate.inverse(rke(y))
 
         if self.objf(y, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
             self.hawks[i, :] = y.copy()
@@ -322,7 +322,7 @@ class HHOCVRP:
             z = (
                     y + np.multiply(np.random.randn(self.dimension), self.levy())
             )
-            z = mutate.insertion(random_key(z))
+            z = mutate.insertion(rke(z))
 
             if self.objf(z, self.distance, self.capacity, self.demands) < self.hawks_fitness[i]:
                 self.hawks[i, :] = z.copy()
@@ -337,7 +337,7 @@ class HHOCVRP:
             current index of hawks
         """
 
-        self.test_route = split_customer(random_key(self.hawks[i, :]), self.capacity, self.demands)
+        self.test_route = split_customer(rke(self.hawks[i, :]), self.capacity, self.demands)
         self.test_route = two_opt_cvrp_inverse(self.test_route, self.distance)
         self.test_route = two_opt_cvrp_insertion(self.test_route, self.distance)
 
