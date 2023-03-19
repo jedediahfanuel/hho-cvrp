@@ -40,7 +40,7 @@ class HHOCVRP:
         self.demands = data.demands
 
         self.hawks = np.zeros(self.dimension)
-        self.rabbit_location = np.zeros(self.dimension)
+        self.rabbit = np.zeros(self.dimension)
         self.best_route = None
         self.test_route = []
 
@@ -81,7 +81,7 @@ class HHOCVRP:
             # Update the location of Rabbit
             if self.hawks_fitness[i] < self.rabbit_energy:  # Change this to > for maximization problem
                 self.rabbit_energy = self.hawks_fitness[i]
-                self.rabbit_location = self.hawks[i, :].copy()
+                self.rabbit = self.hawks[i, :].copy()
 
     def update_location(self, t: int):
         """
@@ -105,7 +105,7 @@ class HHOCVRP:
             # Update the location of Rabbit
             if self.hawks_fitness[i] < self.rabbit_energy:  # Change this to > for maximization problem
                 self.rabbit_energy = self.hawks_fitness[i]
-                self.rabbit_location = self.hawks[i, :].copy()
+                self.rabbit = self.hawks[i, :].copy()
 
                 if t == self.iteration - 1:
                     self.best_route = self.test_route
@@ -154,9 +154,9 @@ class HHOCVRP:
         solution.stop_timer()
         solution.objfname = self.objf.__name__
         solution.best = self.rabbit_energy
-        solution.best_individual = self.rabbit_location
+        solution.best_individual = self.rabbit
         solution.routes = self.best_route if self.best_route is not None else split_customer(
-            self.rabbit_location.astype(int), self.capacity, self.demands)
+            self.rabbit.astype(int), self.capacity, self.demands)
 
     def exploration(self, i: int):
         """
@@ -229,7 +229,7 @@ class HHOCVRP:
             current index of hawks
         """
 
-        self.hawks[i, :] = (self.rabbit_location - self.hawks.mean(0)) - random.random() * (
+        self.hawks[i, :] = (self.rabbit - self.hawks.mean(0)) - random.random() * (
                 (self.ub - self.lb) * random.random() + self.lb
         )
         self.hawks[i, :] = mutate.inverse(rke(self.hawks[i, :]))
@@ -245,8 +245,8 @@ class HHOCVRP:
         """
 
         jump_strength = 2 * (1 - random.random())
-        self.hawks[i, :] = (self.rabbit_location - self.hawks[i, :]) - self.escaping_energy * abs(
-            jump_strength * self.rabbit_location - self.hawks[i, :]
+        self.hawks[i, :] = (self.rabbit - self.hawks[i, :]) - self.escaping_energy * abs(
+            jump_strength * self.rabbit - self.hawks[i, :]
         )
         self.hawks[i, :] = mutate.swap(rke(self.hawks[i, :]))
 
@@ -260,8 +260,8 @@ class HHOCVRP:
             current index of hawks
         """
 
-        self.hawks[i, :] = self.rabbit_location - self.escaping_energy * abs(
-            self.rabbit_location - self.hawks[i, :]
+        self.hawks[i, :] = self.rabbit - self.escaping_energy * abs(
+            self.rabbit - self.hawks[i, :]
         )
         self.hawks[i, :] = mutate.swap(rke(self.hawks[i, :]))
 
@@ -276,11 +276,11 @@ class HHOCVRP:
         """
 
         jump_strength = 2 * (1 - random.random())
-        y = self.rabbit_location - self.escaping_energy * abs(
-            jump_strength * self.rabbit_location - self.hawks[i, :]
+        y = self.rabbit - self.escaping_energy * abs(
+            jump_strength * self.rabbit - self.hawks[i, :]
         )
         y = mutate.swap(rke(y))
-        y, z = pmx(rke(self.rabbit_location), y)
+        y, z = pmx(rke(self.rabbit), y)
 
         xo1 = self.objf(y, self.distance, self.capacity, self.demands)
         xo2 = self.objf(z, self.distance, self.capacity, self.demands)
@@ -311,8 +311,8 @@ class HHOCVRP:
         """
 
         jump_strength = 2 * (1 - random.random())
-        y = self.rabbit_location - self.escaping_energy * abs(
-            jump_strength * self.rabbit_location - self.hawks.mean(0)
+        y = self.rabbit - self.escaping_energy * abs(
+            jump_strength * self.rabbit - self.hawks.mean(0)
         )
         y = mutate.inverse(rke(y))
 
