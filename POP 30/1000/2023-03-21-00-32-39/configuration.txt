@@ -1,0 +1,4 @@
+Num of run : 5
+Population : 30
+Iterations : 1000
+Instances  : ['M-n200-k16', 'M-n200-k17', 'P-n16-k8', 'P-n19-k2', 'P-n20-k2', 'P-n21-k2', 'P-n22-k2', 'P-n22-k8', 'P-n23-k8', 'P-n40-k5', 'P-n45-k5', 'P-n50-k7', 'P-n50-k8', 'P-n50-k10', 'P-n51-k10', 'P-n55-k7', 'P-n55-k10', 'P-n55-k15', 'P-n60-k10', 'P-n60-k15', 'P-n65-k10', 'P-n70-k10', 'P-n76-k4', 'P-n76-k5', 'P-n101-k4']
