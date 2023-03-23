@@ -4,7 +4,7 @@ import pandas as pd
 # Create DataFrame
 df = pd.read_csv("experiment_details.csv")
 
-df.sort_values(['Instance', 'BS'], axis=0, ascending=True, inplace=True)
+df.sort_values(['Instance', 'BS', 'ExecutionTime'], axis=0, ascending=True, inplace=True)
 
 # Groupby function
 result = df.groupby('Instance', as_index=False)
