@@ -6,6 +6,10 @@ df = pd.read_csv("experiment_details.csv")
 
 df.sort_values(['Instance', 'BS', 'ExecutionTime'], axis=0, ascending=True, inplace=True)
 
+df['Gap'] = df['Gap'].round(2)
+
+df['ExecutionTime'] = df['ExecutionTime'].round(2)
+
 # Groupby function
 result = df.groupby('Instance', as_index=False)
 
@@ -24,3 +28,4 @@ print(
 
 # Export to CSV file
 final.to_csv('experiment_best.csv', index=False)
+
