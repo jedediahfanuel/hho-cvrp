@@ -1,0 +1,4 @@
+Num of run : 20
+Population : 30
+Iterations : 1000
+Instances  : ['B-n51-k7', 'E-n30-k3', 'P-n22-k8', 'P-n55-k15']
