@@ -1,0 +1,4 @@
+Num of run : 5
+Population : 30
+Iterations : 1000
+Instances  : ['B-n44-k7']
