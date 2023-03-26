@@ -1,0 +1,4 @@
+Num of run : 5
+Population : 30
+Iterations : 1000
+Instances  : ['CMT1', 'CMT2', 'CMT3', 'CMT4', 'CMT5', 'CMT6', 'CMT7', 'CMT8', 'CMT9', 'CMT10', 'CMT11', 'CMT12', 'CMT13', 'CMT14']
