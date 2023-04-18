@@ -149,7 +149,7 @@ class HHOCVRP:
                 print("At iteration " + str(self.t) + " the best fitness is " + str(self.rabbit_energy))
             self.t += 1
 
-            self.check_solution(solution)
+            # self.check_solution(solution)
 
         solution.stop_timer()
         solution.objfname = self.objf.__name__
