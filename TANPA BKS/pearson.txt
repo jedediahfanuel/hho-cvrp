@@ -1,0 +1,29 @@
+POPULATION X GAP
+(r)         -0.9742
+P-value	     0.145
+Covariance	-5.0279
+Sample size  3
+Statistic   -4.315
+
+
+ITERATION X GAP
+(r)	          -0.8711
+P-value	       0.02387
+Covariance	-149.7051
+Sample size    6
+Statistic     -3.5467
+
+
+POPULATION X TIME
+(r)	          1
+P-value	      1.073e-10
+Covariance	869.4968
+Sample size	  6
+Statistic   486.328
+
+ITERATION X TIME
+(r)           1
+P-value	      0.002461
+Covariance	 18.7841
+Sample size   3
+Statistic   258.6297
