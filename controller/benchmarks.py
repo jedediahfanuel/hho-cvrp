@@ -1,5 +1,5 @@
 import numpy
-import cvrplib
+import vrplib
 
 
 def get_function_details(name):
@@ -18,7 +18,11 @@ def get_function_details(name):
     """
 
     # Download instances
-    instance, solution = cvrplib.download(name, solution=True)
+    vrplib.download_instance(name, "./instances/"+name+".vrp")
+    vrplib.download_solution(name, "./instances/"+name+".sol")
+
+    instance = vrplib.read_instance("./instances/"+name+".vrp")
+    solution = vrplib.read_solution("./instances/"+name+".sol")
 
     return ["cvrp", instance, solution]
 

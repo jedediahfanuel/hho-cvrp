@@ -29,10 +29,10 @@ def selector(algo, func_details, params, solution: Solution):
     function_name = func_details[0]
     instance = func_details[1]
 
-    solution.bks = func_details[2].cost
-    solution.name = instance.name
-    solution.dim = instance.dimension
-    solution.coordinates = instance.coordinates
+    solution.bks = func_details[2]["cost"]
+    solution.name = instance["name"]
+    solution.dim = instance["dimension"]
+    solution.coordinates = instance["node_coord"]
 
     if algo == "HHOCVRP":
         HHOCVRP(

@@ -33,11 +33,11 @@ class HHOCVRP:
         self.escaping_energy = 0
 
         self.lb = 1
-        self.ub = data.n_customers
-        self.capacity = data.capacity
-        self.dimension = data.n_customers
-        self.distance = data.distances
-        self.demands = data.demands
+        self.ub = data["dimension"] - 1
+        self.capacity = data["capacity"]
+        self.dimension = data["dimension"] - 1
+        self.distance = np.rint(data["edge_weight"]).astype(int)
+        self.demands = data["demand"]
 
         self.hawks = np.zeros(self.dimension)
         self.rabbit = np.zeros(self.dimension)
@@ -57,17 +57,17 @@ class HHOCVRP:
             ]
         )
 
-    def check_solution(self, solution: Solution):
-        """
-        This function stop iteration process if current best solution has reached
-        the best known solution, then the convergence curve will be filled with bks
-        """
-
-        if self.rabbit_energy <= solution.bks:
-            solution.convergence = [
-                self.rabbit_energy if conv == 0 else conv for conv in solution.convergence
-            ]
-            self.t = self.iteration
+    # def check_solution(self, solution: Solution):
+    #     """
+    #     This function stop iteration process if current best solution has reached
+    #     the best known solution, then the convergence curve will be filled with bks
+    #     """
+    #
+    #     if self.rabbit_energy <= solution.bks:
+    #         solution.convergence = [
+    #             self.rabbit_energy if conv == 0 else conv for conv in solution.convergence
+    #         ]
+    #         self.t = self.iteration
 
     def determine_rabbit(self):
         """This function is setter for the rabbit at the start of hho-cvrp"""
@@ -148,8 +148,6 @@ class HHOCVRP:
             if self.t % 1 == 0:
                 print("At iteration " + str(self.t) + " the best fitness is " + str(self.rabbit_energy))
             self.t += 1
-
-            # self.check_solution(solution)
 
         solution.stop_timer()
         solution.objfname = self.objf.__name__

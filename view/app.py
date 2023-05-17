@@ -1,4 +1,4 @@
-import cvrplib
+import vrplib
 import threading
 import customtkinter as ctk
 
@@ -44,13 +44,16 @@ class App:
         self.iteration_input.bind("<KeyRelease>", self.__validate_inputs)
 
         # Create dropdown menu with checkboxes
-        self.items = cvrplib.list_names(vrp_type="cvrp")
+        self.items = vrplib.list_names(vrp_type="cvrp")
         self.items_label = ctk.CTkLabel(self.left_frame, text="Instances:")
         self.items_label.configure(padx=5, pady=5)
         self.items_checkbox = ScrollableCheckBoxFrame(self.left_frame,
                                                       width=120,
                                                       command=self.__validate_inputs,
                                                       item_list=self.items)
+        
+        self.items_checkbox.bind_all("<Button-4>", lambda e: self.items_checkbox._parent_canvas.yview("scroll", -1, "units"))
+        self.items_checkbox.bind_all("<Button-5>", lambda e: self.items_checkbox._parent_canvas.yview("scroll", 1, "units"))
 
         # Create process label
         self.process_label = ctk.CTkLabel(self.left_frame, text="")
