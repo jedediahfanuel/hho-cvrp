@@ -3,6 +3,7 @@ venv/bin
 .idea
 venv
 out
+instances
 hho_cvrp
 hho_cvrp_result
 build
