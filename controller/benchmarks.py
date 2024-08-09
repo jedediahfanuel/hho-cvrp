@@ -18,11 +18,11 @@ def get_function_details(name):
     """
 
     # Download instances
-    vrplib.download_instance(name, "./instances/"+name+".vrp")
-    vrplib.download_solution(name, "./instances/"+name+".sol")
+    vrplib.download_instance(name, "instances/"+name+".vrp")
+    vrplib.download_solution(name, "instances/"+name+".sol")
 
-    instance = vrplib.read_instance("./instances/"+name+".vrp")
-    solution = vrplib.read_solution("./instances/"+name+".sol")
+    instance = vrplib.read_instance("instances/"+name+".vrp")
+    solution = vrplib.read_solution("instances/"+name+".sol")
 
     return ["cvrp", instance, solution]
 
